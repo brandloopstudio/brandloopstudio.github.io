@@ -3654,7 +3654,7 @@ const DEF_ALLOC={ads:40,events:20,content:20,assoc:5,tools:10,other:5};
 function finOf(){const f=S.finance||{};return {currency:f.currency||"GTQ",revenue:Number(f.revenue)||0,ticket:Number(f.ticket)||0,margin:f.margin===""||f.margin==null?null:Number(f.margin),customers:Number(f.customers)||0,goal:Number(f.goal)||0,cac:f.cac===""||f.cac==null?null:Number(f.cac),months:Number(f.months)||0,mktPct:f.mktPct==null?null:Number(f.mktPct),alloc:{...DEF_ALLOC,...(f.alloc||{})},notes:f.notes||""}}
 function finCalc(f){
   const won=S.deals.filter(d=>d.stage==="won").length;const adsSpent=S.ads.reduce((a,x)=>a+(Number(x.spent)||0),0);
-  const cac=f.cac!=null&&!isNaN(f.cac)&&f.cac>0?f.cac:(won&&adsSpent?adsSpent/won:null);
+  const _b=f.revenue&&f.mktPct!=null?f.revenue*f.mktPct/100:null;const _tA=Object.values(f.alloc).reduce((a,b)=>a+(Number(b)||0),0)||1;const _ads=_b?_b*(Number(f.alloc.ads)||0)/_tA:0;const cac=won&&adsSpent?adsSpent/won:(_ads&&f.goal?_ads/f.goal:null);
   const gm=f.margin!=null&&!isNaN(f.margin)?f.margin/100:null;
   const ltv=f.ticket&&f.months?f.ticket*f.months*(gm??1):null;
   const ratio=ltv&&cac?ltv/cac:null;
@@ -3663,7 +3663,7 @@ function finCalc(f){
   const totA=Object.values(f.alloc).reduce((a,b)=>a+(Number(b)||0),0)||1;
   const amt=k=>budget?budget*(Number(f.alloc[k])||0)/totA:0;
   const acq=budget&&cac?Math.floor((amt("ads")+amt("events"))/cac):null;
-  return {cac,cacAuto:f.cac==null&&cac!=null,ltv,ratio,payback,budget,amt,totA,acq,newRev:acq&&f.ticket?acq*f.ticket:null};
+  return {cac,cacAuto:cac!=null,cacReal:!!(won&&adsSpent),ltv,ratio,payback,budget,amt,totA,acq,newRev:acq&&f.ticket?acq*f.ticket:null};
 }
 function viewInvest(c){
   const f=finOf();const k=finCalc(f);const cur=f.currency;const m=v=>money(v,cur);const w=S.canWrite;
@@ -3677,7 +3677,7 @@ function viewInvest(c){
   <section class="home" style="--cols:minmax(0,1fr) minmax(300px,420px)">
    <form class="panel" data-form="fin"><div class="ph"><div class="t"><h2>Números del negocio</h2><span class="s">Solo los ve quien tenga acceso a este espacio</span></div><select id="fin-cur" data-fin="currency" aria-label="Moneda" style="width:auto" ${w?"":"disabled"}><option value="GTQ" ${cur==="GTQ"?"selected":""}>Q</option><option value="USD" ${cur==="USD"?"selected":""}>US$</option></select></div>
     <div class="grid2">${num("fin-revenue","Facturación mensual",f.revenue,"Ej. 250000")}${num("fin-margin","Margen bruto (%)",f.margin,"Ej. 60")}</div>
-    <div class="grid3">${num("fin-customers","Clientes activos",f.customers,"Ej. 40")}${num("fin-months","Meses que se queda un cliente",f.months,"Ej. 24")}${num("fin-cac","CAC: costo por cliente nuevo",f.cac,k.cacAuto?"Calculado: "+Math.round(k.cac):"Si no lo sabes, déjalo vacío",k.cacAuto?"Se calcula con lo invertido en Pauta ÷ oportunidades ganadas":"")}</div>
+    <div class="grid3">${num("fin-customers","Clientes activos",f.customers,"Ej. 40")}${num("fin-months","Meses que se queda un cliente",f.months,"Ej. 24")}<div class="field"><label>CAC: costo por cliente nuevo</label><input type="text" readonly value="${k.cac!=null?esc(m(k.cac)):"—"}" style="background:var(--soft,#f3f3f5)"><span class="hint">${k.cacReal?"Lo invertido en pauta ÷ oportunidades ganadas":k.cac!=null?"Pauta del mes ÷ meta de clientes nuevos. Cambia la facturación, la inversión, la pauta o la meta y se recalcula":"Se calcula solo con la pauta y la meta de clientes"}</span></div></div>
     <div class="grid2">${num("fin-goal","Meta de clientes nuevos al mes",f.goal,"Ej. 4")}<div class="field"><label for="fin-mktPct">Inversión en marketing: ${f.mktPct==null?"elige":f.mktPct+"% de la facturación"}</label><input type="range" min="1" max="25" step="0.5" id="fin-mktPct" data-fin="mktPct" value="${f.mktPct??8}" ${w?"":"disabled"}><span class="hint">Margen sano: entre 5% y 12% de la facturación.</span></div></div>
     <div class="field"><span class="lbl2">Reparto del presupuesto</span>${ALLOC.map(([a,l])=>`<div class="alloc"><span>${l}</span><input type="range" min="0" max="100" step="5" id="al-${a}" data-alloc="${a}" value="${Number(f.alloc[a])||0}" aria-label="${l}" ${w?"":"disabled"}><b>${Math.round((Number(f.alloc[a])||0)/k.totA*100)}%</b><span class="hint">${k.budget?esc(m(k.amt(a))):""}</span></div>`).join("")}</div>
     ${w?`<div class="row"><button class="btn ink">Guardar números</button><span class="hint">Se guarda para el equipo de ${esc(c.name)}.</span></div>`:""}</form>
