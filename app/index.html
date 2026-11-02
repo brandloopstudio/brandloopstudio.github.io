@@ -996,7 +996,7 @@ fieldset.field{border:0;padding:0;margin:0}
   sb.auth.onAuthStateChange((_e,s)=>{session=s;if(s)rerunAll()});
   const parentOf=p=>p.split("/").slice(0,-1).join("/");
   const lastSeg=p=>p.split("/").pop();
-  const clone=o=>o==null?o:JSON.parse(JSON.stringify(o));
+  const LEG=window.BL_SB_URL+"/storage/v1/object/public/assets/legacy/";const clone=o=>{if(o==null)return o;const j=JSON.stringify(o),B="/_bl"+"ob/";return JSON.parse(j.indexOf(B)>=0?j.split(B).join(LEG):j)};
   const err=e=>{const x=new Error(e&&e.message||"db error");x.code=e&&e.code||"error";return x};
 
   async function readDoc(path){
