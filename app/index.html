@@ -1069,7 +1069,17 @@ fieldset.field{border:0;padding:0;margin:0}
     const key=`${session.user.id}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;const r=await sb.storage.from("assets").upload(key,file,{contentType:type,upsert:false});if(r.error)throw err(r.error);
     const u=sb.storage.from("assets").getPublicUrl(key).data.publicUrl;return {id:key,url:u}}};
 
-  window.claude={use:async(name)=>{if(name==="db")return db;if(name==="user")return user;if(name==="downloads")return downloads;if(name==="assets")return assets;return null}};
+  let lastUrl=null;
+  async function tool(t,input){const {data,error}=await sb.functions.invoke("dynamic-taskbl-tools",{body:{tool:t,input}});if(error){let m=error.message;try{const j=await error.context.json();if(j&&j.error)throw j.error}catch(x){if(x&&x.code)throw x}throw {code:"tool_error",message:m}}if(data&&data.error)throw data.error;return data.payload}
+  const mcp={callTool:async(server,name,input)=>{
+    if(server==="Windsor.ai"&&name==="get_data")return {payload:await tool("windsor.get_data",input)};
+    if(server==="Google Drive"&&name==="search_files")return {payload:await tool("drive.search_files",input)};
+    if(server==="Google Drive"&&name==="download_file_content")return {payload:await tool("drive.download_file_content",input)};
+    if(server==="host:claude_browser"&&name==="navigate"){lastUrl=input&&input.url;return {payload:"ok"}}
+    if(server==="host:claude_browser"&&name==="get_page_text"){const r=await tool("web.read",{url:lastUrl,max_chars:input&&input.max_chars});return {payload:r.text}}
+    throw {code:"server_not_found",message:"No disponible"}}};
+  window.BL_TOOL=tool;
+  window.claude={use:async(name)=>{if(name==="mcp")return mcp;if(name==="db")return db;if(name==="user")return user;if(name==="downloads")return downloads;if(name==="assets")return assets;return null}};
 
   /* sesión con Supabase ligada al usuario de Brandloop */
   const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
