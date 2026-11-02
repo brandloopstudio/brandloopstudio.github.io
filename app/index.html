@@ -3051,6 +3051,11 @@ function markHTML(c,size,light){
   const k=brandKit(c);return `<span class="bl-mono" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.36)}px;background:${light?"#ffffff":k.p1};color:${light?k.p1:k.on1};font-family:'${esc(k.font)}',var(--display)">${esc(initials(c))}</span>`;
 }
 function wordHTML(c,size,color){if(hasLogo(c))return "";const k=brandKit(c);return `<span class="bl-word" style="font-size:${size}px;color:${color};font-family:'${esc(k.font)}',var(--display)">${esc(c.name)}</span>`}
+function logoPackPanel(c){const L=c.logoPack||[];if(!L.length)return "";const groups=[...new Set(L.map(x=>x.group))];const by={};L.forEach(x=>{const k=x.group+"|"+x.name;(by[k]=by[k]||{group:x.group,name:x.name,v:{}}).v[x.ink]=x});
+ const dl=(x,f,l)=>x&&x[f]?`<a class="btn sm" href="${esc(x[f])}?download=${encodeURIComponent((c.name+"-"+x.slug+"-"+x.ink).toLowerCase()+"."+f)}" download="${esc((c.name+"-"+x.slug+"-"+x.ink).toLowerCase())}.${f}">${ic("export")} ${l}</a>`:"";
+ const tile=t=>{const n=t.v.negro,b=t.v.blanco;return `<article class="panel" style="padding:0;overflow:hidden"><div style="display:grid;grid-template-columns:1fr 1fr"><div style="background:#fff;display:grid;place-items:center;padding:22px;min-height:110px">${n?`<img src="${esc(n.png)}" alt="${esc(t.name)} en negro" style="max-width:100%;max-height:70px">`:""}</div><div style="background:#0B0B0C;display:grid;place-items:center;padding:22px">${b?`<img src="${esc(b.png)}" alt="${esc(t.name)} en blanco" style="max-width:100%;max-height:70px">`:""}</div></div><div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px"><b>${esc(t.name)}</b><div class="row" style="gap:6px;flex-wrap:wrap"><span class="hint" style="min-width:44px">Negro</span>${dl(n,"svg","SVG")}${dl(n,"png","PNG")}</div><div class="row" style="gap:6px;flex-wrap:wrap"><span class="hint" style="min-width:44px">Blanco</span>${dl(b,"svg","SVG")}${dl(b,"png","PNG")}</div></div></article>`};
+ return `<section class="panel"><div class="ph"><div class="t"><span class="eyebrow">Del manual de marca</span><h2>Logos para descargar</h2><span class="s">Logotipo, símbolo y las ${L.filter(x=>x.group==="Productos"&&x.ink==="negro").length} aplicaciones, en negro (para fondos claros) y en blanco (para fondos oscuros). SVG para imprenta y web, PNG transparente de 1600 px.</span></div></div>
+ ${groups.map(g=>`<h3 style="margin:14px 20px 10px">${esc(g)}</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding:0 20px 18px">${Object.values(by).filter(t=>t.group===g).map(tile).join("")}</div>`).join("")}</section>`}
 function viewIdentity(c){
   const pal=Array.isArray(c.palette)&&c.palette.length?c.palette:[{name:"Principal",hex:c.color||"#ff7a1a",role:"Color de marca"}];
   const f=c.fonts||{};ensureFont(f.display);ensureFont(f.body);
@@ -3061,7 +3066,7 @@ function viewIdentity(c){
   const tag=c.tagline||"Agrega un tagline en Editar identidad";
   return `<section class="greet"><div class="hello"><span class="eyebrow">${esc(c.name)} · Brand guidelines</span><h1>Identidad visual</h1><p class="sub">El sistema visual de la marca en una sola vista. Los agentes y todas las piezas lo usan.</p></div>
    ${w?`<button class="btn ${ed?"":"ink"} lg" data-act="idEdit">${ed?"Cerrar edición":"Editar identidad"}</button>`:""}</section>
-  ${ed&&w?identityForm(c,pal,f):""}
+  ${logoPackPanel(c)}${ed&&w?identityForm(c,pal,f):""}
   <div class="board">
    <article class="bc b-construct" style="background:#ffffff;color:#111">
      <span class="bc-lbl" style="color:#777">01 · Logo principal y área de protección</span>
