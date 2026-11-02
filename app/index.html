@@ -1088,8 +1088,10 @@ fieldset.field{border:0;padding:0;margin:0}
   window.BL_EMAIL=u=>`${u}@usuarios.brandloopstudio.com`;
   window.BL_VERIFIER=async(u,raw)=>sha("blv1:"+u+":"+b64(raw));
   window.BL_AUTH=async(u,pass,unwrap)=>{
+    try{await sb.auth.signOut({scope:"local"})}catch(e){}session=null;
     let r=await sb.auth.signInWithPassword({email:BL_EMAIL(u),password:pass});
     if(!r.error){session=r.data.session;return}
+    try{await sb.auth.signOut({scope:"local"})}catch(e){}session=null;
     const rec=await readDoc("vault_users/"+u);if(!rec)throw {code:"bad"};
     const raw=await unwrap(rec,pass);/* lanza si la contraseña no es correcta */
     const v=await BL_VERIFIER(u,raw);
