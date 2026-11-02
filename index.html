@@ -1173,7 +1173,7 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 let current=0,timer=null,answered=false;
 
 function links(){
-  $$("[data-app]").forEach(a=>{a.href=APP;a.target="_blank";a.rel="noopener"});
+  $$("[data-app]").forEach(a=>{a.href=APP;a.removeAttribute("target");a.rel="noopener"});
   $$("[data-book]").forEach(a=>{a.href=BOOK_URL;a.target="_blank";a.rel="noopener"});
 }
 function apply(){
