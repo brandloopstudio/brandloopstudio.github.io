@@ -4071,7 +4071,7 @@ async function syncOrganic(auto){
 }
 const fmtN=n=>Number(n||0).toLocaleString("en-US");
 function viewOrganic(c){
-  const acc=ORG_ACC[S.cid],O=S.organic||[],r=S.orgRun&&S.orgRun.cid===S.cid?S.orgRun:null;
+  const acc=ORG_ACC[S.cid]||client()?.orgAcc,O=S.organic||[],r=S.orgRun&&S.orgRun.cid===S.cid?S.orgRun:null;
   const canSync=!!acc&&!!S.mcp&&S.canWrite;
   if(canSync&&!r?.running&&!(S.orgAuto||{})[S.cid]&&Date.now()-orgLast(S.cid)>6*3600e3){S.orgAuto={...(S.orgAuto||{}),[S.cid]:1};setTimeout(()=>syncOrganic(true),0)}
   const nets=ORG_NETS.filter(n=>acc&&acc[n[2]]);const tab=nets.some(n=>n[0]===S.orgTab)?S.orgTab:(nets[0]?.[0]||"ig");
@@ -4082,7 +4082,7 @@ function viewOrganic(c){
   const kpi=(l,v,sub)=>`<div class="kpi"><span class="lbl">${esc(l)}</span><span class="num" style="font-size:30px">${v==null?"—":esc(fmtN(v))}</span>${sub?`<span class="hint">${esc(sub)}</span>`:""}</div>`;
   const kpis=tab==="ig"?kpi("Seguidores",sum.followers)+kpi("Vistas (30 días)",sum.views30)+kpi("Interacciones (30 días)",sum.inter30)+kpi("Cuentas que interactuaron",sum.engaged30)
     :tab==="fb"?kpi("Seguidores de la página",sum.followers)+kpi("Seguidores nuevos (30 días)",sum.newF30,sum.lostF30?`${sum.lostF30} dejaron de seguir`:"")+kpi("Impresiones (30 días)",sum.impr30)+kpi("Interacciones (30 días)",sum.inter30)
-    :kpi("Seguidores",sum.followers)+kpi("Seguidores nuevos (30 días)",sum.newF30)+kpi("Impresiones (30 días)",sum.impr30)+kpi("Interacciones (30 días)",sum.inter30);
+    :kpi("Seguidores",sum.followers)+(sum.newF30!=null?kpi("Seguidores nuevos (30 días)",sum.newF30):"")+kpi(sum.period?"Impresiones ("+sum.period+")":"Impresiones (30 días)",sum.impr30,sum.impr30Chg)+kpi(sum.period?"Reacciones ("+sum.period+")":"Interacciones (30 días)",sum.inter30,sum.inter30Chg)+(sum.search30!=null?kpi("Apariciones en búsquedas",sum.search30,sum.search30Chg):"");
   const eng=x=>tab==="ig"?nz(x.m.likes)+nz(x.m.comments)+nz(x.m.saves)+nz(x.m.shares):nz(x.m.likes)+nz(x.m.comments)+nz(x.m.shares)+nz(x.m.clicks);
   const best=posts.length?posts.reduce((a,b)=>eng(b)>eng(a)?b:a):null;
   const cols=tab==="ig"?[["Alcance","reach"],["Vistas","views"],["Me gusta","likes"],["Coment.","comments"],["Guardados","saves"],["Compart.","shares"]]
