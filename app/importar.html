@@ -1,0 +1,38 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Importar respaldo · Brandloop</title><meta name="robots" content="noindex">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--ink:#120b07;--fg:#fbf1e8;--muted:#c9b2a0;--o:#ff6a00}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(60% 50% at 50% 40%,rgba(214,82,14,.35),transparent 70%),#0d0603;color:var(--fg);font:16px/1.5 system-ui,sans-serif;padding:24px}
+.card{max-width:520px;width:100%;background:rgba(255,255,255,.05);border-radius:24px;padding:32px;box-shadow:inset 0 0 0 1px rgba(255,176,90,.3)}
+h1{margin:0 0 8px;font-size:26px}p{color:var(--muted)}
+label.btn,button{display:inline-block;margin-top:14px;border:0;border-radius:999px;padding:13px 22px;font-weight:700;background:linear-gradient(100deg,#b3460d,#ff6a00 52%,#ffb057);color:#1a0b04;cursor:pointer}
+input{display:none}.bar{height:8px;border-radius:9px;background:rgba(255,255,255,.1);margin-top:18px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--o);transition:width .2s}
+#msg{margin-top:14px;color:var(--fg)}
+</style></head><body><div class="card"><h1>Importar respaldo</h1>
+<p>Solo para administradores. Elige el archivo <b>respaldo_brandloop.json</b> para pasar tus datos a la nueva app. Antes entra a la app con tu usuario de administrador.</p>
+<label class="btn">Elegir archivo<input id="f" type="file" accept=".json,application/json"></label>
+<div class="bar"><i id="b"></i></div><div id="msg"></div>
+<p style="margin-top:22px"><a href="./" style="color:#ffb057">Volver a la app</a></p></div>
+<script>
+const SB_URL="https://uejlnwahphvzdghroyzm.supabase.co",SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlamxud2FocGh2emRnaHJveXptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1OTIyMTEsImV4cCI6MjEwOTE2ODIxMX0.aQSK3H_MsmjV8uLbEr8-mrknryIfaXN8mrRKUvmWP7c";
+const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,storageKey:"bl-auth"}});
+const msg=t=>document.getElementById("msg").textContent=t;
+document.getElementById("f").onchange=async e=>{
+  const file=e.target.files[0];if(!file)return;
+  const {data:{session}}=await sb.auth.getSession();if(!session){msg("Primero entra a la app con tu usuario de administrador.");return}
+  const adm=await sb.rpc("bl_is_admin");if(!adm.data){msg("Esta cuenta no es administradora.");return}
+  let j;try{j=JSON.parse(await file.text())}catch(x){msg("El archivo no es válido.");return}
+  const BASE=SB_URL+"/storage/v1/object/public/assets/legacy/";
+  const blobs=j.blobs||[];let bi=0;
+  for(const b of blobs){msg(`Subiendo imágenes ${++bi} de ${blobs.length}…`);document.getElementById("b").style.width=(bi/blobs.length*50)+"%";
+    const bin=Uint8Array.from(atob(b.b64),c=>c.charCodeAt(0));
+    const r=await sb.storage.from("assets").upload("legacy/"+b.id,new Blob([bin],{type:b.type}),{contentType:b.type,upsert:false});
+    if(r.error&&!/exists|Duplicate/i.test(r.error.message||"")){msg("Error al subir una imagen: "+r.error.message);return}}
+  const rows=(j.rows||[]).map(r=>({path:r.path,parent:r.path.split("/").slice(0,-1).join("/"),data:JSON.parse(JSON.stringify(r.data).split("/_blob/").join(BASE))}));
+  let done=0;msg(`Importando ${rows.length} registros…`);
+  for(let i=0;i<rows.length;i+=100){const part=rows.slice(i,i+100);const r=await sb.from("docs").upsert(part);if(r.error){msg("Error: "+r.error.message);return}
+    done+=part.length;document.getElementById("b").style.width=(50+done/rows.length*50)+"%"}
+  msg(`Listo: ${done} registros importados. Ya puedes volver a la app.`);
+};
+</script></body></html>
