@@ -1044,7 +1044,7 @@ fieldset.field{border:0;padding:0;margin:0}
   }
   function docRef(path){return {id:lastSeg(path),path,
     get:async()=>docSnap(path,await readDoc(path)),
-    onSnapshot:(cb,onErr)=>listen("doc",path,async()=>cb(docSnap(path,await readDoc(path))),onErr),
+    onSnapshot:(cb,onErr)=>{let last;return listen("doc",path,async()=>{const d=await readDoc(path);const j=JSON.stringify(d);if(j===last)return;last=j;cb(docSnap(path,d))},onErr)},
     set:async(d,o)=>{let data=clone(d)||{};if(o&&o.merge){const cur=await readDoc(path);data={...(cur||{}),...data}}await writeDoc(path,data)},
     update:async(patch)=>{const cur=await readDoc(path);if(cur==null){const e=new Error("No document to update");e.code="not-found";throw e}const next=clone(cur);for(const [k,v] of Object.entries(patch||{}))setDeep(next,k,clone(v));await writeDoc(path,next)},
     delete:async()=>{const r=await sb.from("docs").delete().eq("path",path);if(r.error)throw err(r.error);notify(path)}}}
@@ -1053,7 +1053,7 @@ fieldset.field{border:0;padding:0;margin:0}
     where:(f,op,v)=>query(path,{...q,where:[...q.where,[f,op,v]]}),
     limit:n=>query(path,{...q,lim:n}),
     get:async()=>colSnap(await readCol(path),q),
-    onSnapshot:(cb,onErr)=>listen("col",path,async()=>cb(colSnap(await readCol(path),q)),onErr)}}
+    onSnapshot:(cb,onErr)=>{let last;return listen("col",path,async()=>{const r=await readCol(path);const j=JSON.stringify(r);if(j===last)return;last=j;cb(colSnap(r,q))},onErr)}}}
   const db={
     doc:path=>docRef(path),
     collection:path=>({...query(path,{order:[],where:[],lim:null}),doc:id=>docRef(`${path}/${id||Math.random().toString(36).slice(2)+Date.now().toString(36)}`),
