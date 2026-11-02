@@ -2202,7 +2202,7 @@ function sanitizeDesign(html){
     for(const a of [...el.attributes]){const n=a.name.toLowerCase(),v=a.value;
       if(n.startsWith("on")||n==="srcset"||n==="formaction"||n==="action"){el.removeAttribute(a.name);continue}
       if((n==="href"||n==="xlink:href")&&!/^#/.test(v)){el.removeAttribute(a.name);continue}
-      if(n==="src"){if(!(v==="{{LOGO}}"||v==="{{PHOTO}}"||v==="{{LOGO_DARK}}"||v==="{{LOGO_ON_DARK}}"||/^\/_blob\/[A-Za-z0-9]+$/.test(v)||/^data:image\/(png|jpe?g|gif|webp);base64,/i.test(v)))el.removeAttribute(a.name);continue}
+      if(n==="src"){if(!(v==="{{LOGO}}"||v==="{{PHOTO}}"||v==="{{LOGO_DARK}}"||v==="{{LOGO_ON_DARK}}"||/^\/_blob\/[A-Za-z0-9]+$/.test(v)||v.startsWith("https://uejlnwahphvzdghroyzm.supabase.co/storage/v1/object/public/assets/")||/^data:image\/(png|jpe?g|gif|webp);base64,/i.test(v)))el.removeAttribute(a.name);continue}
       if(n==="style"&&/url\(\s*['"]?(?!data:image|#)/i.test(v))el.setAttribute("style",v.replace(/url\(\s*['"]?(?!data:image|#)[^)]*\)/gi,"none"));
     }
     if(el.tagName==="STYLE")el.textContent=el.textContent.replace(/@import[^;]+;/gi,"").replace(/url\(\s*['"]?(?!data:image|#)[^)]*\)/gi,"none");
