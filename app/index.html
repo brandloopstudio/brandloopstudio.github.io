@@ -986,8 +986,9 @@ fieldset.field{border:0;padding:0;margin:0}
 
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>window.supabase||document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"><\/script>')</script>
 <script>window.BL_SB_URL='https://uejlnwahphvzdghroyzm.supabase.co';window.BL_SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlamxud2FocGh2emRnaHJveXptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1OTIyMTEsImV4cCI6MjEwOTE2ODIxMX0.aQSK3H_MsmjV8uLbEr8-mrknryIfaXN8mrRKUvmWP7c';</script>
-<script>/* Brandloop · capa de datos sobre Supabase (reemplaza window.claude del artefacto) */
+<script>try{/* Brandloop · capa de datos sobre Supabase (reemplaza window.claude del artefacto) */
 (function(){
   const sb=window.supabase.createClient(window.BL_SB_URL,window.BL_SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,storageKey:"bl-auth"}});
   window.BLSB=sb;
@@ -1103,7 +1104,7 @@ fieldset.field{border:0;padding:0;margin:0}
   window.BL_SIGNOUT=async()=>{try{await sb.auth.signOut()}catch(e){}session=null};
   window.BL_SET_VERIFIER=async(u,raw,role,brands,name)=>{const v=await BL_VERIFIER(u,raw);const r=await sb.rpc("bl_set_verifier",{u,vh:await sha(v),r:role,b:brands||[],n:name||u});if(r.error)throw err(r.error)};
 })();
-</script>
+}catch(e){console.error("BL shim",e)}</script>
 <script>
 "use strict";
 const PORTAL=null; /*portal-id*/
@@ -1538,6 +1539,7 @@ function gateShell(inner,foot){return `<div class="welcome" role="dialog" aria-m
    <main class="wl-mid">${inner}</main><footer class="wl-foot">${foot||"Tus datos se guardan cifrados: sin tu contraseña nadie puede leerlos, ni siquiera otras marcas que usan Brandloop."}</footer></div>`}
 function gateScreen(){
   const G=S.gate;const err=S.gateErr?`<p class="wl-err" role="alert">${esc(S.gateErr)}</p>`:"";const busy=S.gateBusy;
+  if(G==="neterr")return gateShell(`<div class="wl-mark">${loopSvg(3.2)}</div><h1 id="wl-t">No pudimos conectar</h1><p class="wl-sub">Revisa tu conexión o desactiva el bloqueador de contenido para esta página y vuelve a intentarlo.</p><button class="btn ink" onclick="location.reload()">Reintentar</button>`);
   if(G==="loading")return gateShell(`<div class="wl-mark">${loopSvg(3.2)}</div><h1 id="wl-t">Cargando…</h1>`);
   if(G==="signin")return gateShell(`<div class="wl-mark">${loopSvg(3.2)}</div><h1 id="wl-t">Bienvenido a Brandloop</h1><p>Para usar Brandloop primero inicia sesión en Claude y vuelve a abrir este enlace.</p>`);
   if(G==="pending")return gateShell(`<div class="wl-mark">${loopSvg(3.2)}</div><h1 id="wl-t">Brandloop se está configurando</h1><p>Tu agencia está activando los accesos. Vuelve a abrir esta página en unos minutos.</p>`);
@@ -5098,12 +5100,12 @@ document.addEventListener("submit",e=>{const f=e.target.closest("form[data-form]
 render();
 (async()=>{
   const C=window.claude;
-  if(!C||!C.use){S.offline=true;render();return}
+  if(!C||!C.use){S.offline=true;S.gate="neterr";render();return}
   const [db,user]=await Promise.all([C.use("db"),C.use("user")]);
   S.rawdb=db;S.db=db?wrapDB(db):null;S.user=user;
   if(!db){S.offline=true;S.gate="signin";render();return}
   if(user){try{S.me=await user.me();const cw=await user.can("data.write");S.canWrite=cw!==false;S.cwBase=S.canWrite;S.isAdmin=await user.canEdit()}catch(e){}}
-  await vaultLoadMeta();
+  try{await Promise.race([vaultLoadMeta(),new Promise((_,rj)=>setTimeout(()=>rj(new Error("timeout")),15000))])}catch(e){console.error("meta",e);try{await window.BL_SIGNOUT()}catch(x){}try{await vaultLoadMeta()}catch(x){S.gate="neterr";render();return}}
   S.gate=V.enabled?"login":(S.isAdmin?"setup":"pending");render();
   db.doc("config/besttimes").onSnapshot(d=>{S.bestTimes=d.exists?d.data():{};render()},()=>{});
   C.use("downloads").then(d=>{S.dl=d;render()});
