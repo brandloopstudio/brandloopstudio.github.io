@@ -2221,6 +2221,7 @@ function designSlideHTML(c,d,i){
   return h;
 }
 function designPreview(p,c){
+  if(p.video&&String(p.video).startsWith(window.BL_SB_URL+"/storage/v1/object/public/assets/"))return `<div class="vis canvas dsingle" style="aspect-ratio:${p.vw||1080}/${p.vh||1350}"><video src="${esc(p.video)}" ${p.poster?`poster="${esc(p.poster)}"`:""} controls loop muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;display:block;background:#000"></video></div>`;
   const d=dzOf(p,c);const n=d.slides.length;const W=d.w||1080,H=d.h||1350;(d.fonts||[]).forEach(ensureFontLink);
   const one=i=>`<div class="dz" data-pid="${esc(p.id)}" data-slide="${i}" style="--dw:${W};--dh:${H}" role="img" aria-label="Diseño ${n>1?"diapositiva "+(i+1)+" de "+n:""}: ${esc(p.onscreen?.headline||p.title||"")}"></div>`;
   return n>1?`<div class="cstrip dstrip" tabindex="0" aria-label="Carrusel de ${n} diapositivas, desliza para ver">${Array.from({length:n},(_,i)=>one(i)).join("")}</div>`:`<div class="vis canvas dsingle">${one(0)}</div>`;
