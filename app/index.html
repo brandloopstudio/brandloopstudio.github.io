@@ -720,7 +720,7 @@ button.card{cursor:pointer;transition:transform .25s ease,box-shadow .25s ease}b
 .subs{padding:2px 0 6px 32px!important;gap:0!important}
 .subs button{width:100%;text-align:left;border:0;background:none;padding:6px 10px;border-radius:9px;font-size:13px;color:var(--muted);cursor:pointer;position:relative}
 .subs button::before{content:"";position:absolute;left:-12px;top:0;bottom:0;width:1px;background:var(--line)}
-.subs button:hover{color:var(--fg)}.subs button[aria-current="page"]{color:var(--accent);font-weight:600;background:var(--accent-soft)}
+.subs button{display:block!important;text-align:left!important;line-height:1.3}.subs button:hover{color:var(--fg)}.subs button[aria-current="page"]{color:var(--accent);font-weight:600;background:var(--accent-soft)}
 .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:12px}
 .themes{display:flex;gap:4px;background:var(--inner);border-radius:12px;padding:3px}.themes .ic2{flex:1;height:32px;border-radius:9px}.themes .ic2[aria-pressed="true"]{background:var(--card);box-shadow:var(--shadow)}
 .me{display:flex;align-items:center;gap:10px;padding:4px}.me .avatar{width:38px;height:38px}.brandrow{display:inline-flex!important;align-items:center;gap:5px;color:var(--accent)!important}.brandrow svg{width:22px;height:11px}
@@ -4388,11 +4388,12 @@ function compBenchView(m,c){
   const cols=m.benchCols||[];const V={y:["✓","b-y","Sí"],p:["<i></i>","b-p","Parcial, de pago o solo en planes altos"],n:["✕","b-n","No"],q:["?","b-q","No se pudo verificar"]};
   const sc=f=>cols.reduce((a,[k])=>a+(f?.[k]==="y"?1:f?.[k]==="p"?.5:0),0);
   const rows=[...(m.self?[{name:m.self.name||c.name,features:m.self.features,priceEntry:m.self.priceEntry,priceLabel:m.self.priceLabel,free:false,ads:{status:"no"},me:true,note:m.self.priceNote}]:[]),...S.comps.filter(k=>k.features&&(!S.compApp||(k.apps||[]).includes(S.compApp))).sort((a,b)=>sc(b.features)-sc(a.features))];
-  const price=r=>r.me&&r.priceLabel?r.priceLabel:r.priceEntry!=null?`US$${(+r.priceEntry).toFixed(r.priceEntry%1?2:0)}`:"—";
+  const price=r=>r.priceLabel?r.priceLabel:r.priceEntry!=null?(+r.priceEntry===0?"Gratis":`US$${(+r.priceEntry).toFixed(r.priceEntry%1?2:0)}`):"Cotización";
   return `<section class="panel bench"><div class="ph"><div class="t"><span class="eyebrow">Benchmarking</span><h2>Quién ofrece qué</h2><span class="s">Precio de entrada por mes y funciones que cada uno muestra en su sitio. La puntuación suma 1 por cada ✓ y 0.5 por cada parcial.</span></div></div>
    <div class="cp-wrap"><table class="cp-t bt"><thead><tr><th>Marca</th><th>Precio desde</th><th>Plan gratis</th>${cols.map(([,l])=>`<th>${esc(l)}</th>`).join("")}<th>Pauta ahora</th><th>Puntos</th></tr></thead><tbody>
-   ${rows.map(r=>{const s=sc(r.features);return `<tr class="${r.me?"cp-me":""}"><th>${esc(r.me?r.name:cName(r))}</th><td title="${esc(r.note||r.priceNote||"")}">${price(r)}</td><td>${r.free===true?'<span class="cp-y">✓</span>':r.free===false?'<span class="cp-n">✕</span>':'<span class="cp-q">?</span>'}</td>${cols.map(([k])=>{const v=V[r.features?.[k]]||V.q;return `<td><span class="${v[1]}" title="${v[2]}">${v[0]}</span></td>`}).join("")}<td>${r.ads?.status==="activo"?'<span class="us us-b">Sí</span>':'<span class="cp-na">No</span>'}</td><td><b>${s}</b><span class="cp-na">/${cols.length}</span></td></tr>`}).join("")}
-   </tbody></table></div>
+   ${rows.map(r=>{const s=sc(r.features);return `<tr class="${r.me?"cp-me":""}"><th>${esc(r.me?r.name:cName(r))}${r.country&&!r.me?`<span class="cp-na" style="display:block;font-weight:500;font-size:11.5px">${esc(String(r.country).split(/[(,;]/)[0].trim())}</span>`:""}</th><td title="${esc(r.note||r.priceNote||"")}">${price(r)}</td><td>${r.free===true?'<span class="cp-y">✓</span>':r.free===false?'<span class="cp-n">✕</span>':'<span class="cp-q">?</span>'}</td>${cols.map(([k])=>{const v=V[r.features?.[k]]||V.q;return `<td><span class="${v[1]}" title="${v[2]}">${v[0]}</span></td>`}).join("")}<td>${r.ads?.status==="activo"?'<span class="us us-b">Sí</span>':'<span class="cp-na">No</span>'}</td><td><b>${s}</b><span class="cp-na">/${cols.length}</span></td></tr>`}).join("")}
+   </tbody><tfoot><tr class="cp-cov"><th>Competidores que lo tienen</th><td></td><td></td>${cols.map(([k])=>{const comp=rows.filter(r=>!r.me);const n=comp.filter(r=>r.features?.[k]==="y").length;const pc=Math.round(n/Math.max(1,comp.length)*100);return `<td><b>${n}</b><span class="cp-na">/${comp.length}</span><div style="height:4px;border-radius:2px;background:var(--line);margin-top:4px"><i style="display:block;height:4px;border-radius:2px;width:${pc}%;background:${pc<20?"var(--ok)":pc<50?"var(--warn)":"var(--bad)"}"></i></div></td>`}).join("")}<td></td><td></td></tr></tfoot></table></div>
+   <p class="hint" style="margin:8px 20px 4px">La fila final cuenta cuántos competidores ofrecen cada función completa: en verde, donde casi nadie compite y ${esc(c.name)} tiene ventaja.</p>
    <p class="hint" style="margin:8px 20px 18px">✓ sí · <span class="b-p"><i></i></span> parcial, de pago o solo en planes altos · ✕ no · ? no se pudo verificar. Precios en dólares para comparar; ${esc(c.name)} cobra en quetzales (aprox. Q7.7 por dólar).</p></section>`;
 }
 function viewComp(c){
@@ -4658,7 +4659,7 @@ S.audRun={running:false,error:null,ctl:null};S.innRun={running:false,error:null,
   const base=`clients/${id}`;
   unsubs.push(S.db.collection(base+"/posts").onSnapshot(s=>{S.posts=s.docs.map(d=>({id:d.id,...d.data()}));S.postsSeen=true;resolveProfiles();render()},dbErr));
   unsubs.push(S.db.collection(base+"/trends").orderBy("order").onSnapshot(s=>{S.trends=s.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
-  unsubs.push(S.db.collection(base+"/competitors").orderBy("order").onSnapshot(s=>{S.comps=s.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));S.compSum=null;
+  unsubs.push(S.db.collection(base+"/competitors").orderBy("order").onSnapshot(s=>{S.comps=s.docs.map(d=>({id:d.id,...d.data()})).filter(k=>!k.mergedInto);render()},dbErr));S.compSum=null;
   unsubs.push(S.db.doc(base+"/docs/compsum").onSnapshot(d=>{S.compSum=d.exists?d.data():null;render()},()=>{}));
   S.people=[];S.lposts=[];S.pSel=null;S.pRun={};S.pErr={};S.lpEdit=S.lpChg=S.lpRw=null;
   unsubs.push(S.db.collection(base+"/people").onSnapshot(s=>{S.people=s.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
