@@ -979,36 +979,36 @@ fieldset.field{border:0;padding:0;margin:0}
 #apbar li.ap-ok{color:var(--ink)}#apbar li.ap-ok span{background:#1f9d55;color:#fff}#apbar li.ap-run{color:var(--ink);font-weight:600}#apbar li.ap-err span{background:#d97706;color:#fff}
 .apspin{width:10px;height:10px;border-radius:50%;border:2px solid var(--accent,#ff7a1a);border-right-color:transparent;animation:apsp .8s linear infinite;display:block}@keyframes apsp{to{transform:rotate(360deg)}}
 
-.cal .cal-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 22px;margin-top:6px}
-@media (max-width:700px){.cal .cal-g{grid-template-columns:1fr}}
-.cal-f{display:flex;flex-direction:column;gap:6px}.cal-fl{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.cal-fl output{font-weight:700;font-size:20px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.cal input[type=range]{width:100%;accent-color:var(--ink,#111)}
-.cal-sec{margin:22px 0 10px;display:flex;flex-direction:column;gap:2px}
-.cal-mix{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 52px 150px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.08))}
-.cal-mix>div{display:flex;flex-direction:column}.cal-mix output{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
-.cal-cpl{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.cal-cpl input{width:84px}.cal-cpl small{font-size:11px}
-@media (max-width:700px){.cal-mix{grid-template-columns:1fr 52px;}.cal-mix input[type=range]{grid-column:1/-1}.cal-cpl{grid-column:1/-1}}
-.cal-ev{display:flex;align-items:center;gap:10px;cursor:pointer}.cal-off{opacity:.4;pointer-events:none}
-.cal-verdict{padding:14px 16px;border-radius:14px;background:var(--soft,rgba(0,0,0,.04));font-size:14px}
-.cal-verdict.good{background:color-mix(in srgb,var(--ok) 14%,transparent)}.cal-verdict.bad{background:color-mix(in srgb,var(--bad) 14%,transparent)}
-.cal-kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.cal-k{border:1px solid var(--line,rgba(0,0,0,.08));border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:2px}
-.cal-k span{font-size:12px;color:var(--muted)}.cal-k b{font-size:28px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.cal-k i{font-style:normal;font-size:12px;color:var(--muted)}
-.cal-funnel{margin-top:16px;display:flex;flex-direction:column;gap:8px}
-.cal-fr{display:grid;grid-template-columns:100px 1fr 90px;gap:10px;align-items:center;font-size:13px}.cal-fr b{text-align:right;font-variant-numeric:tabular-nums}
-.cal-fb{height:14px;border-radius:7px;background:var(--soft,rgba(0,0,0,.05));overflow:hidden}.cal-fb i{display:block;height:100%;border-radius:7px;background:var(--accent,var(--ink,#111))}
-.cal-ch{margin-top:14px;display:flex;flex-direction:column}.cal-cr{display:grid;grid-template-columns:1fr auto 90px;gap:10px;padding:8px 0;border-top:1px solid var(--line,rgba(0,0,0,.06));font-size:13px}.cal-cr i{font-style:normal;color:var(--muted);text-align:right}
-.cal-note{margin-top:12px;font-size:13px;line-height:1.5;padding:12px 14px;border-radius:12px;background:var(--soft,rgba(0,0,0,.03))}
-.cal-how p{font-size:13px;line-height:1.5;margin:0 0 10px}
-.cal-plan{margin-top:20px}.cal-sum{font-size:15px;line-height:1.6;margin:0 0 14px}
-.cal-obj{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}.cal-obj>div{border-radius:14px;padding:14px;background:var(--soft,rgba(0,0,0,.03));display:flex;flex-direction:column;gap:4px}.cal-obj span{font-size:12px;color:var(--muted)}
-.cal-months{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-.cal-mo{border:1px solid var(--line,rgba(0,0,0,.08));border-radius:18px;padding:16px}.cal-moh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}.cal-moh b{font-size:18px}
-.cal-line{padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.06));display:grid;grid-template-columns:1fr auto;gap:4px 10px}.cal-line>div{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.cal-line .amt{font-weight:700;font-variant-numeric:tabular-nums}.cal-line p{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted);line-height:1.45}
-.cal-evr{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.06))}.cal-evr p{margin:4px 0 0;font-size:13px;line-height:1.45}.cal-evr>div{display:flex;flex-direction:column}
-.cal-steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}.cal-steps li{font-size:13px;line-height:1.45}.cal-steps li b{display:block;font-size:14px}
-.cal-list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45}
+.pz .pz-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 22px;margin-top:6px}
+@media (max-width:700px){.pz .pz-g{grid-template-columns:1fr}}
+.pz-f{display:flex;flex-direction:column;gap:6px}.pz-fl{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.pz-fl output{font-weight:700;font-size:20px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.pz input[type=range]{width:100%;accent-color:var(--ink,#111)}
+.pz-sec{margin:22px 0 10px;display:flex;flex-direction:column;gap:2px}
+.pz-mix{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 52px 150px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.08))}
+.pz-mix>div{display:flex;flex-direction:column}.pz-mix output{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.pz-cpl{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.pz-cpl input{width:84px}.pz-cpl small{font-size:11px}
+@media (max-width:700px){.pz-mix{grid-template-columns:1fr 52px;}.pz-mix input[type=range]{grid-column:1/-1}.pz-cpl{grid-column:1/-1}}
+.pz-ev{display:flex;align-items:center;gap:10px;cursor:pointer}.pz-off{opacity:.4;pointer-events:none}
+.pz-verdict{padding:14px 16px;border-radius:14px;background:var(--soft,rgba(0,0,0,.04));font-size:14px}
+.pz-verdict.good{background:color-mix(in srgb,var(--ok) 14%,transparent)}.pz-verdict.bad{background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.pz-kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.pz-k{border:1px solid var(--line,rgba(0,0,0,.08));border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.pz-k span{font-size:12px;color:var(--muted)}.pz-k b{font-size:28px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.pz-k i{font-style:normal;font-size:12px;color:var(--muted)}
+.pz-funnel{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.pz-fr{display:grid;grid-template-columns:100px 1fr 90px;gap:10px;align-items:center;font-size:13px}.pz-fr b{text-align:right;font-variant-numeric:tabular-nums}
+.pz-fb{height:14px;border-radius:7px;background:var(--soft,rgba(0,0,0,.05));overflow:hidden}.pz-fb i{display:block;height:100%;border-radius:7px;background:var(--accent,var(--ink,#111))}
+.pz-ch{margin-top:14px;display:flex;flex-direction:column}.pz-cr{display:grid;grid-template-columns:1fr auto 90px;gap:10px;padding:8px 0;border-top:1px solid var(--line,rgba(0,0,0,.06));font-size:13px}.pz-cr i{font-style:normal;color:var(--muted);text-align:right}
+.pz-note{margin-top:12px;font-size:13px;line-height:1.5;padding:12px 14px;border-radius:12px;background:var(--soft,rgba(0,0,0,.03))}
+.pz-how p{font-size:13px;line-height:1.5;margin:0 0 10px}
+.pz-plan{margin-top:20px}.pz-sum{font-size:15px;line-height:1.6;margin:0 0 14px}
+.pz-obj{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}.pz-obj>div{border-radius:14px;padding:14px;background:var(--soft,rgba(0,0,0,.03));display:flex;flex-direction:column;gap:4px}.pz-obj span{font-size:12px;color:var(--muted)}
+.pz-months{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.pz-mo{border:1px solid var(--line,rgba(0,0,0,.08));border-radius:18px;padding:16px}.pz-moh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}.pz-moh b{font-size:18px}
+.pz-line{padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.06));display:grid;grid-template-columns:1fr auto;gap:4px 10px}.pz-line>div{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.pz-line .amt{font-weight:700;font-variant-numeric:tabular-nums}.pz-line p{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.pz-evr{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.06))}.pz-evr p{margin:4px 0 0;font-size:13px;line-height:1.45}.pz-evr>div{display:flex;flex-direction:column}
+.pz-steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}.pz-steps li{font-size:13px;line-height:1.45}.pz-steps li b{display:block;font-size:14px}
+.pz-list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -3790,60 +3790,60 @@ function calOut(c,k){const m=v=>cmoney(Math.round(v),c.cur);const fmt=x=>x>=10?M
   const ok=k.maxCpl&&k.cplW?k.cplW<=k.maxCpl:null;
   const verdict=ok==null?(c.value?"Ajusta los datos para ver el resultado":"Escribe cuánto vale un cliente para saber si la pauta se paga sola"):ok?"La pauta se paga: cada lead cuesta menos de lo que puedes pagar":"Cada lead cuesta más de lo que puedes pagar: baja el costo por lead o sube la tasa de cierre";
   const maxL=Math.max(1,k.leadsAds+k.qEv);
-  let s=`<div class="cal-verdict ${ok==null?"":ok?"good":"bad"}"><b>${esc(verdict)}</b></div>
-  <div class="cal-kpis">
-   <div class="cal-k"><span>Leads del periodo</span><b>${fmt(k.leadsAds+k.qEv)}</b><i>${fmt(k.leadsAds)} de pauta${k.qEv?" · "+fmt(k.qEv)+" del evento":""}</i></div>
-   <div class="cal-k"><span>Clientes esperados</span><b>${k.clients.toFixed(1)}</b><i>con ${c.qual}% calificados y ${c.close}% de cierre</i></div>
-   <div class="cal-k"><span>CAC</span><b>${k.cac==null?"—":esc(m(k.cac))}</b><i>${k.maxCac?"máximo sano "+esc(m(k.maxCac)):"lo que cuesta cada cliente nuevo"}</i></div>
-   <div class="cal-k"><span>Costo por lead</span><b>${k.cplW==null?"—":esc(m(k.cplW))}</b><i>${k.maxCpl?"puedes pagar hasta "+esc(m(k.maxCpl)):"promedio ponderado de los canales"}</i></div>
+  let s=`<div class="pz-verdict ${ok==null?"":ok?"good":"bad"}"><b>${esc(verdict)}</b></div>
+  <div class="pz-kpis">
+   <div class="pz-k"><span>Leads del periodo</span><b>${fmt(k.leadsAds+k.qEv)}</b><i>${fmt(k.leadsAds)} de pauta${k.qEv?" · "+fmt(k.qEv)+" del evento":""}</i></div>
+   <div class="pz-k"><span>Clientes esperados</span><b>${k.clients.toFixed(1)}</b><i>con ${c.qual}% calificados y ${c.close}% de cierre</i></div>
+   <div class="pz-k"><span>CAC</span><b>${k.cac==null?"—":esc(m(k.cac))}</b><i>${k.maxCac?"máximo sano "+esc(m(k.maxCac)):"lo que cuesta cada cliente nuevo"}</i></div>
+   <div class="pz-k"><span>Costo por lead</span><b>${k.cplW==null?"—":esc(m(k.cplW))}</b><i>${k.maxCpl?"puedes pagar hasta "+esc(m(k.maxCpl)):"promedio ponderado de los canales"}</i></div>
   </div>
-  <div class="cal-funnel">${[["Inversión total",esc(m(k.spend)),1],["Leads",fmt(k.leadsAds+k.qEv),1],["Calificados",fmt(k.qual),k.qual/maxL],["Clientes",k.clients.toFixed(1),k.clients/maxL]].map(([a,b,w],i)=>`<div class="cal-fr"><span>${a}</span><div class="cal-fb"><i style="width:${Math.max(4,Math.min(100,w*100))}%;opacity:${1-i*.18}"></i></div><b>${b}</b></div>`).join("")}</div>
-  <div class="cal-ch">${k.ch.map(x=>`<div class="cal-cr"><span>${esc(x.name)}</span><b>${esc(m(x.spend))}</b><i>${fmt(x.leads)} leads</i></div>`).join("")}${c.evOn?`<div class="cal-cr"><span>${esc(c.evName||"Evento")}</span><b>${esc(m(c.evCost))}</b><i>${fmt(c.evLeads)} contactos</i></div>`:""}</div>
-  <div class="cal-note"><b>Para ${c.goal} cliente${c.goal==1?"":"s"} en ${c.months} mes${c.months==1?"":"es"}</b> necesitas unos ${fmt(k.leadsNeed)} leads${k.needBudget!=null?` y alrededor de <b>${esc(m(k.needBudget))} al mes</b> con este costo por lead. Hoy pones ${esc(m(c.budget))} al mes.`:"."}</div>`;
-  if(c.evOn){const better=k.evCPQ!=null&&k.adCPQ!=null?k.evCPQ<k.adCPQ:null;s+=`<div class="cal-note"><b>Evento vs pauta.</b> Cada contacto calificado del evento cuesta ${k.evCPQ==null?"—":esc(m(k.evCPQ))}; de la pauta, ${k.adCPQ==null?"—":esc(m(k.adCPQ))}. ${better==null?"":better?"El evento rinde más por contacto: vale la pena ir.":"La pauta rinde más por contacto: el evento solo conviene si ahí están cuentas grandes que no alcanzas en línea."}</div>`}
-  if(k.roi!=null)s+=`<div class="cal-note">Retorno esperado del periodo: <b>${k.roi>=0?"+":""}${Math.round(k.roi*100)}%</b> sobre lo invertido, contando el margen de cada cliente. En B2B el primer mes casi nunca cierra: evalúa a los 30 días como mínimo.</div>`;
+  <div class="pz-funnel">${[["Inversión total",esc(m(k.spend)),1],["Leads",fmt(k.leadsAds+k.qEv),1],["Calificados",fmt(k.qual),k.qual/maxL],["Clientes",k.clients.toFixed(1),k.clients/maxL]].map(([a,b,w],i)=>`<div class="pz-fr"><span>${a}</span><div class="pz-fb"><i style="width:${Math.max(4,Math.min(100,w*100))}%;opacity:${1-i*.18}"></i></div><b>${b}</b></div>`).join("")}</div>
+  <div class="pz-ch">${k.ch.map(x=>`<div class="pz-cr"><span>${esc(x.name)}</span><b>${esc(m(x.spend))}</b><i>${fmt(x.leads)} leads</i></div>`).join("")}${c.evOn?`<div class="pz-cr"><span>${esc(c.evName||"Evento")}</span><b>${esc(m(c.evCost))}</b><i>${fmt(c.evLeads)} contactos</i></div>`:""}</div>
+  <div class="pz-note"><b>Para ${c.goal} cliente${c.goal==1?"":"s"} en ${c.months} mes${c.months==1?"":"es"}</b> necesitas unos ${fmt(k.leadsNeed)} leads${k.needBudget!=null?` y alrededor de <b>${esc(m(k.needBudget))} al mes</b> con este costo por lead. Hoy pones ${esc(m(c.budget))} al mes.`:"."}</div>`;
+  if(c.evOn){const better=k.evCPQ!=null&&k.adCPQ!=null?k.evCPQ<k.adCPQ:null;s+=`<div class="pz-note"><b>Evento vs pauta.</b> Cada contacto calificado del evento cuesta ${k.evCPQ==null?"—":esc(m(k.evCPQ))}; de la pauta, ${k.adCPQ==null?"—":esc(m(k.adCPQ))}. ${better==null?"":better?"El evento rinde más por contacto: vale la pena ir.":"La pauta rinde más por contacto: el evento solo conviene si ahí están cuentas grandes que no alcanzas en línea."}</div>`}
+  if(k.roi!=null)s+=`<div class="pz-note">Retorno esperado del periodo: <b>${k.roi>=0?"+":""}${Math.round(k.roi*100)}%</b> sobre lo invertido, contando el margen de cada cliente. En B2B el primer mes casi nunca cierra: evalúa a los 30 días como mínimo.</div>`;
   return s}
-function calField(id,label,val,min,max,step,suf,hint){return `<div class="cal-f"><div class="cal-fl"><label for="cal-${id}">${label}</label><output id="calo-${id}">${esc(String(val))}${suf||""}</output></div><input type="range" id="cal-${id}" data-cal="${id}" min="${min}" max="${max}" step="${step}" value="${esc(String(val))}">${hint?`<span class="hint">${hint}</span>`:""}</div>`}
+function calField(id,label,val,min,max,step,suf,hint,disp){return `<div class="pz-f"><div class="pz-fl"><label for="cal-${id}">${label}</label><output id="calo-${id}">${esc(disp!=null?disp:String(val)+(suf||""))}</output></div><input type="range" id="cal-${id}" data-cal="${id}" min="${min}" max="${max}" step="${step}" value="${esc(String(val))}">${hint?`<span class="hint">${hint}</span>`:""}</div>`}
 function viewAdCalc(c){const v=calOf();const k=calCalc(v);const w=S.canWrite;const cur=v.cur==="USD"?"US$":"Q";const p=v.plan;
   return `<section class="greet"><div class="hello"><h1>Calculadora de pauta</h1><p class="sub">Mueve los datos y mira cuántos leads, clientes y cuánto CAC te da cada presupuesto. El costo máximo por lead sale de lo que gana ${esc(c.name)} por cliente, como propone el método de pauta de Simbionte.</p></div></section>
   <section class="home" style="--cols:minmax(0,1fr) minmax(320px,460px)">
-   <form class="panel cal" data-form="cal" onsubmit="return false">
+   <form class="panel pz" data-form="cal" onsubmit="return false">
     <div class="ph"><div class="t"><h2>Tus números</h2><span class="s">Cada cambio se recalcula al instante</span></div></div>
-    <div class="cal-g">
-     ${calField("budget","Presupuesto al mes",v.budget,v.cur==="USD"?100:500,v.cur==="USD"?10000:60000,v.cur==="USD"?50:250,"",`${cur} al mes`)}
+    <div class="pz-g">
+     ${calField("budget","Presupuesto al mes",v.budget,v.cur==="USD"?100:500,v.cur==="USD"?10000:60000,v.cur==="USD"?50:250,"",`${cur} al mes`,cmoney(v.budget,v.cur))}
      ${calField("months","Meses de campaña",v.months,1,6,1," meses","Las plataformas necesitan al menos 30 días para aprender")}
-     <div class="cal-f"><div class="cal-fl"><label for="cal-value">Valor de un cliente nuevo</label></div><input type="number" min="0" step="any" id="cal-value" data-cal="value" value="${v.value||""}" placeholder="Ej. 60000 (contrato del primer año)"><span class="hint">Lo que factura un cliente en su primer contrato</span></div>
+     <div class="pz-f"><div class="pz-fl"><label for="cal-value">Valor de un cliente nuevo</label></div><input type="number" min="0" step="any" id="cal-value" data-cal="value" value="${v.value||""}" placeholder="Ej. 60000 (contrato del primer año)"><span class="hint">Lo que factura un cliente en su primer contrato</span></div>
      ${calField("margin","Margen sobre esa venta",v.margin,5,95,5,"%")}
      ${calField("qual","Leads que califican",v.qual,5,90,5,"%","De cada 10 leads, cuántos son la empresa y el cargo correctos")}
      ${calField("close","Calificados que se vuelven clientes",v.close,1,60,1,"%")}
      ${calField("goal","Meta de clientes en el periodo",v.goal,1,30,1,"")}
     </div>
-    <div class="cal-sec"><b>Reparto por canal y costo por lead</b><span class="hint">Costos iniciales de referencia para B2B; cámbialos con tus datos reales a las dos semanas.</span></div>
-    ${CAL_CH.map(([key,name,why])=>`<div class="cal-mix"><div><b>${name}</b><span class="hint">${why}</span></div><input type="range" min="0" max="100" step="5" data-cal="mix.${key}" id="cal-mix-${key}" value="${Number(v.mix[key])||0}" aria-label="% en ${name}"><output id="calo-mix.${key}">${Number(v.mix[key])||0}%</output><label class="cal-cpl">${cur}<input type="number" min="1" step="any" data-cal="cpl.${key}" value="${v.cpl[key]}" aria-label="Costo por lead en ${name}"><small>por lead</small></label></div>`).join("")}
-    <div class="cal-sec"><label class="cal-ev"><input type="checkbox" data-cal="evOn" ${v.evOn?"checked":""}> <b>Incluir un evento con el mismo presupuesto</b></label></div>
-    <div class="cal-g ${v.evOn?"":"cal-off"}" id="cal-evbox"><div class="cal-f"><label for="cal-evName">Evento</label><input type="text" id="cal-evName" data-cal="evName" value="${esc(v.evName)}" placeholder="Ej. COREMIF 24 nov"></div><div class="cal-f"><label for="cal-evCost">Costo total (entrada, material, viáticos)</label><input type="number" min="0" step="any" id="cal-evCost" data-cal="evCost" value="${v.evCost||""}" placeholder="${cur}"></div>${calField("evLeads","Contactos calificados esperados",v.evLeads,0,80,1,"")}</div>
+    <div class="pz-sec"><b>Reparto por canal y costo por lead</b><span class="hint">Costos iniciales de referencia para B2B; cámbialos con tus datos reales a las dos semanas.</span></div>
+    ${CAL_CH.map(([key,name,why])=>`<div class="pz-mix"><div><b>${name}</b><span class="hint">${why}</span></div><input type="range" min="0" max="100" step="5" data-cal="mix.${key}" id="cal-mix-${key}" value="${Number(v.mix[key])||0}" aria-label="% en ${name}"><output id="calo-mix.${key}">${Number(v.mix[key])||0}%</output><label class="pz-cpl">${cur}<input type="number" min="1" step="any" data-cal="cpl.${key}" value="${v.cpl[key]}" aria-label="Costo por lead en ${name}"><small>por lead</small></label></div>`).join("")}
+    <div class="pz-sec"><label class="pz-ev"><input type="checkbox" data-cal="evOn" ${v.evOn?"checked":""}> <b>Incluir un evento con el mismo presupuesto</b></label></div>
+    <div class="pz-g ${v.evOn?"":"pz-off"}" id="cal-evbox"><div class="pz-f"><label for="cal-evName">Evento</label><input type="text" id="cal-evName" data-cal="evName" value="${esc(v.evName)}" placeholder="Ej. COREMIF 24 nov"></div><div class="pz-f"><label for="cal-evCost">Costo total (entrada, material, viáticos)</label><input type="number" min="0" step="any" id="cal-evCost" data-cal="evCost" value="${v.evCost||""}" placeholder="${cur}"></div>${calField("evLeads","Contactos calificados esperados",v.evLeads,0,80,1,"")}</div>
     ${w?`<div class="row"><button class="btn ink" type="button" data-act="saveCalc">Guardar escenario</button><span class="hint">Queda guardado para el equipo de ${esc(c.name)}.</span></div>`:""}
    </form>
    <div class="stack"><article class="panel"><div class="ph"><div class="t"><h2>Resultado</h2><span class="s">${esc(v.months+" "+(v.months==1?"mes":"meses"))} · ${esc(cmoney(v.budget*v.months,v.cur))} en total</span></div></div><div class="inner" id="cal-out">${calOut(v,k)}</div></article>
-   <article class="panel"><div class="ph"><div class="t"><h2>Cómo leerlo</h2></div></div><div class="inner cal-how"><p><b>Costo máximo por lead</b> = ganancia por cliente × % que califica × % que cierra. Si pagas más que eso, pierdes dinero.</p><p><b>CAC</b> = todo lo invertido ÷ clientes nuevos. Sano si es menor que la ganancia de un cliente.</p><p><b>Regla de canal:</b> si ya buscan tu servicio, empieza con Google; si hay que crear interés, con Meta o LinkedIn.</p></div></article></div>
+   <article class="panel"><div class="ph"><div class="t"><h2>Cómo leerlo</h2></div></div><div class="inner pz-how"><p><b>Costo máximo por lead</b> = ganancia por cliente × % que califica × % que cierra. Si pagas más que eso, pierdes dinero.</p><p><b>CAC</b> = todo lo invertido ÷ clientes nuevos. Sano si es menor que la ganancia de un cliente.</p><p><b>Regla de canal:</b> si ya buscan tu servicio, empieza con Google; si hay que crear interés, con Meta o LinkedIn.</p></div></article></div>
   </section>
   ${p?viewPautaPlan(p,v):""}`}
 function viewPautaPlan(p,v){const m=x=>cmoney(x,v.cur);
-  return `<section class="panel cal-plan"><div class="ph"><div class="t"><h2>${esc(p.title||"Plan de pauta")}</h2><span class="s">${esc(p.period||"")}</span></div></div><div class="inner">
-   ${p.summary?`<p class="cal-sum">${esc(p.summary)}</p>`:""}
-   ${(p.objective||p.kpi)?`<div class="cal-obj"><div><span>Objetivo medible</span><b>${esc(p.objective||"")}</b></div>${p.kpi?`<div><span>Cómo lo medimos</span><b>${esc(p.kpi)}</b></div>`:""}</div>`:""}
-   ${(p.months||[]).length?`<div class="cal-months">${p.months.map(mo=>`<div class="cal-mo"><div class="cal-moh"><b>${esc(mo.name)}</b><span>${esc(mo.total||"")}</span></div>${(mo.lines||[]).map(l=>`<div class="cal-line"><div><b>${esc(l.channel)}</b><span class="pill" style="--pc:${l.temp==="frío"?"#6E8BB8":l.temp==="tibio"?"var(--warn)":"var(--ok)"}">${esc(l.temp||"")}</span></div><span class="amt">${esc(l.amount||"")}</span><p>${esc(l.what||"")}</p></div>`).join("")}</div>`).join("")}</div>`:""}
-   ${(p.events||[]).length?`<div class="cal-sec"><b>Eventos</b></div>${p.events.map(e=>`<div class="cal-evr"><span class="pill" style="--pc:${e.verdict==="Sí"?"var(--ok)":e.verdict==="No"?"var(--muted)":"var(--warn)"}">${esc(e.verdict)}</span><div><b>${esc(e.name)}</b><span class="hint">${esc(e.when||"")}</span><p>${esc(e.why||"")}</p></div></div>`).join("")}`:""}
-   ${(p.steps||[]).length?`<div class="cal-sec"><b>Ejecución paso a paso</b></div><ol class="cal-steps">${p.steps.map(s=>`<li><b>${esc(s.t)}</b><span>${esc(s.d)}</span></li>`).join("")}</ol>`:""}
-   ${(p.creative||[]).length?`<div class="cal-sec"><b>Mensajes que ganan frente a la competencia</b></div><ul class="cal-list">${p.creative.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
-   ${(p.watch||[]).length?`<div class="cal-sec"><b>Antes de lanzar</b></div><ul class="cal-list">${p.watch.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+  return `<section class="panel pz-plan"><div class="ph"><div class="t"><h2>${esc(p.title||"Plan de pauta")}</h2><span class="s">${esc(p.period||"")}</span></div></div><div class="inner">
+   ${p.summary?`<p class="pz-sum">${esc(p.summary)}</p>`:""}
+   ${(p.objective||p.kpi)?`<div class="pz-obj"><div><span>Objetivo medible</span><b>${esc(p.objective||"")}</b></div>${p.kpi?`<div><span>Cómo lo medimos</span><b>${esc(p.kpi)}</b></div>`:""}</div>`:""}
+   ${(p.months||[]).length?`<div class="pz-months">${p.months.map(mo=>`<div class="pz-mo"><div class="pz-moh"><b>${esc(mo.name)}</b><span>${esc(mo.total||"")}</span></div>${(mo.lines||[]).map(l=>`<div class="pz-line"><div><b>${esc(l.channel)}</b><span class="pill" style="--pc:${l.temp==="frío"?"#6E8BB8":l.temp==="tibio"?"var(--warn)":"var(--ok)"}">${esc(l.temp||"")}</span></div><span class="amt">${esc(l.amount||"")}</span><p>${esc(l.what||"")}</p></div>`).join("")}</div>`).join("")}</div>`:""}
+   ${(p.events||[]).length?`<div class="pz-sec"><b>Eventos</b></div>${p.events.map(e=>`<div class="pz-evr"><span class="pill" style="--pc:${e.verdict==="Sí"?"var(--ok)":e.verdict==="No"?"var(--muted)":"var(--warn)"}">${esc(e.verdict)}</span><div><b>${esc(e.name)}</b><span class="hint">${esc(e.when||"")}</span><p>${esc(e.why||"")}</p></div></div>`).join("")}`:""}
+   ${(p.steps||[]).length?`<div class="pz-sec"><b>Ejecución paso a paso</b></div><ol class="pz-steps">${p.steps.map(s=>`<li><b>${esc(s.t)}</b><span>${esc(s.d)}</span></li>`).join("")}</ol>`:""}
+   ${(p.creative||[]).length?`<div class="pz-sec"><b>Mensajes que ganan frente a la competencia</b></div><ul class="pz-list">${p.creative.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+   ${(p.watch||[]).length?`<div class="pz-sec"><b>Antes de lanzar</b></div><ul class="pz-list">${p.watch.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
    ${(p.sources||[]).length?`<p class="hint" style="margin-top:12px">Fuentes: ${p.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join(" · ")}</p>`:""}
   </div></section>`}
 function calSet(path,val){const a=S.adcalc={...(S.adcalc||{})};const [p,q]=path.split(".");if(q){a[p]={...(a[p]||{}),[q]:val}}else a[p]=val;S.calDirty=true}
 function calRefresh(){const v=calOf();const k=calCalc(v);const o=document.getElementById("cal-out");if(o)o.innerHTML=calOut(v,k);
   const sub=o&&o.closest(".panel")?.querySelector(".ph .s");if(sub)sub.textContent=`${v.months} ${v.months==1?"mes":"meses"} · ${cmoney(v.budget*v.months,v.cur)} en total`;
-  document.querySelectorAll("[data-cal]").forEach(el=>{const out=document.getElementById("calo-"+el.dataset.cal);if(out&&el.type==="range"){const sfx=el.dataset.cal==="months"?" meses":["margin","qual","close"].includes(el.dataset.cal)||el.dataset.cal.startsWith("mix.")?"%":"";out.textContent=el.value+sfx}});
-  const eb=document.getElementById("cal-evbox");if(eb)eb.classList.toggle("cal-off",!v.evOn)}
+  document.querySelectorAll("[data-cal]").forEach(el=>{const out=document.getElementById("calo-"+el.dataset.cal);if(out&&el.type==="range"&&el.dataset.cal==="budget"){out.textContent=cmoney(el.value,v.cur);return}if(out&&el.type==="range"){const sfx=el.dataset.cal==="months"?" meses":["margin","qual","close"].includes(el.dataset.cal)||el.dataset.cal.startsWith("mix.")?"%":"";out.textContent=el.value+sfx}});
+  const eb=document.getElementById("cal-evbox");if(eb)eb.classList.toggle("pz-off",!v.evOn)}
 async function saveCalc(){const a={...(S.adcalc||{})};const v=calOf();
   const clean={budget:v.budget,months:v.months,value:v.value,margin:v.margin,qual:v.qual,close:v.close,goal:v.goal,mix:v.mix,cpl:v.cpl,evOn:v.evOn,evName:v.evName,evCost:v.evCost,evLeads:v.evLeads,plan:a.plan||null,updatedAt:Date.now()};
   const ok=await write(()=>S.db.doc(`clients/${S.cid}/docs/adcalc`).set(clean),"Escenario guardado");if(ok)S.calDirty=false}
