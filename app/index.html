@@ -979,6 +979,32 @@ fieldset.field{border:0;padding:0;margin:0}
 #apbar li.ap-ok{color:var(--ink)}#apbar li.ap-ok span{background:#1f9d55;color:#fff}#apbar li.ap-run{color:var(--ink);font-weight:600}#apbar li.ap-err span{background:#d97706;color:#fff}
 .apspin{width:10px;height:10px;border-radius:50%;border:2px solid var(--accent,#ff7a1a);border-right-color:transparent;animation:apsp .8s linear infinite;display:block}@keyframes apsp{to{transform:rotate(360deg)}}
 
+.sp-brand{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;background:var(--ink,#111);color:#fff;border-radius:24px;padding:22px}
+.sp-bc p{margin:6px 0 0;font-size:15px;line-height:1.45;font-weight:600}.sp-brand .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.6;font-weight:700}
+.sp-rule{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.18);padding-top:12px;font-size:14px;opacity:.85}
+:root[data-theme="dark"] .sp-brand{background:#f2f2f0;color:#111}:root[data-theme="dark"] .sp-rule{border-color:rgba(0,0,0,.15)}
+.sp-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.sp-area{display:flex;flex-direction:column;gap:8px}.sp-area>.lbl,.sp-story .lbl,.sp-for .lbl{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;opacity:.6;font-weight:700}
+.sp-area>div{display:flex;flex-wrap:wrap;gap:6px}
+.sp-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel,#fff);border-radius:999px;padding:7px 12px 7px 8px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;color:inherit}
+.sp-chip.on{background:var(--ink,#111);color:#fff;border-color:transparent}.sp-chip.on .sp-gl{filter:invert(1)}
+:root[data-theme="dark"] .sp-chip.on{background:#f2f2f0;color:#111}:root[data-theme="dark"] .sp-chip.on .sp-gl{filter:none}
+.sp-gl{height:18px;width:auto;max-width:40px;object-fit:contain}:root[data-theme="dark"] .sp-gl{filter:invert(1)}
+.sp-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.sp-dot.sp-y{background:#22b07d}.sp-dot.sp-m{background:#e08a1e}.sp-dot.sp-n{background:#b9bcc2}
+.sp-story{display:flex;flex-direction:column;gap:18px}
+.sp-h{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}.sp-ht{display:flex;gap:14px;align-items:flex-start}.sp-ht .sp-gl{height:34px;margin-top:4px}
+.sp-h h2{margin:4px 0 0;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;line-height:1.2}
+.sp-hs{display:flex;flex-direction:column;align-items:flex-end;gap:6px;max-width:320px;text-align:right}
+.sp-tag{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}.sp-tag.sp-y{background:rgba(34,176,125,.15);color:#13875e}.sp-tag.sp-m{background:rgba(224,138,30,.15);color:#a86410}.sp-tag.sp-n{background:rgba(127,127,127,.15)}
+.sp-for{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.sp-for>div{background:var(--soft,rgba(127,127,127,.08));border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.4;display:flex;flex-direction:column;gap:4px}
+.sp-flow{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;counter-reset:s}
+.sp-s{border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative}
+.sp-s b{font-size:16px;line-height:1.35}.sp-s p{margin:0;font-size:14px;line-height:1.45}.sp-s .lbl{margin-bottom:2px}.sp-s ul{margin:0;padding-left:18px;font-size:14px;line-height:1.5}
+.sp-k{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.sp-s.hero .sp-k{color:#3d6fd6}.sp-s.prob{background:rgba(212,73,58,.06)}.sp-s.prob .sp-k{color:#c0392b}.sp-s.guide{background:var(--ink,#111);color:#fff;border-color:transparent}.sp-s.guide .sp-k{color:#fff;opacity:.7}
+:root[data-theme="dark"] .sp-s.guide{background:#f2f2f0;color:#111}:root[data-theme="dark"] .sp-s.guide .sp-k{color:#111}
+.sp-s.fail .sp-k{opacity:.6}.sp-s.win{background:rgba(34,176,125,.10)}.sp-s.win .sp-k{color:#13875e}
+@media (max-width:860px){.sp-brand,.sp-for,.sp-flow{grid-template-columns:1fr}.sp-hs{align-items:flex-start;text-align:left}}
 .ps-hero{display:flex;flex-direction:column;gap:10px}.ps-hero h2{margin:0;font-size:clamp(20px,2.6vw,28px);letter-spacing:-.02em;line-height:1.2}.ps-hero p{margin:0;line-height:1.55;max-width:75ch}
 .ps-split{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:8px}
 .ps-mo{border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}.ps-mo>b{font-size:15px}.ps-tot{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-top:-6px}
@@ -1162,7 +1188,7 @@ fieldset.field{border:0;padding:0;margin:0}
 <script>
 "use strict";
 const PORTAL=null; /*portal-id*/
-const TEAM_VIEWS=new Set(["plan","invest","adcalc","pauta","track","home","posts","people","cal","pipe","campaigns","ads","organic","email","loop","reply","agents","trends"]);
+const TEAM_VIEWS=new Set(["plan","invest","adcalc","pauta","prodstory","track","home","posts","people","cal","pipe","campaigns","ads","organic","email","loop","reply","agents","trends"]);
 /* ---------- constants ---------- */
 const LOOP_D="M24 12C20 6.5 16.5 4 12.5 4a8 8 0 0 0 0 16c4 0 7.5-2.5 11.5-8s7.5-8 11.5-8a8 8 0 0 1 0 16c-4 0-7.5-2.5-11.5-8z";
 const SITE_URL="../";
@@ -1213,7 +1239,7 @@ const GROUPS=[
   ["social","Social Media","posts",[["posts","Parrilla diaria"],["mc","Masterclass"],["cal","Calendario"],["organic","Métricas orgánicas"],["trends:social","Tendencias en redes"]]],
   ["people","Perfiles","people",[["people","Perfiles profesionales"]]],
   ["ads","Campañas y pauta","ads",[["campaigns","Campañas y eventos"],["email","Email marketing"],["ads","Pauta"]]],
-  ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["adcalc","Calculadora de pauta"],["strategy","Estrategia"],["audience","Audiencia"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
+  ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["adcalc","Calculadora de pauta"],["strategy","Estrategia"],["audience","Audiencia"],["prodstory","Historias por producto"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
   ["innov","Innovación","bulb",[["innovation","Oportunidades de negocio"]]],
   ["ai","AI Solutions","spark",[["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"],["geo","IA Search"]]],
   ["sales","Ventas","pipe",[["pipe","Pipeline"],["events","Eventos y asociaciones"],["export","Documentos"]]]
@@ -1361,6 +1387,7 @@ function body(){
     case "invest": return viewInvest(c);
     case "adcalc": return viewAdCalc(c);
     case "pauta": return viewPauta(c);
+    case "prodstory": return viewProdStory(c);
     case "events": return viewEvents(c);
     case "web": return viewWeb(c);
     case "access": if(!S.vusers)loadVaultUsers();if(!S.drafts["nu-pass"])S.drafts["nu-pass"]=genPass();return viewAccess(c);
@@ -1475,7 +1502,7 @@ let MRAW_SESSION=null;
 const V={enabled:false,meta:null,keys:{},M:null,user:null,cache:{}};
 const KDF_ITERS=600000;
 const SECRET_COLS=new Set(["posts","people","lposts","tasks","deals","metrics","plan","campaigns","ads","geo","organic","emailcamps"]);
-const SECRET_DOCS=new Set(["finance","adcalc","pautastrat","investplan","strategy","audience","innovation","site","quote"]);
+const SECRET_DOCS=new Set(["finance","adcalc","pautastrat","prodstories","investplan","strategy","audience","innovation","site","quote"]);
 const PUBLIC_CLIENT=new Set(["name","short","industry","country","website","lang","order","color","logoUrl","logoOnDark","trendTags","createdAt","tagline","fonts","palette","portalUrl","updatedAt"]);
 const te=new TextEncoder(),td=new TextDecoder();
 function b64(buf){const u=new Uint8Array(buf);let s="";for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)}
@@ -3881,6 +3908,38 @@ function viewPauta(c){const d=S.pautastrat;
   ${L(d.pending).length?det("Pendiente de confirmar",ul(d.pending)):""}
   ${L(d.sources).length?`<p class="hint">Fuentes: ${d.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join(" · ")}</p>`:""}`}
 
+function spGlyph(c,name){const g=(c.logoPack||[]).find(l=>l.slug===String(name).toLowerCase()&&l.ink==="negro");return g?`<img class="sp-gl" src="${esc(g.svg)}" alt="">`:""}
+function viewProdStory(c){const d=S.prodstories;
+  if(!d)return `<section class="greet"><div class="hello"><h1>Historias por producto</h1><p class="sub">Héroe, problema, guía y éxito de cada producto.</p></div></section>${S.prodstoriesSeen?emptyBox("Aún no hay historias por producto","La estrategia de storytelling las agrega aquí."):`<article class="panel"><div class="thinkrow thinking">${loopSvg()} Cargando…</div></article>`}`;
+  const P=d.products||[];const sel=P.find(p=>p.name===S.spSel)||P[0];const b=d.brand||{};
+  const TI={now:["Se pauta","sp-y"],content:["Contenido","sp-m"],no:["No se pauta","sp-n"]};
+  const areas=[...new Set(P.map(p=>p.area))];
+  const ul=a=>`<ul>${(a||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+  const t=TI[sel.tier]||TI.no;
+  return `<section class="greet"><div class="hello"><h1>Historias por producto</h1><p class="sub">Un caso de uso por producto: quién es el héroe, qué problema vive, cómo lo guía ${esc(c.name)} y cómo se ve el éxito.</p></div>
+   <div class="row"><button class="btn" data-act="view" data-v="pauta">Estrategia de pauta</button><button class="btn" data-act="view" data-v="audience">Audiencia</button></div></section>
+  <section class="sp-brand">
+   <div class="sp-bc"><span class="lbl">Quiénes somos</span><p>${esc(b.who||"")}</p></div>
+   <div class="sp-bc"><span class="lbl">Para quiénes somos</span><p>${esc(b.forWhom||"")}</p></div>
+   <div class="sp-bc"><span class="lbl">A dónde vamos</span><p>${esc(b.whereTo||"")}</p></div>
+   ${b.rule?`<div class="sp-rule">${esc(b.rule)}</div>`:""}
+  </section>
+  <nav class="sp-pick" aria-label="Productos">${areas.map(a=>`<div class="sp-area"><span class="lbl">${esc(a)}</span><div>${P.filter(p=>p.area===a).map(p=>{const tt=TI[p.tier]||TI.no;return `<button class="sp-chip ${p===sel?"on":""}" data-act="spSel" data-v="${esc(p.name)}" aria-pressed="${p===sel}">${spGlyph(c,p.name)}<span>${esc(p.name)}</span><i class="sp-dot ${tt[1]}" title="${tt[0]}"></i></button>`}).join("")}</div></div>`).join("")}</nav>
+  <p class="hint" style="margin:-6px 0 0"><i class="sp-dot sp-y"></i> Se pauta · <i class="sp-dot sp-m"></i> Va en contenido · <i class="sp-dot sp-n"></i> No se pauta</p>
+  <article class="panel sp-story">
+   <header class="sp-h"><div class="sp-ht">${spGlyph(c,sel.name)}<div><span class="lbl">${esc(c.name)} ${esc(sel.name)} · ${esc(sel.area)}</span><h2>«${esc(sel.message)}»</h2></div></div><div class="sp-hs"><span class="sp-tag ${t[1]}">${t[0]}</span><span class="hint">${esc(sel.pauta||"")}</span></div></header>
+   <div class="sp-for"><div><span class="lbl">Empresa</span><span>${esc(sel.for?.company||"")}</span></div><div><span class="lbl">Quién compra</span><span>${esc(sel.for?.buyer||"")}</span></div><div><span class="lbl">Quién lo usa</span><span>${esc(sel.for?.user||"")}</span></div></div>
+   <ol class="sp-flow">
+    <li class="sp-s hero"><span class="sp-k">1 · Héroe</span><b>${esc(sel.hero)}</b><p><span class="lbl">Lo que quiere</span>${esc(sel.want)}</p></li>
+    <li class="sp-s prob"><span class="sp-k">2 · Problema</span><b>${esc(sel.villain)}</b><p><span class="lbl">Lo que vive</span>${esc(sel.problem?.external)}</p><p><span class="lbl">Lo que siente</span>${esc(sel.problem?.internal)}</p><p><span class="lbl">Por qué no es justo</span>${esc(sel.problem?.philosophical)}</p></li>
+    <li class="sp-s guide"><span class="sp-k">3 · Guía: ${esc(c.name)}</span><b>${esc(sel.guide?.empathy)}</b><p><span class="lbl">Por qué confiar</span>${esc(sel.guide?.authority)}</p></li>
+    <li class="sp-s plan"><span class="sp-k">4 · Plan</span>${ul(sel.plan)}<p><span class="lbl">Llamado a la acción</span>${esc(sel.cta)}</p></li>
+    <li class="sp-s fail"><span class="sp-k">5 · Lo que evita</span><p>${esc(sel.failure)}</p></li>
+    <li class="sp-s win"><span class="sp-k">6 · Éxito</span><b>${esc(sel.success)}</b></li>
+   </ol>
+   <div class="row"><button class="btn sm" data-act="ask" data-q="${esc(`Con la historia de ${c.name} ${sel.name} (héroe: ${sel.hero}; problema: ${sel.villain}; éxito: ${sel.success}), propón un guion de video de 30 segundos y 3 anuncios para LinkedIn.`)}">Ideas de video y anuncios</button></div>
+  </article>`}
+
 function viewPautaPlan(p,v){const m=x=>cmoney(x,v.cur);
   return `<section class="panel pz-plan"><div class="ph"><div class="t"><h2>${esc(p.title||"Plan de pauta")}</h2><span class="s">${esc(p.period||"")}</span></div></div><div class="inner">
    ${p.summary?`<p class="pz-sum">${esc(p.summary)}</p>`:""}
@@ -4815,8 +4874,8 @@ async function autopilot(id){
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
   stopSubs(); S.cid=id; lsSet("bl-client",id);
-  S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.investPlan=null;S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
-  [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{S[k]=x.exists?x.data():null;S[k+"Seen"]=true;render()},dbErr)));
+  S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
+  [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{S[k]=x.exists?x.data():null;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
   unsubs.push(S.db.collection(`clients/${id}/associations`).onSnapshot(x=>{S.assocs=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
 S.audRun={running:false,error:null,ctl:null};S.innRun={running:false,error:null,ctl:null};
@@ -5058,6 +5117,7 @@ const A={
   adLight:el=>{S.adLight={id:el.dataset.id,i:+el.dataset.i};render()},adLightClose:()=>{S.adLight=null;render()},adLightNav:el=>{const k=S.comps.find(x=>x.id===S.adLight?.id);if(!k)return;const n=k.adShots.length;S.adLight={id:k.id,i:(S.adLight.i+ +el.dataset.n+n)%n};render()},
   compTab:el=>{S.compTab=el.dataset.v;render()},
   psTab:el=>{S.psTab=el.dataset.v;render()},
+  spSel:el=>{S.spSel=el.dataset.v;render()},
   compMap:el=>{S.compMap=el.dataset.v;render()},
   toggleComp:()=>{S.showNewComp=!S.showNewComp;render()},
   pf:b=>{S.pf=b.dataset.v;render()}, sf:b=>{S.sf=b.dataset.v;render()},
