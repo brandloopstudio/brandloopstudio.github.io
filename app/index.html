@@ -978,6 +978,37 @@ fieldset.field{border:0;padding:0;margin:0}
 #apbar ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}#apbar li{display:flex;gap:9px;align-items:center;color:var(--mute,#6b7280)}#apbar li span{width:18px;height:18px;border-radius:9px;display:grid;place-items:center;font-size:11px;background:var(--soft,#f3f4f6);flex:none}
 #apbar li.ap-ok{color:var(--ink)}#apbar li.ap-ok span{background:#1f9d55;color:#fff}#apbar li.ap-run{color:var(--ink);font-weight:600}#apbar li.ap-err span{background:#d97706;color:#fff}
 .apspin{width:10px;height:10px;border-radius:50%;border:2px solid var(--accent,#ff7a1a);border-right-color:transparent;animation:apsp .8s linear infinite;display:block}@keyframes apsp{to{transform:rotate(360deg)}}
+
+.cal .cal-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 22px;margin-top:6px}
+@media (max-width:700px){.cal .cal-g{grid-template-columns:1fr}}
+.cal-f{display:flex;flex-direction:column;gap:6px}.cal-fl{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cal-fl output{font-weight:700;font-size:20px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.cal input[type=range]{width:100%;accent-color:var(--ink,#111)}
+.cal-sec{margin:22px 0 10px;display:flex;flex-direction:column;gap:2px}
+.cal-mix{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 52px 150px;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.08))}
+.cal-mix>div{display:flex;flex-direction:column}.cal-mix output{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.cal-cpl{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}.cal-cpl input{width:84px}.cal-cpl small{font-size:11px}
+@media (max-width:700px){.cal-mix{grid-template-columns:1fr 52px;}.cal-mix input[type=range]{grid-column:1/-1}.cal-cpl{grid-column:1/-1}}
+.cal-ev{display:flex;align-items:center;gap:10px;cursor:pointer}.cal-off{opacity:.4;pointer-events:none}
+.cal-verdict{padding:14px 16px;border-radius:14px;background:var(--soft,rgba(0,0,0,.04));font-size:14px}
+.cal-verdict.good{background:color-mix(in srgb,var(--ok) 14%,transparent)}.cal-verdict.bad{background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.cal-kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.cal-k{border:1px solid var(--line,rgba(0,0,0,.08));border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.cal-k span{font-size:12px;color:var(--muted)}.cal-k b{font-size:28px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.cal-k i{font-style:normal;font-size:12px;color:var(--muted)}
+.cal-funnel{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.cal-fr{display:grid;grid-template-columns:100px 1fr 90px;gap:10px;align-items:center;font-size:13px}.cal-fr b{text-align:right;font-variant-numeric:tabular-nums}
+.cal-fb{height:14px;border-radius:7px;background:var(--soft,rgba(0,0,0,.05));overflow:hidden}.cal-fb i{display:block;height:100%;border-radius:7px;background:var(--accent,var(--ink,#111))}
+.cal-ch{margin-top:14px;display:flex;flex-direction:column}.cal-cr{display:grid;grid-template-columns:1fr auto 90px;gap:10px;padding:8px 0;border-top:1px solid var(--line,rgba(0,0,0,.06));font-size:13px}.cal-cr i{font-style:normal;color:var(--muted);text-align:right}
+.cal-note{margin-top:12px;font-size:13px;line-height:1.5;padding:12px 14px;border-radius:12px;background:var(--soft,rgba(0,0,0,.03))}
+.cal-how p{font-size:13px;line-height:1.5;margin:0 0 10px}
+.cal-plan{margin-top:20px}.cal-sum{font-size:15px;line-height:1.6;margin:0 0 14px}
+.cal-obj{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}.cal-obj>div{border-radius:14px;padding:14px;background:var(--soft,rgba(0,0,0,.03));display:flex;flex-direction:column;gap:4px}.cal-obj span{font-size:12px;color:var(--muted)}
+.cal-months{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.cal-mo{border:1px solid var(--line,rgba(0,0,0,.08));border-radius:18px;padding:16px}.cal-moh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}.cal-moh b{font-size:18px}
+.cal-line{padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.06));display:grid;grid-template-columns:1fr auto;gap:4px 10px}.cal-line>div{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.cal-line .amt{font-weight:700;font-variant-numeric:tabular-nums}.cal-line p{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.cal-evr{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line,rgba(0,0,0,.06))}.cal-evr p{margin:4px 0 0;font-size:13px;line-height:1.45}.cal-evr>div{display:flex;flex-direction:column}
+.cal-steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}.cal-steps li{font-size:13px;line-height:1.45}.cal-steps li b{display:block;font-size:14px}
+.cal-list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:1.45}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -1108,7 +1139,7 @@ fieldset.field{border:0;padding:0;margin:0}
 <script>
 "use strict";
 const PORTAL=null; /*portal-id*/
-const TEAM_VIEWS=new Set(["plan","invest","track","home","posts","people","cal","pipe","campaigns","ads","organic","email","loop","reply","agents","trends"]);
+const TEAM_VIEWS=new Set(["plan","invest","adcalc","track","home","posts","people","cal","pipe","campaigns","ads","organic","email","loop","reply","agents","trends"]);
 /* ---------- constants ---------- */
 const LOOP_D="M24 12C20 6.5 16.5 4 12.5 4a8 8 0 0 0 0 16c4 0 7.5-2.5 11.5-8s7.5-8 11.5-8a8 8 0 0 1 0 16c-4 0-7.5-2.5-11.5-8z";
 const SITE_URL="../";
@@ -1159,7 +1190,7 @@ const GROUPS=[
   ["social","Social Media","posts",[["posts","Parrilla diaria"],["mc","Masterclass"],["cal","Calendario"],["organic","Métricas orgánicas"],["trends:social","Tendencias en redes"]]],
   ["people","Perfiles","people",[["people","Perfiles profesionales"]]],
   ["ads","Campañas y pauta","ads",[["campaigns","Campañas y eventos"],["email","Email marketing"],["ads","Pauta"]]],
-  ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["strategy","Estrategia"],["audience","Audiencia"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
+  ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["adcalc","Calculadora de pauta"],["strategy","Estrategia"],["audience","Audiencia"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
   ["innov","Innovación","bulb",[["innovation","Oportunidades de negocio"]]],
   ["ai","AI Solutions","spark",[["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"],["geo","IA Search"]]],
   ["sales","Ventas","pipe",[["pipe","Pipeline"],["events","Eventos y asociaciones"],["export","Documentos"]]]
@@ -1305,6 +1336,7 @@ function body(){
     case "campaigns": return viewCampaigns(c);
     case "audience": return viewAudience(c);
     case "invest": return viewInvest(c);
+    case "adcalc": return viewAdCalc(c);
     case "events": return viewEvents(c);
     case "web": return viewWeb(c);
     case "access": if(!S.vusers)loadVaultUsers();if(!S.drafts["nu-pass"])S.drafts["nu-pass"]=genPass();return viewAccess(c);
@@ -1419,7 +1451,7 @@ let MRAW_SESSION=null;
 const V={enabled:false,meta:null,keys:{},M:null,user:null,cache:{}};
 const KDF_ITERS=600000;
 const SECRET_COLS=new Set(["posts","people","lposts","tasks","deals","metrics","plan","campaigns","ads","geo","organic","emailcamps"]);
-const SECRET_DOCS=new Set(["finance","investplan","strategy","audience","innovation","site","quote"]);
+const SECRET_DOCS=new Set(["finance","adcalc","investplan","strategy","audience","innovation","site","quote"]);
 const PUBLIC_CLIENT=new Set(["name","short","industry","country","website","lang","order","color","logoUrl","logoOnDark","trendTags","createdAt","tagline","fonts","palette","portalUrl","updatedAt"]);
 const te=new TextEncoder(),td=new TextDecoder();
 function b64(buf){const u=new Uint8Array(buf);let s="";for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)}
@@ -3730,6 +3762,92 @@ async function genInvest(){
   catch(e){S.invRun.error=sampleMsg(e?.code);if(e&&HIDE.includes(e.code))S.sampleOff=true}finally{S.invRun.running=false;render()}
 }
 
+
+/* ---------- calculadora de pauta (CAC, leads y presupuesto) ---------- */
+const cmoney=(n,cur)=>(cur==="USD"?"US$ ":"Q ")+Math.round(Number(n)||0).toLocaleString("en-US");
+const CAL_CH=[["google","Google Search","Intención: ya buscan lo que vendes",180],["linkedin","LinkedIn","Decisores B2B por cargo e industria",450],["meta","Meta (FB, IG, WhatsApp)","Interés y conversaciones",90],["retarget","Remarketing","Calientes: visitaron o vieron videos",60]];
+const CAL_DEF={budget:5000,months:2,value:0,margin:50,qual:40,close:10,goal:2,mix:{google:30,linkedin:40,meta:15,retarget:15},cpl:{},evOn:false,evName:"",evCost:0,evLeads:15};
+function calOf(){const f=finOf();const a=S.adcalc||{};const fx=f.currency==="USD"?1/7.7:1;
+  const cpl={};CAL_CH.forEach(([k,,,d])=>{const v=a.cpl&&a.cpl[k];cpl[k]=v!=null&&v!==""&&!isNaN(Number(v))?Number(v):Math.round(d*fx)});
+  const n=(x,d)=>x==null||x===""||isNaN(Number(x))?d:Number(x);
+  return {cur:f.currency,budget:n(a.budget,Math.round(CAL_DEF.budget*fx)),months:n(a.months,2),value:n(a.value,f.ticket?f.ticket*12:0),margin:n(a.margin,f.margin??50),qual:n(a.qual,40),close:n(a.close,10),goal:n(a.goal,f.goal||2),mix:{...CAL_DEF.mix,...(a.mix||{})},cpl,evOn:!!a.evOn,evName:a.evName||"",evCost:n(a.evCost,0),evLeads:n(a.evLeads,15),plan:a.plan||null}}
+function calCalc(c){
+  const evCost=c.evOn?c.evCost:0;const media=Math.max(0,c.budget*c.months-evCost);
+  const tot=Object.values(c.mix).reduce((a,b)=>a+(Number(b)||0),0)||1;
+  const ch=CAL_CH.map(([k,name])=>{const share=(Number(c.mix[k])||0)/tot;const spend=media*share;const leads=c.cpl[k]>0?spend/c.cpl[k]:0;return {k,name,share,spend,leads,cpl:c.cpl[k]}});
+  const leadsAds=ch.reduce((a,x)=>a+x.leads,0);const qAds=leadsAds*c.qual/100;
+  const qEv=c.evOn?c.evLeads:0;const qual=qAds+qEv;const clients=qual*c.close/100;
+  const spend=c.budget*c.months;const cplW=leadsAds?media/leadsAds:null;
+  const cac=clients>0?spend/clients:null;const profit=c.value*c.margin/100;
+  const maxCpl=profit?profit*(c.qual/100)*(c.close/100):null;  // Simbionte: ganancia por venta ÷ leads necesarios por venta
+  const maxCac=profit||null;
+  const roi=profit&&spend?(clients*profit-spend)/spend:null;
+  // presupuesto para la meta (clientes en el periodo)
+  const leadsNeed=c.goal/((c.qual/100)*(c.close/100));const needBudget=cplW?leadsNeed*cplW/c.months:null;
+  const evCPQ=c.evOn&&c.evLeads?evCost/c.evLeads:null;const adCPQ=qAds?media/qAds:null;
+  return {ch,media,leadsAds,qAds,qEv,qual,clients,spend,cplW,cac,profit,maxCpl,maxCac,roi,leadsNeed,needBudget,evCPQ,adCPQ}}
+function calOut(c,k){const m=v=>cmoney(Math.round(v),c.cur);const fmt=x=>x>=10?Math.round(x).toLocaleString("es-GT"):x.toFixed(1);
+  const ok=k.maxCpl&&k.cplW?k.cplW<=k.maxCpl:null;
+  const verdict=ok==null?(c.value?"Ajusta los datos para ver el resultado":"Escribe cuánto vale un cliente para saber si la pauta se paga sola"):ok?"La pauta se paga: cada lead cuesta menos de lo que puedes pagar":"Cada lead cuesta más de lo que puedes pagar: baja el costo por lead o sube la tasa de cierre";
+  const maxL=Math.max(1,k.leadsAds+k.qEv);
+  let s=`<div class="cal-verdict ${ok==null?"":ok?"good":"bad"}"><b>${esc(verdict)}</b></div>
+  <div class="cal-kpis">
+   <div class="cal-k"><span>Leads del periodo</span><b>${fmt(k.leadsAds+k.qEv)}</b><i>${fmt(k.leadsAds)} de pauta${k.qEv?" · "+fmt(k.qEv)+" del evento":""}</i></div>
+   <div class="cal-k"><span>Clientes esperados</span><b>${k.clients.toFixed(1)}</b><i>con ${c.qual}% calificados y ${c.close}% de cierre</i></div>
+   <div class="cal-k"><span>CAC</span><b>${k.cac==null?"—":esc(m(k.cac))}</b><i>${k.maxCac?"máximo sano "+esc(m(k.maxCac)):"lo que cuesta cada cliente nuevo"}</i></div>
+   <div class="cal-k"><span>Costo por lead</span><b>${k.cplW==null?"—":esc(m(k.cplW))}</b><i>${k.maxCpl?"puedes pagar hasta "+esc(m(k.maxCpl)):"promedio ponderado de los canales"}</i></div>
+  </div>
+  <div class="cal-funnel">${[["Inversión total",esc(m(k.spend)),1],["Leads",fmt(k.leadsAds+k.qEv),1],["Calificados",fmt(k.qual),k.qual/maxL],["Clientes",k.clients.toFixed(1),k.clients/maxL]].map(([a,b,w],i)=>`<div class="cal-fr"><span>${a}</span><div class="cal-fb"><i style="width:${Math.max(4,Math.min(100,w*100))}%;opacity:${1-i*.18}"></i></div><b>${b}</b></div>`).join("")}</div>
+  <div class="cal-ch">${k.ch.map(x=>`<div class="cal-cr"><span>${esc(x.name)}</span><b>${esc(m(x.spend))}</b><i>${fmt(x.leads)} leads</i></div>`).join("")}${c.evOn?`<div class="cal-cr"><span>${esc(c.evName||"Evento")}</span><b>${esc(m(c.evCost))}</b><i>${fmt(c.evLeads)} contactos</i></div>`:""}</div>
+  <div class="cal-note"><b>Para ${c.goal} cliente${c.goal==1?"":"s"} en ${c.months} mes${c.months==1?"":"es"}</b> necesitas unos ${fmt(k.leadsNeed)} leads${k.needBudget!=null?` y alrededor de <b>${esc(m(k.needBudget))} al mes</b> con este costo por lead. Hoy pones ${esc(m(c.budget))} al mes.`:"."}</div>`;
+  if(c.evOn){const better=k.evCPQ!=null&&k.adCPQ!=null?k.evCPQ<k.adCPQ:null;s+=`<div class="cal-note"><b>Evento vs pauta.</b> Cada contacto calificado del evento cuesta ${k.evCPQ==null?"—":esc(m(k.evCPQ))}; de la pauta, ${k.adCPQ==null?"—":esc(m(k.adCPQ))}. ${better==null?"":better?"El evento rinde más por contacto: vale la pena ir.":"La pauta rinde más por contacto: el evento solo conviene si ahí están cuentas grandes que no alcanzas en línea."}</div>`}
+  if(k.roi!=null)s+=`<div class="cal-note">Retorno esperado del periodo: <b>${k.roi>=0?"+":""}${Math.round(k.roi*100)}%</b> sobre lo invertido, contando el margen de cada cliente. En B2B el primer mes casi nunca cierra: evalúa a los 30 días como mínimo.</div>`;
+  return s}
+function calField(id,label,val,min,max,step,suf,hint){return `<div class="cal-f"><div class="cal-fl"><label for="cal-${id}">${label}</label><output id="calo-${id}">${esc(String(val))}${suf||""}</output></div><input type="range" id="cal-${id}" data-cal="${id}" min="${min}" max="${max}" step="${step}" value="${esc(String(val))}">${hint?`<span class="hint">${hint}</span>`:""}</div>`}
+function viewAdCalc(c){const v=calOf();const k=calCalc(v);const w=S.canWrite;const cur=v.cur==="USD"?"US$":"Q";const p=v.plan;
+  return `<section class="greet"><div class="hello"><h1>Calculadora de pauta</h1><p class="sub">Mueve los datos y mira cuántos leads, clientes y cuánto CAC te da cada presupuesto. El costo máximo por lead sale de lo que gana ${esc(c.name)} por cliente, como propone el método de pauta de Simbionte.</p></div></section>
+  <section class="home" style="--cols:minmax(0,1fr) minmax(320px,460px)">
+   <form class="panel cal" data-form="cal" onsubmit="return false">
+    <div class="ph"><div class="t"><h2>Tus números</h2><span class="s">Cada cambio se recalcula al instante</span></div></div>
+    <div class="cal-g">
+     ${calField("budget","Presupuesto al mes",v.budget,v.cur==="USD"?100:500,v.cur==="USD"?10000:60000,v.cur==="USD"?50:250,"",`${cur} al mes`)}
+     ${calField("months","Meses de campaña",v.months,1,6,1," meses","Las plataformas necesitan al menos 30 días para aprender")}
+     <div class="cal-f"><div class="cal-fl"><label for="cal-value">Valor de un cliente nuevo</label></div><input type="number" min="0" step="any" id="cal-value" data-cal="value" value="${v.value||""}" placeholder="Ej. 60000 (contrato del primer año)"><span class="hint">Lo que factura un cliente en su primer contrato</span></div>
+     ${calField("margin","Margen sobre esa venta",v.margin,5,95,5,"%")}
+     ${calField("qual","Leads que califican",v.qual,5,90,5,"%","De cada 10 leads, cuántos son la empresa y el cargo correctos")}
+     ${calField("close","Calificados que se vuelven clientes",v.close,1,60,1,"%")}
+     ${calField("goal","Meta de clientes en el periodo",v.goal,1,30,1,"")}
+    </div>
+    <div class="cal-sec"><b>Reparto por canal y costo por lead</b><span class="hint">Costos iniciales de referencia para B2B; cámbialos con tus datos reales a las dos semanas.</span></div>
+    ${CAL_CH.map(([key,name,why])=>`<div class="cal-mix"><div><b>${name}</b><span class="hint">${why}</span></div><input type="range" min="0" max="100" step="5" data-cal="mix.${key}" id="cal-mix-${key}" value="${Number(v.mix[key])||0}" aria-label="% en ${name}"><output id="calo-mix.${key}">${Number(v.mix[key])||0}%</output><label class="cal-cpl">${cur}<input type="number" min="1" step="any" data-cal="cpl.${key}" value="${v.cpl[key]}" aria-label="Costo por lead en ${name}"><small>por lead</small></label></div>`).join("")}
+    <div class="cal-sec"><label class="cal-ev"><input type="checkbox" data-cal="evOn" ${v.evOn?"checked":""}> <b>Incluir un evento con el mismo presupuesto</b></label></div>
+    <div class="cal-g ${v.evOn?"":"cal-off"}" id="cal-evbox"><div class="cal-f"><label for="cal-evName">Evento</label><input type="text" id="cal-evName" data-cal="evName" value="${esc(v.evName)}" placeholder="Ej. COREMIF 24 nov"></div><div class="cal-f"><label for="cal-evCost">Costo total (entrada, material, viáticos)</label><input type="number" min="0" step="any" id="cal-evCost" data-cal="evCost" value="${v.evCost||""}" placeholder="${cur}"></div>${calField("evLeads","Contactos calificados esperados",v.evLeads,0,80,1,"")}</div>
+    ${w?`<div class="row"><button class="btn ink" type="button" data-act="saveCalc">Guardar escenario</button><span class="hint">Queda guardado para el equipo de ${esc(c.name)}.</span></div>`:""}
+   </form>
+   <div class="stack"><article class="panel"><div class="ph"><div class="t"><h2>Resultado</h2><span class="s">${esc(v.months+" "+(v.months==1?"mes":"meses"))} · ${esc(cmoney(v.budget*v.months,v.cur))} en total</span></div></div><div class="inner" id="cal-out">${calOut(v,k)}</div></article>
+   <article class="panel"><div class="ph"><div class="t"><h2>Cómo leerlo</h2></div></div><div class="inner cal-how"><p><b>Costo máximo por lead</b> = ganancia por cliente × % que califica × % que cierra. Si pagas más que eso, pierdes dinero.</p><p><b>CAC</b> = todo lo invertido ÷ clientes nuevos. Sano si es menor que la ganancia de un cliente.</p><p><b>Regla de canal:</b> si ya buscan tu servicio, empieza con Google; si hay que crear interés, con Meta o LinkedIn.</p></div></article></div>
+  </section>
+  ${p?viewPautaPlan(p,v):""}`}
+function viewPautaPlan(p,v){const m=x=>cmoney(x,v.cur);
+  return `<section class="panel cal-plan"><div class="ph"><div class="t"><h2>${esc(p.title||"Plan de pauta")}</h2><span class="s">${esc(p.period||"")}</span></div></div><div class="inner">
+   ${p.summary?`<p class="cal-sum">${esc(p.summary)}</p>`:""}
+   ${(p.objective||p.kpi)?`<div class="cal-obj"><div><span>Objetivo medible</span><b>${esc(p.objective||"")}</b></div>${p.kpi?`<div><span>Cómo lo medimos</span><b>${esc(p.kpi)}</b></div>`:""}</div>`:""}
+   ${(p.months||[]).length?`<div class="cal-months">${p.months.map(mo=>`<div class="cal-mo"><div class="cal-moh"><b>${esc(mo.name)}</b><span>${esc(mo.total||"")}</span></div>${(mo.lines||[]).map(l=>`<div class="cal-line"><div><b>${esc(l.channel)}</b><span class="pill" style="--pc:${l.temp==="frío"?"#6E8BB8":l.temp==="tibio"?"var(--warn)":"var(--ok)"}">${esc(l.temp||"")}</span></div><span class="amt">${esc(l.amount||"")}</span><p>${esc(l.what||"")}</p></div>`).join("")}</div>`).join("")}</div>`:""}
+   ${(p.events||[]).length?`<div class="cal-sec"><b>Eventos</b></div>${p.events.map(e=>`<div class="cal-evr"><span class="pill" style="--pc:${e.verdict==="Sí"?"var(--ok)":e.verdict==="No"?"var(--muted)":"var(--warn)"}">${esc(e.verdict)}</span><div><b>${esc(e.name)}</b><span class="hint">${esc(e.when||"")}</span><p>${esc(e.why||"")}</p></div></div>`).join("")}`:""}
+   ${(p.steps||[]).length?`<div class="cal-sec"><b>Ejecución paso a paso</b></div><ol class="cal-steps">${p.steps.map(s=>`<li><b>${esc(s.t)}</b><span>${esc(s.d)}</span></li>`).join("")}</ol>`:""}
+   ${(p.creative||[]).length?`<div class="cal-sec"><b>Mensajes que ganan frente a la competencia</b></div><ul class="cal-list">${p.creative.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+   ${(p.watch||[]).length?`<div class="cal-sec"><b>Antes de lanzar</b></div><ul class="cal-list">${p.watch.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+   ${(p.sources||[]).length?`<p class="hint" style="margin-top:12px">Fuentes: ${p.sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join(" · ")}</p>`:""}
+  </div></section>`}
+function calSet(path,val){const a=S.adcalc={...(S.adcalc||{})};const [p,q]=path.split(".");if(q){a[p]={...(a[p]||{}),[q]:val}}else a[p]=val;S.calDirty=true}
+function calRefresh(){const v=calOf();const k=calCalc(v);const o=document.getElementById("cal-out");if(o)o.innerHTML=calOut(v,k);
+  const sub=o&&o.closest(".panel")?.querySelector(".ph .s");if(sub)sub.textContent=`${v.months} ${v.months==1?"mes":"meses"} · ${cmoney(v.budget*v.months,v.cur)} en total`;
+  document.querySelectorAll("[data-cal]").forEach(el=>{const out=document.getElementById("calo-"+el.dataset.cal);if(out&&el.type==="range"){const sfx=el.dataset.cal==="months"?" meses":["margin","qual","close"].includes(el.dataset.cal)||el.dataset.cal.startsWith("mix.")?"%":"";out.textContent=el.value+sfx}});
+  const eb=document.getElementById("cal-evbox");if(eb)eb.classList.toggle("cal-off",!v.evOn)}
+async function saveCalc(){const a={...(S.adcalc||{})};const v=calOf();
+  const clean={budget:v.budget,months:v.months,value:v.value,margin:v.margin,qual:v.qual,close:v.close,goal:v.goal,mix:v.mix,cpl:v.cpl,evOn:v.evOn,evName:v.evName,evCost:v.evCost,evLeads:v.evLeads,plan:a.plan||null,updatedAt:Date.now()};
+  const ok=await write(()=>S.db.doc(`clients/${S.cid}/docs/adcalc`).set(clean),"Escenario guardado");if(ok)S.calDirty=false}
+
 /* ---------- events & associations ---------- */
 const EV_ST={ir:"Vamos",evaluar:"Evaluar",descartar:"Descartar",pasado:"Ya pasó"};
 const EV_STC={ir:"var(--ok)",evaluar:"var(--warn)",descartar:"var(--muted)",pasado:"var(--faint)"};
@@ -4644,8 +4762,8 @@ async function autopilot(id){
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
   stopSubs(); S.cid=id; lsSet("bl-client",id);
-  S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.investPlan=null;S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
-  [["finance","finance"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{S[k]=x.exists?x.data():null;S[k+"Seen"]=true;render()},dbErr)));
+  S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.investPlan=null;S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
+  [["finance","finance"],["adcalc","adcalc"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{S[k]=x.exists?x.data():null;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
   unsubs.push(S.db.collection(`clients/${id}/associations`).onSnapshot(x=>{S.assocs=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
 S.audRun={running:false,error:null,ctl:null};S.innRun={running:false,error:null,ctl:null};
@@ -4850,6 +4968,7 @@ let tt;function toast(m){const t=document.getElementById("toast");t.textContent=
 
 /* ---------- events ---------- */
 const A={
+  saveCalc:()=>saveCalc(),
   view:b=>{const [v,t]=b.dataset.v.split(":");S.view=v;if(t)S.trendTab=t;S.menu=false;S.changeFor=null;S.confirm=null;render();window.scrollTo({top:0})},
   gate:b=>{S.gate=b.dataset.v;S.gateErr=null;render()},
   pwToggle:b=>{const i=b.parentElement.querySelector("input");i.type=i.type==="password"?"text":"password";b.setAttribute("aria-label",i.type==="password"?"Mostrar contraseña":"Ocultar contraseña")},
@@ -4999,6 +5118,7 @@ document.addEventListener("click",e=>{
 document.addEventListener("input",e=>{
   const el=e.target;const k=el.dataset?.draft;if(k)S.drafts[k]=el.value;
   if(el.dataset?.q&&S.quote){const f=el.dataset.q;S.quote[f]=el.type==="checkbox"?el.checked:el.value;if(f==="currency"||f==="iva")updateQuoteTotals()}
+  if(el.dataset?.cal){const t=el.type;const val=t==="checkbox"?el.checked:t==="text"?el.value:(el.value===""?"":Number(el.value));calSet(el.dataset.cal,val);calRefresh();return}
   if(el.dataset?.fin){S.finDraft={...(S.finDraft||{})};S.finDraft[el.dataset.fin]=el.value;S.finance={...(S.finance||{}),[el.dataset.fin]:el.value}}
   if(el.dataset?.fin&&el.type!=="range")finLive(el);if(el.dataset?.fin==="mktPct"){const lb=document.querySelector('label[for="fin-mktPct"]');if(lb)lb.textContent="Inversión en marketing: "+el.value+"% de la facturación";finLabels()}
   if(el.dataset?.alloc){const key=el.dataset.alloc;const cur={...DEF_ALLOC,...(S.finance?.alloc||{})};const tot=Object.values(cur).reduce((a,b)=>a+(+b||0),0)||100;const norm={};for(const q in cur)norm[q]=(+cur[q]||0)/tot*100;const v=Math.max(0,Math.min(100,Number(el.value)));const rest=Object.keys(norm).filter(q=>q!==key);const rs=rest.reduce((a,q)=>a+norm[q],0);const al={[key]:v};rest.forEach(q=>al[q]=rs>0?norm[q]/rs*(100-v):(100-v)/rest.length);for(const q in al)al[q]=Math.round(al[q]*10)/10;S.finance={...(S.finance||{}),alloc:al};S.finDraft={...(S.finDraft||{}),alloc:al};document.querySelectorAll("[data-alloc]").forEach(r=>{if(r!==el)r.value=al[r.dataset.alloc]});finLabels()}
