@@ -1294,7 +1294,7 @@ const S={
   trendTab:"sector", postView:"cards", varTab:{}, slideIx:{}, showNewDeal:false, showNewMetric:false, geoManual:false, geoRun:{running:false,error:null,ctl:null}, importMsg:null,
   planRun:{running:false,error:null}, finance:null, finDraft:null, investPlan:null, invRun:{running:false,error:null}, events:[], assocs:[], evScope:"all", showNewEv:false, webaudit:null, webRun:{running:false,error:null}, site:null, siteRun:{running:false,error:null}, siteSecs:null, mcp:null, audience:null, audRun:{running:false,error:null,ctl:null}, audTab:"personas", innovation:null, innRun:{running:false,error:null,ctl:null}, camps:[], campOpen:null, campRun:{running:false,error:null,ctl:null}, campLogos:[], strategy:null, stratRun:{running:false,error:null,ctl:null}, reply:{running:false,error:null,options:null,ctl:null}, ads:[], adGen:{running:false,error:null,res:null,ctl:null}, showNewAd:false, showAdGen:false, bestTimes:null, calNet:"all", sankeyBy:"count",
   month:monthKey(new Date()), week:mondayOf(new Date()),
-  drafts:{}, pf:"all", sf:"all", changeFor:null, confirm:null, showNewPost:false, showGen:false, openCap:{}, showNewComp:false,
+  drafts:{}, pf:"all", sf:"all", mf:null, changeFor:null, confirm:null, showNewPost:false, showGen:false, openCap:{}, showNewComp:false,
   chat:{}, gen:{running:false,results:null,error:null,ctl:null},
   mail:{running:false,error:null,ctl:null}, quote:null, profiles:{}, people:[], lposts:[], pSel:null, pTab:"content", showNewPerson:false, busyX:null,
   theme:lsGet("bl-theme"), range:"1M", welcome:false, gate:"loading"
@@ -1903,18 +1903,24 @@ function trendsMini(){
 function postToolbar(c,counts){
   const B0=S.posts.filter(p=>!p.campaign);const sc={all:B0.length};Object.keys(STATUS).forEach(k=>sc[k]=B0.filter(p=>p.status===k).length);
   const chs=CHANNELS.filter(ch=>counts[ch]||S.pf===ch);
+  const mk=postMonths(),mfv=curMF();
   const art=S.posts.length?`<button class="ptb-art" data-act="dzGal" title="Ver estilos de diseño">${ic("spark")}<span>Dirección de arte: <b>${esc((c.dzStyle&&DZ_STYLES[c.dzStyle])?DZ_STYLES[c.dzStyle].name:"Automático")}</b> · ${Number(c.dzH)===1440?"3:4":"4:5"}</span></button>`:"";
   return `<section class="ptb">
    <div class="ptb-top"><div class="seg" role="group" aria-label="Vista"><button data-act="postView" data-v="cards" aria-pressed="${S.postView!=="grid"}">Tarjetas</button><button data-act="postView" data-v="grid" aria-pressed="${S.postView==="grid"}">Parrilla (tabla)</button></div>
     <span class="spacer"></span>${art}
     <details class="ptb-more"><summary class="btn sm" aria-label="Importar o descargar">CSV ${ic("chev")}</summary><div class="ptb-menu">${S.canWrite?`<label for="csv-in" style="cursor:pointer">Importar parrilla (.csv)</label><input type="file" id="csv-in" accept=".csv,text/csv" hidden>`:""}<button data-act="exportCSV" ${S.dl&&S.posts.length?"":"disabled"}>Descargar parrilla (.csv)</button></div></details></div>
+   <div class="ptb-row"><span class="ptb-l">Mes</span><div class="chips" role="group" aria-label="Mes">${mk.keys.map(k=>`<button data-act="mf" data-v="${k}" aria-pressed="${mfv===k}">${esc(monthLabel(k))} <em>${mk.n[k]}</em></button>`).join("")}${mk.nod?`<button data-act="mf" data-v="none" aria-pressed="${mfv==="none"}">Sin fecha <em>${mk.nod}</em></button>`:""}<button data-act="mf" data-v="all" aria-pressed="${mfv==="all"}">Todos <em>${mk.all}</em></button></div></div>
    <div class="ptb-row"><span class="ptb-l">Canal</span><div class="chips" role="group" aria-label="Canal"><button data-act="pf" data-v="all" aria-pressed="${S.pf==="all"}">Todos <em>${counts.all}</em></button>${chs.map(ch=>`<button data-act="pf" data-v="${ch}" aria-pressed="${S.pf===ch}" style="${chVar(ch)}"><i class="dot"></i>${esc(chLabel(ch))} <em>${counts[ch]}</em></button>`).join("")}</div></div>
    <div class="ptb-row"><span class="ptb-l">Estado</span><div class="chips" role="group" aria-label="Estado"><button data-act="sf" data-v="all" aria-pressed="${S.sf==="all"}">Todos <em>${sc.all}</em></button>${Object.entries(STATUS).map(([k,v])=>`<button data-act="sf" data-v="${k}" aria-pressed="${S.sf===k}" class="sfc st-${k}" ${sc[k]||S.sf===k?"":"disabled"}><i class="sd"></i>${v} <em>${sc[k]}</em></button>`).join("")}</div></div>
   </section>`;
 }
+/* Separación de la parrilla por mes (según la fecha de cada pieza) */
+function postMonths(){const base=S.posts.filter(p=>!p.campaign);const n={};let nod=0;base.forEach(p=>{const k=String(p.date||"").slice(0,7);if(/^\d{4}-\d{2}$/.test(k))n[k]=(n[k]||0)+1;else nod++});const nowK=ymdL(new Date()).slice(0,7);if(!n[nowK])n[nowK]=0;return {keys:Object.keys(n).sort(),n,nod,all:base.length}}
+function curMF(){if(S.mf)return S.mf;const mk=postMonths();const nowK=ymdL(new Date()).slice(0,7);return nowK}
 function viewPosts(c){
   const base=S.posts.filter(p=>!p.campaign);const counts={all:base.length};const onNet=(p,ch)=>p.channel===ch||(p.variants||[]).some(v=>v.network===ch);CHANNELS.concat(["TikTok"]).forEach(ch=>counts[ch]=base.filter(p=>onNet(p,ch)).length);
-  let ps=base.filter(p=>(S.pf==="all"||onNet(p,S.pf))&&(S.sf==="all"||p.status===S.sf));
+  const mfv=curMF();const inM=p=>mfv==="all"||(mfv==="none"?!p.date:String(p.date||"").slice(0,7)===mfv);
+  let ps=base.filter(p=>inM(p)&&(S.pf==="all"||onNet(p,S.pf))&&(S.sf==="all"||p.status===S.sf));
   ps=[...ps].sort((a,b)=>(a.status==="pending"?0:1)-(b.status==="pending"?0:1)||(b.createdAt||0)-(a.createdAt||0));
   return `<section class="greet"><div class="hello"><h1>Parrilla diaria</h1><p class="sub">Lo que ${esc(c.name)} publica en el día a día en la web y redes. Aprueba, pide cambios o crea piezas nuevas con IA.${hasMC()?` Las piezas de la masterclass están en su propia sección.`:""}</p></div>
    ${S.canWrite?`<button class="btn lg" data-act="toggleGen" ${S.sample&&!S.sampleOff?"":"disabled"}>${ic("spark")} Crear con IA</button>`:""}</section>
@@ -1925,7 +1931,7 @@ function viewPosts(c){
    ${postToolbar(c,counts)}
    ${S.posts.length&&S.dzGalOpen?styleGallery(c):""}
    ${S.importMsg?`<p class="hint">${esc(S.importMsg)}</p>`:""}
-   ${ps.length?(S.postView==="grid"?parrillaTable(ps):groupedCards(ps,c)):emptyBox(S.posts.length?"Ningún post con estos filtros":"Aún no hay posts",S.posts.length?"Cambia el canal o el estado para ver más.":"Crea el primero con el botón Crear con IA o Nuevo post.")}`;
+   ${ps.length?(S.postView==="grid"?parrillaTable(ps):groupedCards(ps,c)):emptyBox(S.posts.length?"Ningún post con estos filtros":"Aún no hay posts",S.posts.length?"Cambia el mes, el canal o el estado para ver más.":"Crea el primero con el botón Crear con IA o Nuevo post.")}`;
 }
 
 /* ---------- parrilla: piece formats & renderer ---------- */
@@ -5120,9 +5126,9 @@ const A={
   spSel:el=>{S.spSel=el.dataset.v;render()},
   compMap:el=>{S.compMap=el.dataset.v;render()},
   toggleComp:()=>{S.showNewComp=!S.showNewComp;render()},
-  pf:b=>{S.pf=b.dataset.v;render()}, sf:b=>{S.sf=b.dataset.v;render()},
+  pf:b=>{S.pf=b.dataset.v;render()}, sf:b=>{S.sf=b.dataset.v;render()}, mf:b=>{S.mf=b.dataset.v;render()},
   cap:b=>{S.openCap[b.dataset.id]=!S.openCap[b.dataset.id];render()},
-  goPost:b=>{S.view="posts";S.pf="all";S.sf="all";render();document.getElementById("post-"+b.dataset.id)?.scrollIntoView({block:"center"})},
+  goPost:b=>{S.view="posts";S.pf="all";S.sf="all";S.mf="all";render();document.getElementById("post-"+b.dataset.id)?.scrollIntoView({block:"center"})},
   status:b=>{const s=b.dataset.s;write(()=>col("posts").doc(b.dataset.id).update({status:s,decidedAt:Date.now(),decidedBy:myId()}),s==="approved"?"Post aprobado":"Marcado como publicado")},
   askChg:b=>{S.changeFor=b.dataset.id;render();document.getElementById("chg-"+b.dataset.id)?.focus()},
   cancelChg:()=>{S.changeFor=null;render()},
