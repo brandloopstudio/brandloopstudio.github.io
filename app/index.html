@@ -1957,7 +1957,7 @@ function viewPosts(c){
   const base=S.posts.filter(p=>!p.campaign);const counts={all:base.length};const onNet=(p,ch)=>p.channel===ch||(p.variants||[]).some(v=>v.network===ch);CHANNELS.concat(["TikTok"]).forEach(ch=>counts[ch]=base.filter(p=>onNet(p,ch)).length);
   const mfv=curMF();const inM=p=>mfv==="all"||(mfv==="none"?!p.date:String(p.date||"").slice(0,7)===mfv);
   let ps=base.filter(p=>inM(p)&&(S.pf==="all"||onNet(p,S.pf))&&(S.sf==="all"||p.status===S.sf));
-  ps=[...ps].sort((a,b)=>(a.status==="pending"?0:1)-(b.status==="pending"?0:1)||(b.createdAt||0)-(a.createdAt||0));
+  ps=[...ps].sort((a,b)=>String(a.date||"9999").localeCompare(String(b.date||"9999"))||(a.createdAt||0)-(b.createdAt||0));
   return `<section class="greet"><div class="hello"><h1>Parrilla diaria</h1><p class="sub">Lo que ${esc(c.name)} publica en el día a día en la web y redes. Aprueba, pide cambios o crea piezas nuevas con IA.${hasMC()?` Las piezas de la masterclass están en su propia sección.`:""}</p></div>
    ${S.canWrite?`<button class="btn lg" data-act="toggleGen" ${S.sample&&!S.sampleOff?"":"disabled"}>${ic("spark")} Crear con IA</button>`:""}</section>
    ${V.user?.role==="admin"?inboxBar(c):""}
@@ -4052,7 +4052,7 @@ function postAdCard(p){const a=p.ad;if(!a)return "";const L=x=>Array.isArray(x)?
    ${L(au.behaviors).length?`<span class="lbl">Cargos, comportamientos y datos demográficos</span><div class="ad-tags">${au.behaviors.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>`:""}
    ${a.kpi?`<p><b>Cómo se mide:</b> ${esc(a.kpi)}</p>`:""}${a.stop?`<p><b>Cuándo apagarlo:</b> ${esc(a.stop)}</p>`:""}`:""}</div></details>`}
 function postTags(p){const t=p.temp?psTempPill(p.temp):"";const ct=p.ctype&&CT_TYPES[p.ctype]?`<span class="chip">${CT_TYPES[p.ctype]}</span>`:"";const pa=p.ad?`<span class="chip" style="${p.ad.pautar?"background:var(--ink);color:var(--canvas)":""}">${p.ad.pautar?"Se pauta":"Solo orgánico"}</span>`:"";return (t||ct||pa)?`<div class="row" style="gap:6px;flex-wrap:wrap;margin:4px 0">${t}${ct}${pa}</div>`:""}
-function pautaPosts(c){const ps=S.posts.filter(p=>p.ad).sort((a,b)=>(a.date||"9")<(b.date||"9")?-1:1);const groups=[["frío","Frío"],["tibio","Tibio"],["caliente","Caliente"],["","Sin temperatura"]];
+function pautaPosts(c){const ps=S.posts.filter(p=>p.ad).sort((a,b)=>(a.date||"9")<(b.date||"9")?-1:1);const groups=[["frío","Para quien todavía no conoce la marca"],["tibio","Para quien ya conoce la marca"],["caliente","Para quien está listo para comprar"],["","Sin clasificar"]];
   if(!ps.length)return emptyBox("Aún no hay piezas clasificadas para pauta","Cuando el agente de pauta revise la parrilla, cada pieza aparece aquí con su temperatura y su ficha para Meta.");
   return groups.map(([k,l])=>{const g=ps.filter(p=>(p.temp||"")===k);if(!g.length)return "";return `<article class="panel"><div class="ph"><div class="t"><h2>${k?psTempPill(k):""} ${esc(l)}</h2><span class="s">${g.filter(p=>p.ad.pautar).length} para pautar · ${g.length} piezas</span></div></div><div class="ps-rows">${g.map(p=>`<div class="ps-row inner"><div class="ps-rh"><div class="ps-rt"><h3>${esc(p.title||"")}</h3><div class="ps-meta"><span>${esc(p.date?fmtD(p.date):"")}</span><span>${esc(p.format||"")}</span>${p.ctype?`<span>${esc(CT_TYPES[p.ctype]||"")}</span>`:""}<span>${p.ad.pautar?"Se pauta":"Solo orgánico"}</span></div></div>${p.ad.pautar&&p.ad.budget?`<span class="ps-amt">${esc(p.ad.budget)}</span>`:""}</div>${postAdCard(p)}</div>`).join("")}</div></article>`}).join("")}
 
