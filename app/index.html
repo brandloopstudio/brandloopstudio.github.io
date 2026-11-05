@@ -2711,6 +2711,9 @@ function personContent(p,c){
    <div class="row" style="justify-content:space-between;align-items:center"><div class="filters" role="group" aria-label="Estado">${[["queue","En cola"],["published","Publicados"],["all","Todos"]].map(([k,l])=>`<button data-act="lpFilter" data-v="${k}" aria-pressed="${st===k}">${l} · ${k==="all"?all.length:k==="published"?all.filter(x=>x.status==="published").length:all.filter(x=>x.status!=="published").length}</button>`).join("")}</div></div>
    ${list.length?`<div class="li-feed">${list.map(x=>liCard(x,p,c)).join("")}</div>`:emptyBox(st==="published"?"Aún no hay publicaciones marcadas como publicadas":"No hay publicaciones en cola","Genera ideas con IA arriba; quedan aquí para revisar, editar y aprobar.")}`;
 }
+function blLiMedia(x){const ok=u=>typeof u==="string"&&u.startsWith((window.BL_SB_URL||"")+"/storage/v1/object/public/assets/");
+  const img=ok(x.image)?x.image:"";const pdf=ok(x.pdf)?x.pdf:"";if(!img&&!pdf)return "";const nm=String(x.title||"publicacion").replace(/[^\wáéíóúñÁÉÍÓÚÑ -]/g,"").trim()||"publicacion";
+  return `<div class="li-media">${img?`<img src="${esc(img)}" alt="" style="width:100%;display:block;border-radius:6px;margin:8px 0">`:""}<div class="row" style="gap:6px;flex-wrap:wrap;margin:6px 0">${img?`<a class="btn sm" href="${esc(img)}?download=${encodeURIComponent(nm+".png")}" target="_blank" rel="noopener">Descargar imagen</a>`:""}${pdf?`<a class="btn sm" href="${esc(pdf)}?download=${encodeURIComponent(nm+" - LinkedIn.pdf")}" target="_blank" rel="noopener">Descargar PDF (LinkedIn)</a>`:""}</div></div>`}
 function liCard(x,p,c){
   const w=S.canWrite;const open=S.openCap[x.id];const ed=S.lpEdit===x.id;const txt=String(x.text||"");const long=txt.length>LP_FOLD;
   const body=ed?`<form data-form="lpEdit" data-id="${esc(x.id)}" class="li-ed"><textarea id="lpe-${esc(x.id)}" data-draft="lpe-${esc(x.id)}" rows="12">${esc(S.drafts["lpe-"+x.id]??txt)}</textarea><div class="row"><button class="btn ink sm">Guardar</button><button type="button" class="btn ghost sm" data-act="lpEditCancel">Cancelar</button><span class="hint" style="margin-left:auto">${(S.drafts["lpe-"+x.id]??txt).length} / 3000</span></div></form>`
@@ -2720,7 +2723,7 @@ function liCard(x,p,c){
    <div class="li-top"><span class="pill st-${esc(x.status)}">${esc(STATUS[x.status]||x.status)}</span><span class="chip">${esc((LP_TYPES.find(t=>t[0]===x.type)||[,"Publicación"])[1])}</span>${x.date?`<span class="hint">${esc(fmtD(x.date))}</span>`:""}</div>
    <div class="li-post"><div class="li-h">${pAvatar(p,c)}<div><b>${esc(p.name)}</b><span>${esc(p.kit?.headline||[p.role,c.name].filter(Boolean).join(" en "))}</span><span>${x.date?esc(fmtD(x.date)):"Ahora"} · ${ic("eye","i li-gl")}</span></div></div>
     ${body}
-    ${x.visual?`<div class="li-vis"><b>${x.type==="carrusel"?"Documento / carrusel":"Imagen sugerida"}</b>${esc(x.visual)}</div>`:""}
+    ${blLiMedia(x)||(x.visual?`<div class="li-vis"><b>${x.type==="carrusel"?"Documento / carrusel":"Imagen sugerida"}</b>${esc(x.visual)}</div>`:"")}
     ${x.type==="encuesta"&&(x.poll||[]).length?`<div class="li-poll">${x.poll.map(o=>`<span>${esc(o)}</span>`).join("")}</div>`:""}
     <div class="li-bar" aria-hidden="true"><span>Recomendar</span><span>Comentar</span><span>Compartir</span><span>Enviar</span></div></div>
    ${x.comment?`<div class="note"><b>Cambios pedidos:</b> ${esc(x.comment)}</div>`:""}
