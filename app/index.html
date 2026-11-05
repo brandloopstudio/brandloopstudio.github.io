@@ -3832,7 +3832,7 @@ function viewInvest(c){
   const health=k.ratio==null?null:k.ratio>=3?["Sano","var(--ok)"]:k.ratio>=1?["Ajustado","var(--warn)"]:["En riesgo","var(--bad)"];
   const evGo=S.events.filter(e=>e.status==="ir").reduce((a,e)=>a+(Number(e.estCost)||0),0);
   const asGo=S.assocs.filter(e=>e.status==="ir").reduce((a,e)=>a+(Number(e.estCost)||0),0);
-  const num=(id,label,val,ph,suf)=>`<div class="field"><label for="${id}">${label}</label><input type="number" min="0" step="any" id="${id}" data-fin="${id.slice(3)}" value="${val==null||val===0&&!S.finance?.[id.slice(3)]?"":esc(val)}" placeholder="${ph||""}" ${w?"":"disabled"}>${suf?`<span class="hint">${suf}</span>`:""}</div>`;
+  const num=(id,label,val,ph,suf)=>`<div class="field"><label for="${id}">${label}</label><input type="number" min="0" step="any" id="${id}" data-fin="${id.slice(4)}" value="${val==null||val===0&&!S.finance?.[id.slice(4)]?"":esc(val)}" placeholder="${ph||""}" ${w?"":"disabled"}>${suf?`<span class="hint">${suf}</span>`:""}</div>`;
   const pct=f.mktPct??8;const adsShare=(Number(f.alloc.ads)||0)/k.totA;const rev=Number(f.revenue)||0;
   const pRec=rev?rev*pct/100*adsShare:null;const pLo=rev?rev*.05*adsShare:null;const pHi=rev?rev*.12*adsShare:null;
   const calP=S.adcalc&&Number(S.adcalc.budget)>0?Number(S.adcalc.budget):null;
