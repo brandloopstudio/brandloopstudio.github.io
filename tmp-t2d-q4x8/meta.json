@@ -1,0 +1,456 @@
+[
+{
+"id": 1,
+"title": "Scattered tools. Silent costs.",
+"serie": "The problem",
+"date": "2026-11-09",
+"ig": "Most companies are not short on software. They are short on software that talks. The cost never shows up as a line item: it shows up as re-typing, approvals stuck in inboxes and three days to close the month.",
+"li": "Most companies are not short on software. They are short on software that talks.\n\nThe cost hides in four places: the same customer typed into three systems, approvals living in someone's inbox, month-end reports that take days, and licenses nobody uses.\n\nNobody budgets for it. Everybody pays for it.\n\nBook your Tech Stack Diagnostic: turn2digital.com",
+"tags": "#TechIntegration #BusinessOperations #DigitalTransformation #SMB #Guatemala",
+"dir": "T2D_01_Scattered_tools_Silent_costs",
+"n": 4,
+"temp": "frío",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 2,
+"title": "Seven signs you run on duct tape",
+"serie": "The problem",
+"date": "2026-11-11",
+"ig": "Seven signs your company runs on duct tape. Three or more? It's not your team. It's your stack.",
+"li": "Seven signs your company runs on duct tape:\n\n1. The same data, typed twice\n2. Excel is the real system\n3. Approvals live in email\n4. Month-end takes days\n5. Two tools doing the same job\n6. One person knows how it all works\n7. Nobody trusts the numbers\n\nThree or more? It's not your team. It's your stack.\n\nTake the scorecard: turn2digital.com",
+"tags": "#TechStack #Operations #ProcessAutomation #SMB #Integration",
+"dir": "T2D_02_Seven_signs_you_run_on_duct_tape",
+"n": 5,
+"temp": "frío",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 3,
+"title": "The re-typing math",
+"serie": "The problem",
+"date": "2026-11-13",
+"ig": "The math of typing it again: 5 people × 6 hours a week × 52 weeks = 1,560 hours a year spent copying, not deciding. (Illustrative example.)",
+"li": "The math of typing it again.\n\nIllustrative example: 5 people re-typing the same data, 6 hours each per week, 52 weeks a year.\n\n1,560 hours. Almost a full-time salary spent moving data from one screen to another.\n\nRun the numbers on your own stack with our scorecard: turn2digital.com",
+"tags": "#Productivity #ProcessAutomation #Operations #TechIntegration #SMB",
+"dir": "T2D_03_The_re_typing_math",
+"n": 5,
+"temp": "frío",
+"ctype": "educativo",
+"ad": {
+"pautar": true,
+"platform": "LinkedIn Ads",
+"placements": "Feed de LinkedIn, anuncio de documento (el PDF del carrusel). Sin Audience Network.",
+"schedule": "Lunes a jueves, 7:00–10:00 y 12:00–14:00 (hora de Guatemala).",
+"why": "Lleva al scorecard: es el paso tibio de la estrategia de pauta.",
+"objective": "Generación de leads con formulario nativo: \"Recibe tu resultado del scorecard\"",
+"budget": "Q900 · 24 de noviembre al 7 de diciembre (propuesta por aprobar)",
+"audience": {
+"locations": "Guatemala (Ciudad de Guatemala y área metropolitana)",
+"age": "Antigüedad: Dueño, Director, Gerente, VP, C-level",
+"advantage": "Audience Expansion apagada",
+"exclude": "Empleados de T2D, clientes actuales y competidores",
+"interests": [
+"Gestión de operaciones",
+"Transformación digital",
+"Software empresarial",
+"Automatización de procesos"
+],
+"behaviors": [
+"Retargeting: abrieron el documento de las 103 aplicaciones",
+"Tamaño de empresa: 11 a 200 empleados",
+"Funciones: Dirección general, Operaciones, Finanzas"
+]
+},
+"kpi": "Costo por scorecard completado.",
+"stop": "Si a los 7 días hay menos de 3 scorecards, pasar el monto al anuncio del Diagnostic."
+}
+},
+{
+"id": 4,
+"title": "From 29 to 103 apps",
+"serie": "The market",
+"date": "2026-11-16",
+"ig": "Companies go from 29 SaaS apps in their first years to 103 as they grow (BetterCloud, via Spendesk). Growth adds tools. It rarely adds connections.",
+"li": "From 29 to 103.\n\nThat's how many SaaS apps a company runs between its first two years and years three to six (BetterCloud, via Spendesk).\n\nGrowth adds tools: a CRM for sales, a board for projects, a chat for customers. What nobody buys is the link between them, one source of truth, and someone who owns the whole picture.\n\nMore tools is not the problem. Tools that don't agree is.\n\nBook your Tech Stack Diagnostic: turn2digital.com",
+"tags": "#SaaS #TechStack #DigitalTransformation #Integration #BusinessGrowth",
+"dir": "T2D_04_From_29_to_103_apps",
+"n": 4,
+"temp": "frío",
+"ctype": "educativo",
+"ad": {
+"pautar": true,
+"platform": "LinkedIn Ads",
+"placements": "Feed de LinkedIn, anuncio de documento (el PDF del carrusel). Sin Audience Network.",
+"schedule": "Lunes a jueves, 7:00–10:00 y 12:00–14:00 (hora de Guatemala).",
+"why": "El dato de las 103 aplicaciones (BetterCloud) es el gancho frío de la estrategia de pauta: nombra el problema sin vender.",
+"objective": "Interacción con anuncio de documento",
+"budget": "Q600 · 16 al 29 de noviembre (propuesta por aprobar)",
+"audience": {
+"locations": "Guatemala (Ciudad de Guatemala y área metropolitana)",
+"age": "Antigüedad: Dueño, Director, Gerente, VP, C-level",
+"advantage": "Audience Expansion apagada",
+"exclude": "Empleados de T2D, clientes actuales y competidores",
+"interests": [
+"Gestión de operaciones",
+"Transformación digital",
+"Software empresarial",
+"Automatización de procesos"
+],
+"behaviors": [
+"Tamaño de empresa: 11 a 200 empleados",
+"Funciones: Dirección general, Operaciones, Finanzas, Tecnología",
+"Industrias: Distribución, Servicios profesionales, Salud, Logística, Comercio"
+]
+},
+"kpi": "CTR arriba de 0.6% y costo por interacción; con quienes abran el documento se arma el retargeting.",
+"stop": "Si a los 7 días el CTR está debajo de 0.35%, cambiar la primera página del documento."
+}
+},
+{
+"id": 5,
+"title": "Assessment first. Tool second.",
+"serie": "How we work",
+"date": "2026-11-18",
+"ig": "Assessment first. Tool second. We start with your problem, not with a platform. Not even the ones we sell.",
+"li": "Assessment first. Tool second.\n\nThe T2D process:\n→ Assess your operation, your tech and your maturity\n→ Recommend the architecture and the tools that fit\n→ Implement: integrate, automate, deliver\n→ Optimize: measure, improve, repeat\n\nNo platform by default. Not even the ones we sell.\n\nYou bring the business challenge. We build the ecosystem.",
+"tags": "#TechConsulting #Integration #DigitalTransformation #Operations #LATAM",
+"dir": "T2D_05_Assessment_first_Tool_second",
+"n": 4,
+"temp": "tibio",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 6,
+"title": "What a Tech Stack Diagnostic includes",
+"serie": "How we work",
+"date": "2026-11-20",
+"ig": "What a Tech Stack Diagnostic includes: survey, stack scan, gaps and route, and an Integration Blueprint that is yours, whether you build it with us or not.",
+"li": "What a Tech Stack Diagnostic actually includes:\n\n1. Survey: your company answers the scorecard\n2. Stack scan: tools, users, manual hand-offs and costs\n3. Gaps and route: where time is lost and what architecture fits, using The Greenlight\n4. Integration Blueprint: a phased plan\n\nThe Blueprint is yours. Build it with us or not.\n\nBook your Tech Stack Diagnostic: turn2digital.com",
+"tags": "#TechStack #Integration #ITStrategy #Operations #SMB",
+"dir": "T2D_06_What_a_Tech_Stack_Diagnostic_includes",
+"n": 4,
+"temp": "tibio",
+"ctype": "convincente",
+"ad": {
+"pautar": true,
+"platform": "LinkedIn Ads (retargeting)",
+"placements": "Feed de LinkedIn, anuncio de documento (el PDF del carrusel). Sin Audience Network.",
+"schedule": "Lunes a jueves, 7:00–10:00 y 12:00–14:00 (hora de Guatemala).",
+"why": "Retargeting a quien ya interactuó, con un solo llamado: agendar el Tech Stack Diagnostic. Reemplaza el anuncio del caso de la aseguradora, que no tiene cifra respaldada.",
+"objective": "Generación de leads con formulario nativo: \"Agenda tu Tech Stack Diagnostic\"",
+"budget": "Q900 · 28 de noviembre al 11 de diciembre (propuesta por aprobar)",
+"audience": {
+"locations": "Guatemala (Ciudad de Guatemala y área metropolitana)",
+"age": "Antigüedad: Dueño, Director, Gerente, VP, C-level",
+"advantage": "Audience Expansion apagada",
+"exclude": "Empleados de T2D, clientes actuales y competidores",
+"interests": [
+"Gestión de operaciones",
+"Transformación digital",
+"Software empresarial",
+"Automatización de procesos"
+],
+"behaviors": [
+"Retargeting: visitaron la página de LinkedIn de T2D",
+"Retargeting: abrieron un carrusel o el scorecard",
+"Abrieron el formulario y no lo enviaron"
+]
+},
+"kpi": "Costo por Diagnostic agendado (métrica norte).",
+"stop": "Si la audiencia tiene menos de 300 miembros, LinkedIn no la deja lanzar: sumar la lista de cuentas A de la prospección."
+}
+},
+{
+"id": 7,
+"title": "The Greenlight: five filters",
+"serie": "The Greenlight",
+"date": "2026-11-23",
+"ig": "Before we recommend any platform, it has to pass five filters: The Edge, The Backbone, The Shield, The Fit and The Door. Technology-agnostic. Never technology-indifferent.",
+"li": "The Greenlight: five filters before we recommend anything.\n\nThe Edge: a real, proprietary advantage.\nThe Backbone: cloud-native, real APIs, built to connect.\nThe Shield: compliance for your industry.\nThe Fit: economics sized for companies of 10 to 250 people.\nThe Door: reciprocal value.\n\nOnly what passes all five gets Greenlit. We only recommend what we would buy ourselves.\n\nTechnology-agnostic. Never technology-indifferent.",
+"tags": "#TheGreenlight #SoftwareSelection #TechStack #Integration #Turn2Digital",
+"dir": "T2D_07_The_Greenlight_five_filters",
+"n": 4,
+"temp": "tibio",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 8,
+"title": "Five questions before you buy another software",
+"serie": "The Greenlight",
+"date": "2026-11-25",
+"ig": "Five questions before you buy another software. If one answer is no, it doesn't go in.",
+"li": "Five questions before you buy another software:\n\n1. What does it do that nobody else does?\n2. Can it connect without custom code?\n3. Does it meet the rules of your industry?\n4. Is it sized for a company like mine?\n5. Does it make the rest of my stack better?\n\nIf one answer is no, it doesn't go in.\n\nWant a second opinion before you sign? Book your Tech Stack Diagnostic: turn2digital.com",
+"tags": "#SoftwareSelection #SaaS #TechStack #Procurement #SMB",
+"dir": "T2D_08_Five_questions_before_you_buy_another_software",
+"n": 5,
+"temp": "frío",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 9,
+"title": "We resell only what earns the Greenlight",
+"serie": "Behind T2D",
+"date": "2026-11-27",
+"ig": "We resell only what earns the Greenlight. And we answer for it: we integrate it and stay to run it.",
+"li": "Two ways to sell software.\n\nA single-brand reseller has one platform for every problem. The answer is decided before the meeting.\n\nAt T2D we diagnose first, recommend second, and only resell platforms that pass The Greenlight. Then we integrate them with what you already have and stay until it works.\n\nWe don't sell every tool. We sell the ones that earn it.",
+"tags": "#TechPartners #Reseller #Integration #TheGreenlight #TechStack",
+"dir": "T2D_09_We_resell_only_what_earns_the_Greenlight",
+"n": 4,
+"temp": "tibio",
+"ctype": "convincente",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 10,
+"title": "Automation and AI: the core",
+"serie": "The stack",
+"date": "2026-11-30",
+"ig": "Conversation, process, AI and management, connected from day one: Gina, Cloud Workflow, Cyntia, ElevenLabs, Docs Studio and monday.com.",
+"li": "The core of a connected operation.\n\nGina: omnichannel messaging with AI.\nCloud Workflow: no-code process automation.\nCyntia: AI data validation.\nElevenLabs: voice AI.\nDocs Studio: documents and OCR at scale.\nmonday.com: work management and CRM.\n\nEach one Greenlit. All of them integrated.\n\nWhich of these is your stack missing?",
+"tags": "#ProcessAutomation #AI #Omnichannel #NoCode #mondaycom",
+"dir": "T2D_10_Automation_and_AI_the_core",
+"n": 4,
+"temp": "tibio",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 11,
+"title": "Industry-ready platforms",
+"serie": "The stack",
+"date": "2026-12-02",
+"ig": "Platforms built for your industry, integrated with the rest of your stack: IsiCare, Paylink, BEX, Rest-touch, Workly and IVO.",
+"li": "Vertical platforms, integrated with the rest of your stack:\n\nIsiCare: clinics, labs and hospitals.\nPaylink: payments, POS and payment links.\nBEX: real estate projects, from lead to keys.\nRest-touch: restaurant control.\nWorkly: HR process automation.\nIVO: field teams and trade marketing.\n\nTell us your industry. We'll show you the stack.",
+"tags": "#IndustrySolutions #HealthTech #Fintech #PropTech #HRTech",
+"dir": "T2D_11_Industry_ready_platforms",
+"n": 4,
+"temp": "tibio",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 12,
+"title": "AI that works: connect first",
+"serie": "Intelligence Suite",
+"date": "2026-12-04",
+"ig": "AI on disconnected systems gives you faster wrong answers. Integration first. Then the Suite.",
+"li": "AI on disconnected systems just gives you faster wrong answers.\n\nAI as one more island: a chatbot that doesn't see your CRM, an assistant with old data, one more tool to maintain.\n\nAI on a connected stack reads the same data as your team and acts inside your processes.\n\nThat's why the T2D Intelligence Suite (Lens, Avatar, CoPilot and Omnichannel) comes after integration, not before.\n\nConnect first. Then automate.",
+"tags": "#ArtificialIntelligence #AIStrategy #Integration #Automation #IntelligenceSuite",
+"dir": "T2D_12_AI_that_works_connect_first",
+"n": 4,
+"temp": "tibio",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 13,
+"title": "Lens: audit every interaction",
+"serie": "Intelligence Suite",
+"date": "2026-12-07",
+"ig": "Lens audits 100% of your customer interactions. Not a 2% sample. Powered by Cyntia, a Greenlit partner.",
+"li": "Quality control, two ways.\n\nA supervisor with headphones listens to a handful of calls and finds problems weeks later.\n\nLens by T2D reviews every interaction: script compliance, sentiment, security policy, sales opportunities and resolution. It flags what needs attention, so coaching runs on evidence.\n\nAudit 100%. Not a 2% sample.\n\nPowered by Cyntia, a Greenlit partner.",
+"tags": "#CustomerExperience #ContactCenter #QualityAssurance #AI #CX",
+"dir": "T2D_13_Lens_audit_every_interaction",
+"n": 4,
+"temp": "tibio",
+"ctype": "convincente",
+"ad": {
+"pautar": false,
+"why": "Producto de la Intelligence Suite: orgánico y para conversaciones de venta."
+}
+},
+{
+"id": 14,
+"title": "Before and after: from spreadsheets to a flow",
+"serie": "Integration in action",
+"date": "2026-12-09",
+"ig": "From scattered spreadsheets to one automated flow. Same people. Same tools. Finally working together.",
+"li": "Same process, before and after.\n\nCapture: typed by hand → captured once.\nApproval: chased by email → routed automatically.\nReport: built in Excel → live dashboard.\n\nSame people. Same tools. Finally working together.\n\nWhich process would you connect first?",
+"tags": "#ProcessAutomation #Workflow #Operations #Integration #Productivity",
+"dir": "T2D_14_Before_and_after_from_spreadsheets_to_a_flow",
+"n": 4,
+"temp": "tibio",
+"ctype": "inspiracional",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 15,
+"title": "PMO-as-a-Service",
+"serie": "Integration in action",
+"date": "2026-12-11",
+"ig": "A plan is not a result. Go-live is. Our PMO owns the plan, the vendors and the date.",
+"li": "Projects that actually finish.\n\nOur PMO-as-a-Service:\n→ Scope and governance: who decides, what and when\n→ Timeline and risks everyone can see\n→ Internal teams and vendors in one plan\n→ Weekly progress and impact for leadership\n\nOften run on monday.com and Cloud Workflow.\n\nA plan is not a result. Go-live is.",
+"tags": "#ProjectManagement #PMO #mondaycom #Execution #Operations",
+"dir": "T2D_15_PMO_as_a_Service",
+"n": 4,
+"temp": "tibio",
+"ctype": "convincente",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 16,
+"title": "Before we were Turn2Digital, we were you",
+"serie": "Behind T2D",
+"date": "2026-12-14",
+"ig": "Before we were Turn2Digital, we were you. So we built the company we wished we had hired.",
+"li": "Before we were Turn2Digital, we were you.\n\nWe ran operations on duct tape and hope. Great strategies, powerful tools, motivated teams, and a gap between intention and execution.\n\nSo we built the company we wished we had hired: one that diagnoses first, integrates, and stays until it works.\n\nBuilt on execution. Aimed beyond efficiency.",
+"tags": "#Turn2Digital #Leadership #Execution #Operations #LATAM",
+"dir": "T2D_16_Before_we_were_Turn2Digital_we_were_you",
+"n": 5,
+"temp": "tibio",
+"ctype": "inspiracional",
+"ad": {
+"pautar": false,
+"why": "Historia de marca: funciona mejor orgánica, compartida por Juan Carlos."
+}
+},
+{
+"id": 17,
+"title": "Your buyer asks AI first",
+"serie": "The market",
+"date": "2026-12-16",
+"ig": "51% of B2B software buyers now start in an AI chatbot, up from 29% a year earlier. 69% chose a different vendor because of what AI told them (G2, 2026).",
+"li": "Your next client asks AI first.\n\n51% of B2B software buyers start their search in an AI chatbot, up from 29% a year earlier. And 69% chose a different vendor because of what AI told them (G2, The Answer Economy, 2026).\n\nAI recommends who publishes clear, consistent answers.\n\nIs your company the answer?",
+"tags": "#AISearch #B2BMarketing #GEO #BuyerJourney #SoftwareBuying",
+"dir": "T2D_17_Your_buyer_asks_AI_first",
+"n": 4,
+"temp": "frío",
+"ctype": "educativo",
+"ad": {
+"pautar": false,
+"why": "Dato de mercado con fuente: mejor orgánico y para el LinkedIn de Ricardo."
+}
+},
+{
+"id": 18,
+"title": "The T2D Reseller Stack",
+"serie": "Partners",
+"date": "2026-12-18",
+"ig": "You know the customer. We know the stack. Become a T2D partner: sign, certify, sell, and earn recurring commission for as long as the client stays.",
+"li": "The T2D Reseller Stack.\n\nYou know the customer. We know the stack.\n\nIntegrated: one provider, one integrator, one contact.\nSupported: each platform's own vendor support.\nRecurring: commission for as long as the client stays.\nCo-branded marketing kits, ready to use.\n\nSign. Certify. Sell.\n\nTalk to our partner team: info@turn2digital.com",
+"tags": "#ResellerProgram #ChannelPartners #SaaS #RecurringRevenue #LATAM",
+"dir": "T2D_18_The_T2D_Reseller_Stack",
+"n": 4,
+"temp": "frío",
+"ctype": "convincente",
+"ad": {
+"pautar": true,
+"platform": "LinkedIn Ads",
+"placements": "Feed de LinkedIn, anuncio de documento (el PDF del carrusel). Sin Audience Network.",
+"schedule": "Lunes a jueves, 7:00–10:00 y 12:00–14:00 (hora de Guatemala).",
+"why": "El Reseller Stack es el modelo de negocio; esta pieza recluta socios revendedores.",
+"objective": "Generación de leads con formulario nativo: \"Quiero ser socio de T2D\"",
+"budget": "Q600 · 18 al 31 de diciembre (propuesta por aprobar)",
+"audience": {
+"locations": "Guatemala (Ciudad de Guatemala y área metropolitana)",
+"age": "Antigüedad: Dueño, Socio, Director",
+"advantage": "Audience Expansion apagada",
+"exclude": "Empleados de T2D, clientes actuales y competidores",
+"interests": [
+"Consultoría",
+"Desarrollo de negocios",
+"Ventas B2B",
+"Corretaje de seguros"
+],
+"behaviors": [
+"Cargos: Consultor independiente, Socio, Gerente comercial, Corredor de seguros",
+"Tamaño de empresa: 1 a 50 empleados",
+"Industrias: Consultoría, Seguros, Servicios de TI"
+]
+},
+"kpi": "Socios que piden el deck o agendan llamada.",
+"stop": "Si a los 7 días el CTR está debajo de 0.35%, cambiar la primera página del documento."
+}
+},
+{
+"id": 19,
+"title": "LATAM Speed. US Standards.",
+"serie": "Why T2D",
+"date": "2026-12-21",
+"ig": "LATAM Speed. US Standards. We don't promise transformation by 2030. We promise your tools will agree on reality next quarter.",
+"li": "Why T2D?\n\nAgnostic: diagnosis first, platform second.\nCurated: only what earns the Greenlight.\nIntegrated: we connect what you already have.\nAccountable: a PMO until it works.\n\nWe don't promise transformation by 2030. We promise your tools will agree on reality next quarter.\n\nLATAM Speed. US Standards.",
+"tags": "#Turn2Digital #TechIntegration #LATAM #DigitalTransformation #Execution",
+"dir": "T2D_19_LATAM_Speed_US_Standards",
+"n": 4,
+"temp": "caliente",
+"ctype": "convincente",
+"ad": {
+"pautar": false,
+"why": "Pieza orgánica de la serie; la pauta se concentra en el dato de mercado, el scorecard, el Diagnostic y el programa de socios."
+}
+},
+{
+"id": 20,
+"title": "How to start",
+"serie": "How to start",
+"date": "2026-12-23",
+"ig": "How to start: take the scorecard (2 minutes), book the Diagnostic, get your Blueprint, and build with us or not. Your call.",
+"li": "How to start:\n\n1. Take the scorecard: ten questions, two minutes\n2. Book the Tech Stack Diagnostic: we scan your stack\n3. Get your Integration Blueprint: a phased plan that is yours\n4. Build with us, or not. Your call.\n\nStop running your business on duct tape and hope.\n\nBook your Tech Stack Diagnostic: turn2digital.com",
+"tags": "#TechStack #Integration #SMB #DigitalTransformation #Turn2Digital",
+"dir": "T2D_20_How_to_start",
+"n": 5,
+"temp": "caliente",
+"ctype": "motivacional",
+"ad": {
+"pautar": true,
+"platform": "Meta Advantage+ (retargeting)",
+"placements": "Feed y Reels de Instagram y Facebook (sin Audience Network ni Messenger)",
+"schedule": "Todos los días, 7:00–9:00 y 18:00–21:00",
+"why": "Remarketing barato en Meta a quien ya visitó la web o vio los videos: el paso final hacia el scorecard y el Diagnostic.",
+"objective": "Tráfico a la página del scorecard",
+"budget": "Q400 · 23 al 31 de diciembre (propuesta por aprobar)",
+"audience": {
+"locations": "Guatemala",
+"age": "25–60",
+"advantage": "Advantage+ apagado: solo audiencias personalizadas",
+"exclude": "Clientes actuales",
+"interests": [],
+"behaviors": [
+"Visitaron turn2digital.com en 30 días (requiere el píxel)",
+"Vieron 50% o más de un video de T2D en 60 días"
+]
+},
+"kpi": "Costo por visita y scorecards completados.",
+"stop": "Si la audiencia tiene menos de 1,000 personas, no lanzar."
+}
+}
+]
