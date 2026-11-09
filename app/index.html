@@ -4320,7 +4320,7 @@ function viewStrategy(c){
   const st=S.strategy;const g=S.stratRun;
   const ai=S.sample&&!S.sampleOff&&S.canWrite;const Q=st?.quarter?{label:st.quarter,months:st.months||quarterOf().months,range:st.range||""}:quarterOf();
   const list=(st?.strategies||[]);const fa=S.stratArea||"all";const vis=list.map((x,i)=>({...x,_i:i})).filter(x=>fa==="all"||x.area===fa);
-  const areas=STRAT_AREAS.filter(([k])=>list.some(x=>x.area===k));
+  const areas=STRAT_AREAS.filter(([k])=>list.some(x=>x.area===k)).sort((a,b)=>list.findIndex(x=>x.area===a[0])-list.findIndex(x=>x.area===b[0]));
   const avg=list.length?Math.round(list.reduce((a,x)=>a+(Number(x.progress)||0),0)/list.length):0;
   return `<section class="greet"><div class="hello"><h1>Estrategia del trimestre</h1><p class="sub">${esc(Q.label)}${Q.range?" · "+esc(Q.range):""} · Objetivos y estrategias de ${esc(c.name)} para ventas, redes, marca, eventos, pauta y web.</p></div>
    ${list.length?`<div class="kpi"><span class="lbl">Avance del trimestre</span><span class="num">${avg}%</span></div><div class="kpi"><span class="lbl">Objetivos</span><span class="num">${list.length}</span></div>`:""}
