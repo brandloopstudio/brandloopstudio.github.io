@@ -1343,6 +1343,8 @@ if(S.theme) document.documentElement.dataset.theme=S.theme;
 function render(){
   if(S.gate){const fid=document.activeElement&&document.activeElement.id;root.innerHTML=gateScreen();root.querySelectorAll("[data-draft]").forEach(el=>{const k=el.dataset.draft;if(k in S.drafts)el.value=S.drafts[k]});const f=(fid&&document.getElementById(fid))||root.querySelector(".wl-form input:not([value]),.wl-form input");if(f&&!S.gateBusy)f.focus({preventScroll:true});return}
   const LIM=PORTAL||(V.enabled&&V.user&&V.user.role!=="admin");if(S.cwBase==null)S.cwBase=S.canWrite;S.canWrite=!!S.cwBase&&(!LIM||!["newclient","access"].includes(S.view));if(LIM&&(S.view==="newclient"||S.view==="access"))S.view="home";if(PORTAL)S.menu=false;
+  try{const sel=window.getSelection&&window.getSelection();if(sel&&!sel.isCollapsed&&sel.rangeCount&&root.contains(sel.anchorNode)&&!/^(INPUT|TEXTAREA)$/.test((document.activeElement||{}).tagName||"")){S._selWait=(S._selWait||0)+1;if(S._selWait<40){clearTimeout(S._selT);S._selT=setTimeout(render,700);return}}}catch(e){}S._selWait=0;
+  const _sy=window.scrollY;const _ms=(document.querySelector("main.main")||{}).scrollTop||0;
   const a=document.activeElement, fid=a&&a.id; let ss=null,se=null;
   try{ss=a.selectionStart;se=a.selectionEnd}catch(e){}
   const logScroll=document.getElementById("chat-log");
@@ -1351,6 +1353,7 @@ function render(){
   root.querySelectorAll("[data-draft]").forEach(el=>{const k=el.dataset.draft;if(k in S.drafts)el.value=S.drafts[k]});
   if(fid){const el=document.getElementById(fid);if(el){el.focus({preventScroll:true});try{if(ss!=null)el.setSelectionRange(ss,se)}catch(e){}}}
   if(atBottom) scrollChat();
+  try{if(Math.abs(window.scrollY-_sy)>2)window.scrollTo(0,_sy);const _m=document.querySelector("main.main");if(_m&&_ms)_m.scrollTop=_ms}catch(e){}
   drawPreviews();
   mountDesigns();
   if(S.view==="mockups"&&document.getElementById("studio-host"))mountStudio().catch(()=>{});else if(ST.raf){cancelAnimationFrame(ST.raf);ST.raf=0}
@@ -2059,7 +2062,7 @@ function postCard(p,c){
     ${k==="video"&&scenes.length?`<details class="note"><summary><b>Guion del video (${scenes.length} escenas)</b></summary><ol style="margin:6px 0 0;padding-left:18px">${scenes.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></details>`:""}
     ${postTags(p)}${postAdCard(p)}
     ${p.visual&&head?`<div class="note"><b>Dirección visual:</b> ${esc(p.visual)}</div>`:""}
-    ${p.comment?`<div class="note"><b>Cambios pedidos:</b> ${esc(p.comment)}</div>`:""}
+    ${Array.isArray(p.changeLog)&&p.changeLog.length?`<div class="note"><b>Cambios pedidos (${p.changeLog.length}):</b>${p.changeLog.slice().reverse().map(h=>`<div style="margin-top:6px;white-space:pre-wrap"><span class="hint">${esc((h.name||(S.profiles[h.by]&&S.profiles[h.by].name)||"Equipo")+(h.at?" · "+fmtTs(h.at):""))}</span><br>${esc(h.txt)}</div>`).join("")}</div>`:p.comment?`<div class="note"><b>Cambios pedidos:</b> ${esc(p.comment)}</div>`:""}
     ${media}
     <span class="hint">${esc(by)}${p.createdAt?" · "+esc(fmtTs(p.createdAt)):""}</span></div>
    ${actions?`<div class="post-f">${actions}</div>`:""}</article>`;
@@ -5274,7 +5277,7 @@ const A={
   compMap:el=>{S.compMap=el.dataset.v;render()},
   toggleComp:()=>{S.showNewComp=!S.showNewComp;render()},
   pf:b=>{S.pf=b.dataset.v;render()}, sf:b=>{S.sf=b.dataset.v;render()}, mf:b=>{S.mf=b.dataset.v;render()},
-  cap:b=>{S.openCap[b.dataset.id]=!S.openCap[b.dataset.id];render()},
+  cap:b=>{const id=b.dataset.id;S.openCap[id]=!S.openCap[id];const el=b.previousElementSibling&&b.previousElementSibling.classList.contains("cap")?b.previousElementSibling:(b.closest(".post-b")||document).querySelector(".cap");if(el){el.classList.toggle("open",!!S.openCap[id]);b.textContent=S.openCap[id]?"Ver menos":"Ver todo el texto"}else render()},
   goPost:b=>{S.view="posts";S.pf="all";S.sf="all";S.mf="all";render();document.getElementById("post-"+b.dataset.id)?.scrollIntoView({block:"center"})},
   status:b=>{const s=b.dataset.s;write(()=>col("posts").doc(b.dataset.id).update({status:s,decidedAt:Date.now(),decidedBy:myId()}),s==="approved"?"Post aprobado":"Marcado como publicado")},
   askChg:b=>{S.changeFor=b.dataset.id;render();document.getElementById("chg-"+b.dataset.id)?.focus()},
@@ -5429,7 +5432,7 @@ const F={
   newpost:async()=>{const d=S.drafts;const title=(d["np-title"]||"").trim();if(!title){toast("Ponle un título al post.");return}
     const ok=await write(()=>addPost({title,channel:d["np-ch"]||"Web",format:d["np-fmt"]||FORMATS[0],caption:d["np-cap"]||"",hashtags:(d["np-tags"]||"").split(/[\s,]+/).filter(Boolean).map(h=>h.startsWith("#")?h:"#"+h),visual:d["np-vis"]||"",date:d["np-date"]||""}),"Post guardado");
     if(ok){["np-title","np-cap","np-tags","np-vis","np-date"].forEach(k=>delete d[k]);S.showNewPost=false;render()}},
-  changes:async f=>{const id=f.dataset.id;const txt=(S.drafts["chg-"+id]||"").trim();if(!txt){toast("Escribe qué hay que cambiar.");return}const ok=await write(()=>col("posts").doc(id).update({status:"changes",comment:txt,decidedAt:Date.now(),decidedBy:myId()}),"Cambios enviados");if(ok){S.changeFor=null;delete S.drafts["chg-"+id];render()}},
+  changes:async f=>{const id=f.dataset.id;const txt=(S.drafts["chg-"+id]||"").trim();if(!txt){toast("Escribe qué hay que cambiar.");return}const _p=S.posts.find(x=>x.id===id)||{};const _h=Array.isArray(_p.changeLog)?_p.changeLog.slice(-30):(_p.comment?[{txt:_p.comment,at:_p.decidedAt||0,by:_p.decidedBy||""}]:[]);_h.push({txt,at:Date.now(),by:myId(),name:(S.profiles[myId()]&&S.profiles[myId()].name)||""});const ok=await write(()=>col("posts").doc(id).update({status:"changes",comment:txt,changeLog:_h,decidedAt:Date.now(),decidedBy:myId()}),"Cambios enviados. Quedan guardados en el post.");if(ok){S.changeFor=null;delete S.drafts["chg-"+id];render()}},
   obj:async()=>{const d=S.drafts;const text=(d["ob-text"]||"").trim();if(!text)return;const o=[...(S.plan?.objectives||[]).map(x=>({...x})),{id:rid(),text,kpi:(d["ob-kpi"]||"").trim(),target:(d["ob-target"]||"").trim(),progress:0}];const ok=await savePlan({objectives:o});if(ok){d["ob-text"]=d["ob-kpi"]=d["ob-target"]="";render()}},
   focus:async()=>{const k="pl-focus-"+S.month;const v=S.drafts[k]??S.plan?.focus??"";const ok=await savePlan({focus:v.trim()});if(ok)toast("Enfoque guardado")},
   comp:async()=>{const d=S.drafts;const name=(d["cp-name"]||"").trim();if(!name)return;const ok=await write(()=>col("competitors").add({name,type:d["cp-type"]==="indirecta"?"indirecta":"directa",url:(d["cp-url"]||"").trim(),country:(d["cp-country"]||"").trim(),does:splitLines(d["cp-does"]),doesnt:splitLines(d["cp-doesnt"]),opportunity:(d["cp-opp"]||"").trim(),channels:[],order:Date.now(),updatedAt:Date.now(),source:"manual"}),"Competidor agregado");if(ok){["cp-type","cp-name","cp-url","cp-country","cp-does","cp-doesnt","cp-opp"].forEach(k=>delete d[k]);S.showNewComp=false;render()}},
