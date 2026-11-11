@@ -2612,6 +2612,7 @@ function dzOf(p,c){if(!p||!c)return null;if(hasDesign(p))return p.design;if(!AUT
   const plan=layPlan(c);let lay=plan[p.id];if(!lay){const t=tplData(p,c);lay=Object.keys(LAY).sort((x,y)=>layFit(y,t,p)-layFit(x,t,p))[0]}
   const key=p.id+"|"+lay+"|"+H+"|"+JSON.stringify([p.onscreen,p.scenes,p.title,p.photo,p.date,p.format])+"|"+c.id+"|"+JSON.stringify([c.palette,c.fonts,c.website]);const hit=autoCache.get(p.id);if(hit&&hit.k===key)return hit.d;
   const d=autoDesign2(p,c,lay,H);d.at=key.length+":"+hashStr(key);autoCache.set(p.id,{k:key,d});return d}
+function blCopy(t){t=String(t==null?"":t);const fb=()=>{const ta=document.createElement("textarea");ta.value=t;ta.setAttribute("readonly","");ta.style.cssText="position:fixed;top:0;left:0;opacity:0;pointer-events:none";document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,t.length);let ok=false;try{ok=document.execCommand("copy")}catch(e){}ta.remove();return ok?Promise.resolve():Promise.reject(new Error("copy"))};try{if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(t).catch(fb)}catch(e){}return fb()}
 function hashStr(x){let h=0;for(let i=0;i<x.length;i++)h=(h*31+x.charCodeAt(i))|0;return h}
 function dzOpt(p,c){const o=(S.dzOpt||{})[p.id]||{};return {style:o.style||p.dzStyle||c.dzStyle||"auto",h:Number(o.h||p.dzH||c.dzH||1350)}}
 function designPrompt(c,p,slides,styleKey,H){
@@ -5237,7 +5238,7 @@ const A={
   gate:b=>{S.gate=b.dataset.v;S.gateErr=null;render()},
   pwToggle:b=>{const i=b.parentElement.querySelector("input");i.type=i.type==="password"?"text":"password";b.setAttribute("aria-label",i.type==="password"?"Mostrar contraseña":"Ocultar contraseña")},
   dlRecovery:()=>saveFile("brandloop-codigo-de-recuperacion.txt",new Blob([`Brandloop · código de recuperación de administradora\n\n${S.recoveryCode}\n\nGuárdalo en un lugar seguro. Sirve para recuperar el acceso a los datos si olvidas tu contraseña.`],{type:"text/plain"})),
-  copyRecovery:async()=>{try{await navigator.clipboard.writeText(S.recoveryCode);toast("Código copiado")}catch(e){toast("No se pudo copiar; descárgalo")}},
+  copyRecovery:async()=>{try{await blCopy(S.recoveryCode);toast("Código copiado")}catch(e){toast("No se pudo copiar; descárgalo")}},
   recoveryDone:()=>{S.recoveryCode=null;S.gate=null;S.view="access";S.vusers=null;startData();render()},
   logout:async()=>{V.keys={};V.M=null;V.user=null;V.cache={};MRAW_SESSION=null;await BL_SIGNOUT();try{location.reload()}catch(e){S.gate="login";render()}},
   bulkUsers:async()=>{const us=S.vusers||[];const has=cid=>us.some(u=>u.role!=="admin"&&(u.brands||[]).includes(cid));const miss=S.clients.filter(k=>!has(k.id));if(!miss.length)return;
@@ -5246,10 +5247,10 @@ const A={
       const pass=genPass();try{await vaultCreateUser({name:k.name,uname:un,pass,role:"member",brands:[k.id]});out.push({brand:k.name,uname:un,pass})}catch(e){toast("No se pudo crear el acceso de "+k.name)}}
     S.newCreds=[...(S.newCreds||[]),...out];S.accBusy=false;await loadVaultUsers()},
   closeCreds:()=>{S.newCreds=[];render()},
-  copyCreds:async()=>{const t=(S.newCreds||[]).map(c=>`${c.brand}\nUsuario: ${c.uname}\nContraseña: ${c.pass}`).join("\n\n");try{await navigator.clipboard.writeText("Brandloop · accesos\n\n"+t);toast("Credenciales copiadas")}catch(e){toast("No se pudo copiar; descárgalas")}},
+  copyCreds:async()=>{const t=(S.newCreds||[]).map(c=>`${c.brand}\nUsuario: ${c.uname}\nContraseña: ${c.pass}`).join("\n\n");try{await blCopy("Brandloop · accesos\n\n"+t);toast("Credenciales copiadas")}catch(e){toast("No se pudo copiar; descárgalas")}},
   dlCreds:()=>{const t=(S.newCreds||[]).map(c=>`${c.brand}\nUsuario: ${c.uname}\nContraseña: ${c.pass}`).join("\n\n");saveFile("brandloop-accesos.txt",new Blob(["Brandloop · accesos por marca\n\n"+t+"\n\nCada persona entra al enlace de Brandloop con su usuario y contraseña."],{type:"text/plain"}))},
   closeCred:()=>{S.newCred=null;render()},
-  copyCred:async()=>{const c=S.newCred;if(!c)return;try{await navigator.clipboard.writeText(`Brandloop\nUsuario: ${c.uname}\nContraseña: ${c.pass}`);toast("Credenciales copiadas")}catch(e){toast("No se pudo copiar")}},
+  copyCred:async()=>{const c=S.newCred;if(!c)return;try{await blCopy(`Brandloop\nUsuario: ${c.uname}\nContraseña: ${c.pass}`);toast("Credenciales copiadas")}catch(e){toast("No se pudo copiar")}},
   resetUser:async b=>{const u=(S.vusers||[]).find(x=>x.uname===b.dataset.id);if(!u)return;const pass=genPass();try{await vaultCreateUser({name:u.name,uname:u.uname,pass,role:u.role,brands:u.brands||[]});S.newCred={name:u.name,uname:u.uname,pass};await loadVaultUsers()}catch(e){toast(e.message||"No se pudo cambiar la contraseña")}},
   askDelUser:b=>{S.confirm="u:"+b.dataset.id;render()},
   delUser:async b=>{S.confirm=null;try{await S.rawdb.doc("vault_users/"+b.dataset.id).delete();toast("Acceso quitado");await loadVaultUsers()}catch(e){toast("No se pudo quitar el acceso")}},
@@ -5281,8 +5282,8 @@ const A={
   newPerson:()=>{S.showNewPerson=!S.showNewPerson;render()}, pSel:b=>{S.pSel=b.dataset.id;S.showNewPerson=false;render()}, pTab:b=>{S.pTab=b.dataset.v;render()},
   lpType:b=>{const v=b.dataset.v;const t=new Set(S.lpTypes||["opinion","consejos","historia"]);t.has(v)?t.delete(v):t.add(v);if(!t.size)t.add(v);S.lpTypes=[...t];render()},
   lpFilter:b=>{S.lpFilter=b.dataset.v;render()}, lpGen:b=>lpGen(b.dataset.id), lpStop:b=>{const c=S.pRun?.[b.dataset.id];if(c&&c.abort)c.abort()},
-  lpCopy:async b=>{const x=S.lposts.find(y=>y.id===b.dataset.id);if(!x)return;const t=x.text+((x.hashtags||[]).length?"\n\n"+x.hashtags.join(" "):"");try{await navigator.clipboard.writeText(t);toast("Texto copiado: pégalo en LinkedIn")}catch(e){toast("No se pudo copiar")}},
-  copyText:async b=>{try{await navigator.clipboard.writeText(b.dataset.t||"");toast("Copiado")}catch(e){toast("No se pudo copiar")}},
+  lpCopy:async b=>{const x=S.lposts.find(y=>y.id===b.dataset.id);if(!x)return;const t=x.text+((x.hashtags||[]).length?"\n\n"+x.hashtags.join(" "):"");try{await blCopy(t);toast("Texto copiado: pégalo en LinkedIn")}catch(e){toast("No se pudo copiar")}},
+  copyText:async b=>{try{await blCopy(b.dataset.t||"");toast("Copiado")}catch(e){toast("No se pudo copiar")}},
   lpStatus:b=>write(()=>col("lposts").doc(b.dataset.id).update({status:b.dataset.s,...(b.dataset.s==="approved"?{comment:""}:{}),decidedAt:Date.now(),decidedBy:myId()}),b.dataset.s==="published"?"Marcado como publicado":"Aprobado"),
   lpChg:b=>{S.lpChg=b.dataset.id;render()}, lpChgCancel:()=>{S.lpChg=null;render()},
   lpEdit:b=>{S.lpEdit=b.dataset.id;render()}, lpEditCancel:()=>{if(S.lpEdit)delete S.drafts["lpe-"+S.lpEdit];S.lpEdit=null;render()},
@@ -5320,13 +5321,13 @@ const A={
   qDel:b=>{S.quote.items.splice(Number(b.dataset.i),1);if(!S.quote.items.length)S.quote.items.push({d:"",q:1,p:0});render()},
   goMail:()=>document.getElementById("mail")?.scrollIntoView({behavior:"smooth"}),
   copyMail:b=>{const t=(S.drafts["m-subject"]?"Asunto: "+S.drafts["m-subject"]+"\n\n":"")+(S.drafts["m-body"]||"");if(!t.trim()){toast("Primero redacta el correo.");return}
-    navigator.clipboard.writeText(t).then(()=>toast("Correo copiado")).catch(()=>{const el=document.getElementById("m-body");el?.focus();el?.select();toast("Selecciona y copia el texto")})},
+    blCopy(t).then(()=>toast("Correo copiado")).catch(()=>{const el=document.getElementById("m-body");el?.focus();el?.select();toast("Selecciona y copia el texto")})},
   dlMail:()=>{const t=(S.drafts["m-subject"]?"Asunto: "+S.drafts["m-subject"]+"\n\n":"")+(S.drafts["m-body"]||"");if(!t.trim()){toast("Primero redacta el correo.");return}saveFile(`Correo - ${client().name}.txt`,t)},
   trendTab:b=>{S.trendTab=b.dataset.v;render()},
   postView:b=>{S.postView=b.dataset.v;render()},
   slide:b=>{const p=S.posts.find(x=>x.id===b.dataset.id);const n=(p?.scenes||[]).filter(Boolean).length;if(!n)return;S.slideIx[b.dataset.id]=((S.slideIx[b.dataset.id]||0)+Number(b.dataset.n)+n)%n;render()},
   varTab:b=>{S.varTab[b.dataset.id]=b.dataset.v;render()},
-  copyVar:b=>{const p=S.posts.find(x=>x.id===b.dataset.id);if(!p)return;const v=(p.variants||[]).find(x=>x.network===S.varTab[p.id])||(p.variants||[])[0];if(!v)return;const t=v.copy+(v.hashtags?.length?"\n\n"+v.hashtags.join(" "):"");navigator.clipboard.writeText(t).then(()=>toast("Copy de "+chLabel(v.network)+" copiado")).catch(()=>toast("No se pudo copiar. Selecciona el texto a mano."))},
+  copyVar:b=>{const p=S.posts.find(x=>x.id===b.dataset.id);if(!p)return;const v=(p.variants||[]).find(x=>x.network===S.varTab[p.id])||(p.variants||[])[0];if(!v)return;const t=v.copy+(v.hashtags?.length?"\n\n"+v.hashtags.join(" "):"");blCopy(t).then(()=>toast("Copy de "+chLabel(v.network)+" copiado")).catch(()=>toast("No se pudo copiar. Selecciona el texto a mano."))},
   play:b=>playPreview(b.dataset.id),
   dzGal:()=>{S.dzGalOpen=!S.dzGalOpen;render()},
   dzDefStyle:b=>{const c=client();write(()=>S.db.doc("clients/"+c.id).update({dzStyle:b.dataset.v==="auto"?"":b.dataset.v,updatedAt:Date.now()}),"Estilo de la marca guardado")},
@@ -5351,7 +5352,7 @@ const A={
   exportCSV:()=>exportCSV(),
   genStrat:()=>genStrat(), stopStrat:()=>S.stratRun.ctl?.abort(), stratArea:el=>{S.stratArea=el.dataset.v;render()},
   stopReply:()=>S.reply.ctl?.abort(),
-  copyReply:b=>{const o=S.reply.options?.[Number(b.dataset.i)];if(o)navigator.clipboard.writeText(o.text).then(()=>toast("Respuesta copiada")).catch(()=>toast("No se pudo copiar. Selecciona el texto a mano."))},
+  copyReply:b=>{const o=S.reply.options?.[Number(b.dataset.i)];if(o)blCopy(o.text).then(()=>toast("Respuesta copiada")).catch(()=>toast("No se pudo copiar. Selecciona el texto a mano."))},
   toggleAd:()=>{S.showNewAd=!S.showNewAd;render()}, syncMeta:()=>syncMeta(false), syncSheet:b=>syncSheet(b.dataset.id,false), syncOrg:()=>syncOrganic(false), orgTab:b=>{S.orgTab=b.dataset.v;render()}, radarMode:b=>{S.radarMode=b.dataset.v;render()}, adAnalyze:()=>runAdAnalysis(), adPick:()=>{S.adPick=!S.adPick;render()}, toggleCampForm:()=>{S.showCampForm=!S.showCampForm;render()}, adPickClose:()=>{S.adPick=false;render()}, adSelT:b=>{S.adSel={...(S.adSel||{})};if(S.adSel[b.dataset.id])delete S.adSel[b.dataset.id];else S.adSel[b.dataset.id]=1;render()}, adSelNone:()=>{S.adSel={};render()}, adAnSel:()=>runAdAnalysis(Object.keys(S.adSel||{}).filter(id=>S.ads.some(a=>a.id===id))), adAnOne:b=>{runAdAnalysis([b.dataset.id]);setTimeout(()=>document.querySelector(".adan-sec")?.scrollIntoView({behavior:"smooth",block:"start"}),60)}, stopAdAn:()=>{S.adAn?.ctl?.abort()}, closeAdAn:()=>{S.adAn=null;render()}, toggleAdGen:()=>{S.showAdGen=!S.showAdGen;render()},
   delAd:b=>{S.confirm=null;write(()=>col("ads").doc(b.dataset.id).delete(),"Campaña eliminada")},
   stopAdGen:()=>S.adGen.ctl?.abort(),
@@ -5369,10 +5370,10 @@ const A={
   driveLogos:()=>driveLogos(), driveClose:()=>{S.driveFiles=null;render()}, driveUse:b=>driveUse(b.dataset.id,b.dataset.field),
   critique:()=>critique(), dlMock:b=>dlMock(b.dataset.k),
   idEdit:()=>{S.idEdit=!S.idEdit;S.idPal=null;render()},
-  dlBrandbook:()=>exportBrandbook(), dlLogo:b=>dlLogo(b.dataset.v), stItem:b=>{ST.item=b.dataset.v;render()}, stBg:b=>{S.stBg=b.dataset.v;render()}, stDl:()=>stDownload(), dlSig:async()=>{const c=client();const u=c.signatureUrl||SIGS[c.id];if(!u)return;try{const b=await (await fetch(u)).blob();await saveFile(`${c.name} - firma de correo.${(b.type.split("/")[1]||"png")}`,b)}catch(e){toast("No se pudo descargar la firma.")}}, copyHex:b=>navigator.clipboard.writeText(b.dataset.v).then(()=>toast(b.dataset.v.toUpperCase()+" copiado")).catch(()=>toast(b.dataset.v.toUpperCase())),
+  dlBrandbook:()=>exportBrandbook(), dlLogo:b=>dlLogo(b.dataset.v), stItem:b=>{ST.item=b.dataset.v;render()}, stBg:b=>{S.stBg=b.dataset.v;render()}, stDl:()=>stDownload(), dlSig:async()=>{const c=client();const u=c.signatureUrl||SIGS[c.id];if(!u)return;try{const b=await (await fetch(u)).blob();await saveFile(`${c.name} - firma de correo.${(b.type.split("/")[1]||"png")}`,b)}catch(e){toast("No se pudo descargar la firma.")}}, copyHex:b=>blCopy(b.dataset.v).then(()=>toast(b.dataset.v.toUpperCase()+" copiado")).catch(()=>toast(b.dataset.v.toUpperCase())),
   palAdd:()=>{(S.idPal||(S.idPal=[])).push({name:"",hex:"#888888",role:""});render()},
   palDel:b=>{S.idPal?.splice(Number(b.dataset.i),1);render()},
-  copyAds:()=>{const r=S.adGen.res;if(!r)return;const t=["Títulos:",...r.headlines,"","Textos:",...r.primary,"","Descripciones:",...r.descriptions,"",r.audience?"Segmentación: "+r.audience:"",r.cta?"CTA: "+r.cta:""].join("\n");navigator.clipboard.writeText(t).then(()=>toast("Copys copiados")).catch(()=>toast("No se pudo copiar."))}
+  copyAds:()=>{const r=S.adGen.res;if(!r)return;const t=["Títulos:",...r.headlines,"","Textos:",...r.primary,"","Descripciones:",...r.descriptions,"",r.audience?"Segmentación: "+r.audience:"",r.cta?"CTA: "+r.cta:""].join("\n");blCopy(t).then(()=>toast("Copys copiados")).catch(()=>toast("No se pudo copiar."))}
 };
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-act]");
