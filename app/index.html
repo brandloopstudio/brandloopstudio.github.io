@@ -1763,7 +1763,7 @@ function objAuto(ob){const m=objMeasure(ob);return m?m.pct:null}
 function objPct(ob){const a=objAuto(ob);const m=Number(ob.progress)||0;return a==null?m:Math.max(a,m)}
 function objKnown(ob){return objAuto(ob)!=null||(Number(ob.progress)||0)>0}
 function contentPct(){const m=S.month,t=todayStr();if(m!==monthKey(new Date()))return null;const due=S.posts.filter(p=>p.date&&p.date.startsWith(m)&&p.date<=t).length;if(!due)return null;return Math.min(100,Math.round(pubOf(m).max/due*100))}
-function planPct(){const o=S.plan?.objectives||[];const cp=contentPct();if(!o.length)return cp;const k=o.filter(objKnown);const v=k.map(objPct);if(cp!=null)v.push(cp);if(!v.length)return 0;return Math.round(v.reduce((a,b)=>a+b,0)/v.length)}
+function planPct(){const o=S.plan?.objectives||[];const cp=contentPct();if(!o.length)return cp;const k=o.filter(ob=>objPct(ob)>0);const v=k.map(objPct);if(cp!=null)v.push(cp);if(!v.length)return 0;return Math.round(v.reduce((a,b)=>a+b,0)/v.length)}
 function planInfo(){const o=S.plan?.objectives||[];const k=o.filter(objKnown).length+(contentPct()!=null?1:0);const fut=S.month>monthKey(new Date());return {n:o.length,k,fut}}
 function smoothPath(pts){if(pts.length<2)return "";let d=`M${pts[0][0]},${pts[0][1]}`;for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;d+=` C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)} ${p2[0]},${p2[1]}`}return d}
 const dShort=s=>{const d=parseD(s);const w=d.toLocaleDateString("es",{weekday:"short"}).replace(".","");return w[0].toUpperCase()+w.slice(1)+", "+d.getDate()+" "+d.toLocaleDateString("es",{month:"short"}).replace(".","")};
