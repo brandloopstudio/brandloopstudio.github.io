@@ -1370,8 +1370,8 @@ function rail(){
     ${on&&subs.length>1?`<ul class="subs">${subs.filter(([k])=>k!=="mc"||hasMC()).map(([k,sl])=>{const [v,t]=k.split(":");const son=S.view===v&&(!t||S.trendTab===t);return `<li><button data-act="view" data-v="${k}" ${son?'aria-current="page"':""}>${esc(sl)}</button></li>`}).join("")}</ul>`:""}</li>`};
   return `<aside class="rail side">
   ${c?`<div class="switch ws"><button class="ws-btn" ${PORTAL?"disabled":`data-act="menu" aria-expanded="${S.menu}"`} id="sw-btn">${lf?`<span class="swlogo"><img src="${esc(lf.url)}" alt="" style="${lf.f?"filter:"+lf.f:""}"></span>`:`${monoHTML(c,"")}`}<span class="who"><b>${esc(c.name)}</b><span>${esc(c.industry||"Cliente")}</span></span>${PORTAL?"":`<span class="updown" aria-hidden="true">${ic("chev")}</span>`}</button>
-   ${S.menu?`<div class="menu" role="menu">${S.clients.map(k=>`<button role="menuitem" data-act="client" data-id="${esc(k.id)}" aria-current="${k.id===S.cid}">${monoHTML(k,"")}<span>${esc(k.name)}<br><span class="hint">${esc(k.industry||"")}</span></span></button>`).join("")}
-     ${S.canWrite&&V.user?.role!=="admin"&&V.enabled?"":S.canWrite?`<button data-act="view" data-v="newclient">${ic("plus")} Agregar cliente</button>`:""}</div>`:""}</div>`:`<a class="logo" href="${SITE_URL}" target="_blank" rel="noopener" title="Ir a la página de Brandloop">${loopSvg()}</a>`}
+   ${S.menu?`<div class="menu" role="menu">${S.clients.filter(k=>!S.meet||k.id===S.meet).map(k=>`<button role="menuitem" data-act="client" data-id="${esc(k.id)}" aria-current="${k.id===S.cid}">${monoHTML(k,"")}<span>${esc(k.name)}<br><span class="hint">${esc(k.industry||"")}</span></span></button>`).join("")}
+     ${S.clients.length>1?`<button data-act="meet">${S.meet?"Salir del modo reunión":"Modo reunión: mostrar solo esta marca"}</button>`:""}${S.meet?"":S.canWrite&&V.user?.role!=="admin"&&V.enabled?"":S.canWrite?`<button data-act="view" data-v="newclient">${ic("plus")} Agregar cliente</button>`:""}</div>`:""}</div>`:`<a class="logo" href="${SITE_URL}" target="_blank" rel="noopener" title="Ir a la página de Brandloop">${loopSvg()}</a>`}
   <nav class="nav" aria-label="Áreas"><span class="sec">Principal</span><ul>${GROUPS.slice(0,4).map(item).join("")}</ul><span class="sec">Crecimiento</span><ul>${GROUPS.slice(4).map(item).join("")}</ul></nav>
   <div class="side-foot"><div class="themes" role="group" aria-label="Tema"><button class="ic2" data-act="theme" data-t="light" aria-pressed="${th==="light"}" aria-label="Tema claro" title="Tema claro">${ic("sun")}</button><button class="ic2" data-act="theme" data-t="dark" aria-pressed="${th==="dark"}" aria-label="Tema oscuro" title="Tema oscuro">${ic("moon")}</button></div>
    ${V.user?.role==="admin"?`<button class="nv" data-act="view" data-v="access" ${S.view==="access"?'aria-current="page"':""}><span class="ic">${ic("brand")}</span><span class="nl">Usuarios y accesos</span></button>`:""}
@@ -2698,7 +2698,10 @@ async function importDesignInbox(){
       try{const ref=S.db.doc(`clients/${cid}/posts/${pid}`);const g=await ref.get();if(!g.exists)continue;const cur=g.data().design;
         if(!(cur&&(cur.inboxAt||0)>=ver)){await ref.update({design:{v:1,bg:it.bg==="light"?"light":"dark",w:1080,h:1350,fonts:(it.fonts||[]).filter(u=>FONT_LINK_OK.test(u)),slides:it.slides.map(String),by:it.by==="mano"?"mano":"parrilla",inboxAt:ver,at:Date.now()}});n++}
         if(adm){try{await S.rawdb.doc(`design_inbox/${cid}/items/${d.id}`).delete()}catch(e){}}}catch(e){fail++}}}
-  S.inboxRun=false;S.inboxDone=true;S.inboxCnt=null;if(n)toast(n+" diseños nuevos cargados en Posts");else if(fail)toast("No se pudieron cargar "+fail+" diseños. Intenta de nuevo.");render();return n;
+  let pn=0;if(adm){for(const cid of Object.keys(V.keys||{})){let s;try{s=await S.rawdb.collection(`plan_inbox/${cid}/items`).get()}catch(e){continue}
+    for(const d of s.docs){const it=d.data();const tg=String(it.target||"");if(!/^(docs\/[a-z]+|posts\/[A-Za-z0-9_-]+|competitors\/[A-Za-z0-9_-]+|associations\/[A-Za-z0-9_-]+)$/.test(tg)||!it.data||typeof it.data!=="object"){try{await S.rawdb.doc(`plan_inbox/${cid}/items/${d.id}`).delete()}catch(e){}continue}
+      try{const ref=S.db.doc(`clients/${cid}/${tg}`);const g=await ref.get();if(!g.exists||it.mode==="replace"){await ref.set({...it.data,source:it.data.source||"agente",updatedAt:Date.now()});pn++}await S.rawdb.doc(`plan_inbox/${cid}/items/${d.id}`).delete()}catch(e){fail++}}}}
+  S.inboxRun=false;S.inboxDone=true;S.inboxCnt=null;if(pn)toast(pn+" secciones nuevas del plan quedaron listas");if(n)toast(n+" diseños nuevos cargados en Posts");else if(fail)toast("No se pudieron cargar "+fail+" diseños. Intenta de nuevo.");render();return n;
 }
 
 /* ---------- perfiles profesionales (LinkedIn de las personas de la empresa) ---------- */
@@ -5261,7 +5264,8 @@ const A={
   range:b=>{S.range=b.dataset.v;render()},
   enter:()=>{S.welcome=false;try{sessionStorage.setItem("bl-in","1")}catch(e){}render();window.scrollTo({top:0})},
   pendingPosts:()=>{S.view="posts";S.sf="pending";S.menu=false;render();window.scrollTo({top:0})},
-  client:b=>{S.menu=false;S.view=S.view==="newclient"?"home":S.view;selectClient(b.dataset.id);render()},
+  client:b=>{if(S.meet&&b.dataset.id!==S.meet)return;S.menu=false;S.view=S.view==="newclient"?"home":S.view;selectClient(b.dataset.id);render()},
+  meet:()=>{S.meet=S.meet?null:S.cid;lsSet("bl-meet",S.meet||"");S.menu=false;toast(S.meet?"Modo reunión activado: solo se ve esta marca":"Modo reunión desactivado");render()},
   theme:b=>{const t=b.dataset.t;S.theme=S.theme===t?null:t;if(S.theme)document.documentElement.dataset.theme=S.theme;else delete document.documentElement.dataset.theme;lsSet("bl-theme",S.theme||"");render()},
   week:b=>{S.week=addDays(S.week,Number(b.dataset.n));render()},
   month:b=>{S.month=shiftMonth(S.month,Number(b.dataset.n));subPlan();render()},
@@ -5544,6 +5548,7 @@ async function runImports(){
     }
   }catch(e){}finally{S.impRun=false}
 }
+S.meet=(()=>{try{return localStorage.getItem("bl-meet")||null}catch(e){return null}})();
 function startData(){
   if(S.clientsUnsub){try{S.clientsUnsub()}catch(e){}}
   S.clientsUnsub=S.db.collection("clients").orderBy("order").onSnapshot(s=>{
