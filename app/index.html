@@ -1273,7 +1273,7 @@ const GROUPS=[
   ["social","Social Media","posts",[["posts","Parrilla diaria"],["mc","Masterclass"],["cal","Calendario"],["organic","Métricas orgánicas"],["trends:social","Tendencias en redes"]]],
   ["people","Perfiles","people",[["people","Perfiles profesionales"]]],
   ["ads","Campañas y pauta","ads",[["campaigns","Campañas y eventos"],["email","Email marketing"],["ads","Pauta"]]],
-  ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["adcalc","Calculadora de pauta"],["strategy","Estrategia"],["audience","Audiencia"],["prodstory","Historias por producto"],["funnel","Embudo de ventas"],["compass","Brújula de marca"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
+  ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["strategy","Estrategia"],["audience","Audiencia"],["prodstory","Historias por producto"],["funnel","Embudo de ventas"],["compass","Brújula de marca"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
   ["innov","Innovación","bulb",[["innovation","Oportunidades de negocio"]]],
   ["ai","AI Solutions","spark",[["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"],["geo","IA Search"]]],
   ["sales","Ventas","pipe",[["pipe","Pipeline"],["events","Eventos y asociaciones"],["export","Documentos"]]]
@@ -3834,7 +3834,7 @@ function finCalc(f){
   const totA=Object.values(f.alloc).reduce((a,b)=>a+(Number(b)||0),0)||1;
   const amt=k=>budget?budget*(Number(f.alloc[k])||0)/totA:0;
   const ticket=f.ticket>0?f.ticket:(f.revenue>0&&f.customers>0?f.revenue/f.customers:null);
-  let _cv=null,_ck=null;try{if(S.adcalc&&Number(S.adcalc.budget)>0){_cv=calOf();_ck=calCalc(_cv)}}catch(e){}
+  let _cv=null,_ck=null;try{if(false&&S.adcalc&&Number(S.adcalc.budget)>0){_cv=calOf();_ck=calCalc(_cv)}}catch(e){}
   const pauta=_cv?_cv.budget:null;const clientsMo=_ck&&_cv.months?_ck.clients/_cv.months:null;const pautaPct=pauta&&f.revenue?pauta/f.revenue*100:null;
   const cacReal=won&&adsSpent?adsSpent/won:null;const cacPlan=_ck&&_ck.clients>0?_ck.spend/_ck.clients:null;const cac=cacReal??cacPlan;
   const gp=ticket&&gm?ticket*gm:null;const ltv=gp&&f.months?gp*f.months:null;
@@ -3886,7 +3886,7 @@ function viewInvest(c){
      ${rev?`${[["Facturación al mes",m(rev)],["× "+pct+"% para marketing",m(rev*pct/100)],["× "+Math.round(adsShare*100)+"% del marketing para pauta",m(pRec)]].map(([a,b],i)=>`<div class="top2" style="justify-content:space-between;gap:12px;${i==2?"border-top:1px solid var(--line,#e5e5e5);padding-top:8px":""}" data-x="${i}" ${""}><span style="color:var(--muted)">${a}</span><span class="pct" style="font-size:${i==2?18:15}px">${esc(b)}</span></div>`).join("")}
      <div class="obj"><div class="top2"><b>Pauta sana para esta facturación</b><span class="pct" style="color:var(--ok)">${esc(m(pLo))} – ${esc(m(pHi))}</span></div><span class="meta">Lo mínimo y lo máximo sano: facturación × 5% o 12% × ${Math.round(adsShare*100)}% para pauta.</span></div>
      ${verdict?`<div class="note">${verdict}</div>`:""}
-     ${w&&pRec?`<button type="button" class="btn accent" data-act="finToCalc" data-v="${Math.round(pRec)}">Usar ${esc(m(Math.round(pRec)))} en la Calculadora de pauta</button>`:""}`:`<p class="meta">Escribe la facturación neta al mes y aquí sale cuánto invertir en pauta.</p>`}
+     ${w&&pRec?`<button type="button" hidden class="btn accent" data-act="finToCalc" data-v="${Math.round(pRec)}">Usar ${esc(m(Math.round(pRec)))} en la Calculadora de pauta</button>`:""}`:`<p class="meta">Escribe la facturación neta al mes y aquí sale cuánto invertir en pauta.</p>`}
     </div></article>
     ${f.ticket>0?(()=>{const once=(f.saleType||"monthly")==="once";const gmx=f.margin>0?f.margin/100:null;const pM=f.payM||12;
       const life=once?f.ticket:f.ticket*(f.months||pM);const maxC=once?(gmx?f.ticket*gmx:null):f.ticket*pM;
@@ -4005,7 +4005,7 @@ function viewPauta(c){const d=S.pautastrat;
   const det=(lbl,body)=>`<details class="ps-det"><summary>${lbl}</summary><div>${body}</div></details>`;
   const months=L(d.months);
   return `<section class="greet"><div class="hello"><h1>Estrategia de pauta</h1><p class="sub">${esc(d.period||"")}</p></div>
-   <div class="row"><button class="btn" data-act="view" data-v="adcalc">Calculadora de pauta</button><button class="btn" data-act="view" data-v="comp">Competencia</button></div></section>
+   <div class="row"><button class="btn" data-act="view" data-v="comp">Competencia</button></div></section>
   <section class="panel ps-hero"><span class="eyebrow">En una frase</span><h2>${esc(d.headline||"")}</h2>${d.short?`<p>${esc(d.short)}</p>`:""}
    ${months.length?`<div class="ps-split">${months.map(m=>`<div class="ps-mo"><b>${esc(m.name)}</b><span class="ps-tot">${esc(m.total)}</span><div class="ps-bar">${L(m.parts).map(p=>`<i style="flex:${p.v};--pc:${(PS_TEMP.find(r=>r[0]===p.temp)||PS_TEMP[3])[1]}" title="${esc(p.l+" "+p.a)}"></i>`).join("")}</div><ul class="ps-parts">${L(m.parts).map(p=>`<li>${psTempPill(p.temp)}<span>${esc(p.l)}</span><b>${esc(p.a)}</b></li>`).join("")}</ul></div>`).join("")}</div>`:""}</section>
   ${det("¿Qué significa frío, tibio y caliente?",psTempLegend())}
