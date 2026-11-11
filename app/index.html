@@ -3537,7 +3537,7 @@ function studioPanel(c){
 
 function viewMockups(c){
   return `<section class="greet"><div class="hello"><h1>Aplicaciones de marca</h1><p class="sub">Así se aplica ${esc(c.name)} en papelería, roll-up, gafete y redes, según su brandbook oficial.</p></div></section>
-   ${(BOOKS[c.id]||c.book)?bookAppsPanel(c):emptyBox("Aún no hay aplicaciones de "+c.name,"Cuando su brandbook esté cargado en Perfil de marca, sus aplicaciones aparecen aquí.")}`;
+   ${(BOOKS[c.id]||c.book)?bookAppsPanel(c):""}${studioPanel(c)}`;
 }
 async function critique(){
   const c=client();S.critRun={running:true,error:null};render();
