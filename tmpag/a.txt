@@ -1,0 +1,468 @@
+// Brandloop · agente de investigación automática (lunes, miércoles y viernes, 5 a.m. Guatemala)
+// Actualiza, marca por marca: tendencias del mercado y de redes, hashtags, competencia,
+// eventos, asociaciones y auditoría web. Investiga con la API de Claude + búsqueda web.
+// Cada llamada procesa UNA marca (la que tenga la investigación más vieja), para no pasar el tiempo límite.
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
+import { jsonrepair } from "npm:jsonrepair@3.8.0";
+
+const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+const KEY = (Deno.env.get("ANTHROPIC_API_KEY") || "").trim();
+const API_VERSION = Deno.env.get("BL_API_VERSION") || "2026-10-21";
+const AGENT_KEY = Deno.env.get("AGENT_KEY") || "";
+const MODEL = Deno.env.get("BL_MODEL") || "claude-sonnet-5-5";
+const SKIP = (Deno.env.get("BL_SKIP") || "paylink").split(",").map((s) => s.trim()).filter(Boolean);
+const json = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { "content-type": "application/json" } });
+const now = () => Date.now();
+const parentOf = (p: string) => p.split("/").slice(0, -1).join("/");
+
+async function getDoc(path: string) {
+  const { data } = await db.from("docs").select("data").eq("path", path).maybeSingle();
+  return data ? data.data : null;
+}
+async function listCol(path: string) {
+  const { data } = await db.from("docs").select("path,data").eq("parent", path);
+  return (data || []).map((r: any) => ({ id: r.path.split("/").pop(), ...r.data }));
+}
+async function put(path: string, data: unknown) {
+  const { error } = await db.from("docs").upsert({ path, parent: parentOf(path), data, updated_at: new Date().toISOString() });
+  if (error) throw error;
+}
+async function merge(path: string, patch: Record<string, unknown>) {
+  const cur = (await getDoc(path)) || {};
+  await put(path, { ...cur, ...patch }); // conserva el campo cifrado "e" tal cual
+}
+
+async function claude(prompt: string) {
+  const body = JSON.stringify({
+    model: MODEL,
+    max_tokens: 16000,
+    tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 10 }],
+    messages: [{ role: "user", content: prompt }],
+  });
+  const base = { "anthropic-version": API_VERSION, "content-type": "application/json" };
+  let r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { ...base, "x-api-key": KEY }, body });
+  if (r.status === 401) {
+    // algunas claves nuevas se mandan como "Authorization: Bearer"
+    r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { ...base, authorization: `Bearer ${KEY}` }, body });
+  }
+  const d = await r.json();
+  if (!r.ok) throw new Error(`${d?.error?.message || "Anthropic"} (${r.status}; clave ${KEY.slice(0, 10)}…, ${KEY.length} caracteres)`);
+  const text = (d.content || []).filter((b: any) => b.type === "text").map((b: any) => b.text).join("\n");
+  const m = text.match(/\{[\s\S]*\}$/m) || text.match(/\{[\s\S]*\}/);
+  if (!m) throw new Error("La respuesta no trajo JSON");
+  try {
+    return JSON.parse(m[0]);
+  } catch {
+    // a veces vienen saltos de línea dentro de los textos: se limpian y se intenta otra vez
+    try {
+      return JSON.parse(m[0].replace(/[\u0000-\u001F]+/g, " "));
+    } catch {
+      // comillas o comas mal puestas en textos largos: se reparan
+      return JSON.parse(jsonrepair(m[0]));
+    }
+  }
+}
+
+function brief(c: any) {
+  return `Marca: ${c.name}\nSector: ${c.industry || "-"}\nPaís de su audiencia: ${c.country || "Guatemala"}\nSitio web: ${c.website || "-"}\nAudiencia: ${c.audience || "-"}\nNotas: ${String(c.notes || "").slice(0, 1200)}`;
+}
+
+async function research(cid: string) {
+  const c = await clientOf(cid);
+  if (!c || !c.name) throw new Error("marca sin datos públicos");
+  const comps = await listCol(`clients/${cid}/competitors`);
+  const events = await listCol(`clients/${cid}/events`);
+  const today = new Date().toISOString().slice(0, 10);
+  const prompt = `Eres el agente de investigación de Brandloop, una plataforma de marketing en Guatemala. Hoy es ${today}.
+${brief(c)}
+
+Investiga en la web (varias búsquedas, prioriza lo publicado en los últimos 14 días y fuentes de su país y región). Abre su sitio web para entender qué vende.
+Competidores que ya tenemos (no los repitas como nuevos): ${comps.map((x: any) => x.name).join("; ") || "ninguno"}.
+Eventos que ya tenemos: ${events.map((x: any) => x.name).join("; ") || "ninguno"}.
+
+Reglas: no inventes datos, cifras, eventos ni URLs; todo debe venir de una fuente que hayas visto. Parafrasea. Español.
+Responde SOLO con un JSON con esta forma:
+{"sector":[{"title","summary","why","idea","source","url"}x4],
+ "social":[{"title","summary","why","idea","source","url","platform"}x4],
+ "tags":{"es":[8-15 hashtags vistos en su nicho],"en":[8-15]},
+ "newCompetitors":[{"name","type":"directa|indirecta","url","country","does":[2-4],"doesnt":[2-4],"channels":["Instagram","Facebook","LinkedIn","TikTok","YouTube","Web"],"channelsNote","opportunity"}] (0-4, solo importantes y reales),
+ "events":[{"name","type","date":"YYYY-MM-DD","end","date_confirmed":true|false,"city","country","url","audience","why","play","cost"}] (próximos 12 meses, 0-6, solo nuevos o con datos actualizados),
+ "summary":"1 frase con lo más importante para la marca esta semana"}`;
+  const r = await claude(prompt);
+  const t = now();
+  const writes: Promise<unknown>[] = [];
+  (r.sector || []).slice(0, 4).forEach((x: any, i: number) => writes.push(put(`clients/${cid}/trends/s${i + 1}`, { ...x, kind: "sector", order: i + 1, updatedAt: t })));
+  (r.social || []).slice(0, 4).forEach((x: any, i: number) => writes.push(put(`clients/${cid}/trends/r${i + 1}`, { ...x, kind: "social", order: 10 + i, updatedAt: t })));
+  if (r.tags) writes.push(merge(`clients/${cid}`, { trendTags: r.tags }));
+  let k = comps.reduce((m: number, x: any) => Math.max(m, Number(String(x.id).replace(/\D/g, "")) || 0), 0);
+  const have = new Set(comps.map((x: any) => String(x.name || "").toLowerCase().replace(/[^a-z0-9]/g, "")));
+  for (const x of (r.newCompetitors || []).slice(0, 4)) {
+    const key = String(x.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!key || have.has(key)) continue;
+    have.add(key);
+    writes.push(put(`clients/${cid}/competitors/k${++k}`, { ...x, order: 100 + k, updatedAt: t, source: "investigacion" }));
+  }
+  let e = events.reduce((m: number, x: any) => Math.max(m, Number(String(x.id).replace(/\D/g, "")) || 0), 0);
+  for (const x of (r.events || []).slice(0, 6)) {
+    const old = events.find((y: any) => String(y.name || "").toLowerCase() === String(x.name || "").toLowerCase());
+    if (old && old.source === "manual") continue;
+    const path = old ? `clients/${cid}/events/${old.id}` : `clients/${cid}/events/e${++e}`;
+    writes.push(put(path, { ...(old || {}), ...x, status: old?.status, estCost: old?.estCost, order: old?.order ?? e, updatedAt: t, source: "investigacion" }));
+  }
+  for (const x of events) if (x.date && x.date < today && !x.status && x.source !== "manual") writes.push(put(`clients/${cid}/events/${x.id}`, { ...x, status: "pasado" }));
+  writes.push(put(`clients/${cid}/docs/research`, { ...((await getDoc(`clients/${cid}/docs/research`)) || {}), at: t, summary: r.summary || "", model: MODEL, error: null }));
+  await Promise.all(writes);
+  return { cid, summary: r.summary || "" };
+}
+
+
+// ---------- Llaves: el agente puede leer y guardar datos privados de cada marca, cifrados ----------
+// La primera vez el agente crea su par de llaves. La privada queda en la tabla bl_agent_secret (sin acceso
+// desde la app ni desde internet; solo el servidor). La pública se publica en config/agent; la app la usa
+// para entregarle al agente la llave de cada marca (vault/agentkeys), cifrada para que solo el agente la abra.
+const te = new TextEncoder(), td = new TextDecoder();
+const b64 = (u: Uint8Array) => { let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(s); };
+const ub64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+const RSA = { name: "RSA-OAEP", hash: "SHA-256" };
+const SECRET_COLS = new Set(["posts", "people", "lposts", "tasks", "deals", "metrics", "plan", "campaigns", "ads", "geo", "organic", "emailcamps"]);
+const SECRET_DOCS = new Set(["finance", "adcalc", "pautastrat", "funnel", "compass", "prodstories", "investplan", "strategy", "audience", "innovation", "site", "quote", "emailideas"]);
+let PRIV: CryptoKey | null = null;
+const BKEYS: Record<string, CryptoKey | null> = {};
+
+async function agentPriv() {
+  if (PRIV) return PRIV;
+  const { data } = await db.from("bl_agent_secret").select("data").eq("id", "rsa").maybeSingle();
+  let jwk = data?.data?.priv;
+  if (!jwk) {
+    const kp = await crypto.subtle.generateKey({ ...RSA, modulusLength: 3072, publicExponent: new Uint8Array([1, 0, 1]) }, true, ["encrypt", "decrypt"]) as CryptoKeyPair;
+    jwk = await crypto.subtle.exportKey("jwk", kp.privateKey);
+    const pub = await crypto.subtle.exportKey("jwk", kp.publicKey);
+    const kid = String(Date.now());
+    const { error } = await db.from("bl_agent_secret").insert({ id: "rsa", data: { priv: jwk, kid } });
+    if (error) throw new Error("No se pudo guardar la llave del agente: " + error.message);
+    await put("config/agent", { pub: { kty: pub.kty, n: pub.n, e: pub.e, alg: "RSA-OAEP-256" }, kid, at: now() });
+  }
+  PRIV = await crypto.subtle.importKey("jwk", jwk, RSA, false, ["decrypt"]);
+  return PRIV;
+}
+async function brandKey(cid: string) {
+  if (cid in BKEYS) return BKEYS[cid];
+  const ak = (await getDoc("vault/agentkeys")) || {};
+  const w = ak[cid]?.w;
+  if (!w) return (BKEYS[cid] = null);
+  const raw = new Uint8Array(await crypto.subtle.decrypt(RSA, await agentPriv(), ub64(w)));
+  return (BKEYS[cid] = await crypto.subtle.importKey("raw", raw, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]));
+}
+async function encJSON(k: CryptoKey, o: unknown, aad: string) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv, additionalData: te.encode(aad) }, k, te.encode(JSON.stringify(o))));
+  const out = new Uint8Array(12 + ct.length); out.set(iv); out.set(ct, 12); return b64(out);
+}
+async function decJSON(k: CryptoKey, s: string, aad: string) {
+  const u = ub64(s);
+  return JSON.parse(td.decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: u.slice(0, 12), additionalData: te.encode(aad) }, k, u.slice(12))));
+}
+function aadOf(path: string) {
+  const s = path.split("/");
+  if (s[0] !== "clients" || !s[1]) return null;
+  if (s.length === 2) return { kind: "client", aad: "clients/" + s[1] };
+  if (SECRET_COLS.has(s[2])) return { kind: "doc", aad: `clients/${s[1]}/${s[2]}` };
+  if (s[2] === "docs" && s[3] && SECRET_DOCS.has(s[3])) return { kind: "doc", aad: `clients/${s[1]}/docs` };
+  return null;
+}
+// lee un documento y, si es privado, lo descifra con la llave de SU marca (nunca la de otra)
+async function readPriv(path: string) {
+  const d = await getDoc(path);
+  const a = aadOf(path);
+  if (!d || !a || !d.e) return d;
+  const k = await brandKey(path.split("/")[1]);
+  if (!k) return a.kind === "client" ? d : null;
+  const p = await decJSON(k, d.e, a.aad);
+  if (a.kind === "client") { const pub = { ...d }; delete pub.e; return { ...pub, ...p }; }
+  return p;
+}
+// guarda un documento privado ya cifrado; si la marca no le ha dado su llave al agente, no guarda nada
+async function writePriv(path: string, data: any) {
+  const a = aadOf(path);
+  if (!a || a.kind !== "doc") return put(path, data);
+  const k = await brandKey(path.split("/")[1]);
+  if (!k) throw new Error("sin llave de la marca");
+  const out: any = { e: await encJSON(k, data, a.aad) };
+  if (data?.order != null) out.order = data.order;
+  if (data?.createdAt != null) out.createdAt = data.createdAt;
+  return put(path, out);
+}
+async function clientOf(cid: string) {
+  return (await readPriv(`clients/${cid}`)) || null;
+}
+
+// ---------- Plan completo automático y actualización mensual ----------
+// Cada llamada hace UNA sección de UNA marca:
+//  1) marca sin investigación → investigación;  2) sección vacía → se crea;
+//  3) sección vieja → se actualiza (mensual o trimestral) partiendo de la versión vigente, que se guarda en _prev.
+const PLAN_ORDER = ["webaudit", "associations", "audience", "prodstories", "strategy", "funnel", "compass", "pautastrat", "innovation", "emailideas"];
+const MONTHLY = new Set(["webaudit", "strategy", "funnel", "pautastrat", "innovation", "emailideas"]); // cada mes
+const QUARTERLY = new Set(["audience", "compass", "prodstories"]); // ene, abr, jul y oct
+const RULES = "Reglas: investiga en la web (abre el sitio de la marca y fuentes de su país). No inventes cifras, porcentajes, tamaños de mercado, clientes, testimonios ni URLs; si un dato no se conoce, déjalo vacío. Parafrasea. Español de Guatemala.";
+const MES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+function gtNow() { return new Date(Date.now() - 6 * 3600e3); }
+// último día hábil (lunes a viernes) del mes de una fecha
+function lastBizDay(d: Date) {
+  const x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0));
+  while ([0, 6].includes(x.getUTCDay())) x.setUTCDate(x.getUTCDate() - 1);
+  return x.getUTCDate();
+}
+// el mes para el que se trabaja el plan: desde el último día hábil, ya es el mes siguiente
+function planDate() {
+  const d = gtNow();
+  if (d.getUTCDate() >= lastBizDay(d)) return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1));
+  return d;
+}
+function monthKey() { const d = planDate(); return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`; }
+function quarterGT() {
+  const d = planDate();
+  const q = Math.floor(d.getUTCMonth() / 3), y = d.getUTCFullYear();
+  const M = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"];
+  return { label: `T${q + 1} ${y}`, months: [0, 1, 2].map((i) => M[q * 3 + i]), range: `${M[q * 3]}–${M[q * 3 + 2]} ${y}` };
+}
+
+async function ctxOf(cid: string, c: any) {
+  const trends = await listCol(`clients/${cid}/trends`);
+  const comps = await listCol(`clients/${cid}/competitors`);
+  const res = (await getDoc(`clients/${cid}/docs/research`)) || {};
+  const ps = await readPriv(`clients/${cid}/docs/prodstories`).catch(() => null);
+  const prods = (ps?.products || []).map((x: any) => `- ${x.name}${x.area ? " (" + x.area + ")" : ""}: ${x.tier === "now" ? "pautar ya" : x.tier === "content" ? "solo contenido" : "no comunicar aún"}${x.message ? " · mensaje: " + x.message : ""}`).join("\n");
+  return `${brief(c)}
+Productos de la marca (de sus historias por producto):
+${prods || "- (aún no hay historias por producto; usa solo los productos de su sitio oficial)"}
+Tagline: ${c.tagline || "-"}
+Voz y tono: ${c.voice || "-"}
+Resumen de la última investigación: ${res.summary || "-"}
+Tendencias:
+${trends.slice(0, 8).map((t: any) => `- ${t.title}: ${t.summary}`).join("\n") || "- (sin tendencias)"}
+Competencia:
+${comps.slice(0, 8).map((k: any) => `- ${k.name}${k.url ? " (" + k.url + ")" : ""}: hace ${(k.does || []).join("; ")} | no hace ${(k.doesnt || []).join("; ")}`).join("\n") || "- (sin competidores)"}`;
+}
+
+function planPrompt(k: string, c: any, ctx: string, cur?: any, monthName?: string) {
+  const Q = quarterGT();
+  const byProduct = ["strategy", "funnel", "pautastrat", "emailideas", "innovation"].includes(k)
+    ? "\nIMPORTANTE: la estrategia de esta marca se trabaja POR PRODUCTO. Organiza la sección por cada producto de la lista (empieza con los de 'pautar ya'); en cada estrategia, táctica, idea, acción de pauta o correo indica a qué producto pertenece, con el nombre exacto del producto al inicio del título (ej. «Ventas y CRM: …»).\n"
+    : "";
+  const head = `Eres el equipo de estrategia de Brandloop (agencia de marketing en Guatemala). Arma la sección "${k}" del plan de marketing de esta marca.\n\n${ctx}\n\n${RULES}\nResponde SOLO con un JSON válido, sin texto antes ni después.\n${byProduct}`;
+  const P: Record<string, string> = {
+    webaudit: `Abre el sitio ${c.website || "(búscalo)"} y evalúa su portada: puntaje global 0-100 y puntajes 0-100 de seo, geo (qué tan fácil es que una IA la entienda y la cite), conversion, message (claridad) y trust (prueba social, contacto). Resumen de 2-3 frases, 3-5 fortalezas, 5-7 problemas con arreglo concreto y prioridad, 4-6 arreglos rápidos, y titular + subtítulo sugeridos.
+{"url":"","score":0,"scores":{"seo":0,"geo":0,"conversion":0,"message":0,"trust":0},"summary":"","strengths":[],"issues":[{"area":"","problem":"","fix":"","priority":"Alta|Media|Baja"}],"quickWins":[],"copy":{"headline":"","sub":""}}`,
+    associations: `Encuentra 4-8 asociaciones, gremios y cámaras reales donde le conviene estar a la marca para conseguir clientes, primero en su país y luego en la región.
+{"items":[{"name":"","country":"","what":"qué es","why":"por qué le sirve a la marca","how":"cómo participar","cost":"costo si se publica, si no vacío","url":""}]}`,
+    audience: `Entrega: market (resumen 3 frases y 3-4 segmentos), current (2-3 tipos de clientes actuales probables), future (2-3 nichos a conquistar), personas (3 buyer personas con nombre ficticio, cargo, empresa, segmento, frase típica, 3 objetivos, 3 dolores, 2-3 objeciones con cómo responder, canales y qué lo hace comprar) y stories (StoryBrand por nicho, máx 4).
+{"market":{"summary":"","segments":[{"name":"","description":"","approach":""}]},"current":[{"name":"","description":"","approach":""}],"future":[{"name":"","description":"","approach":""}],"personas":[{"name":"","role":"","company":"","segment":"","quote":"","goals":[],"pains":[],"objections":[],"channels":[],"trigger":""}],"stories":[{"niche":"","hook":"","villain":"","hero":"","guide":"","plan":"","success":"","message":""}]}`,
+    strategy: `Estrategia del trimestre ${Q.label} (${Q.range}): una frase de posicionamiento (máx 25 palabras) y 7 a 9 estrategias que cubran las áreas ventas, redes, marca, eventos, pauta, web e ia (visibilidad en buscadores de IA). Cada una con objetivo medible, indicador, meta al cierre del trimestre, dato de hoy solo si se conoce, por qué, y 1-3 acciones por mes (${Q.months.join(", ")}). Más 3-5 cosas a evitar.
+{"positioning":"","strategies":[{"area":"ventas|redes|marca|eventos|pauta|web|ia","title":"","objective":"","kpi":"","target":"","baseline":"","why":"","months":{"${Q.months[0]}":[],"${Q.months[1]}":[],"${Q.months[2]}":[]},"basedOn":""}],"avoid":[]}`,
+    funnel: `Embudo de marketing completo: resumen, recorrido del cliente (5-6 pasos con emoji), las 4 etapas (atraccion, interaccion, conversion, fidelizacion) con meta, 3-5 tácticas y 3-4 ideas (canal y mes ${Q.months.join("/")}), TOFU/MOFU/BOFU con 3 preguntas que se hace el cliente y su respuesta y 3-4 contenidos, 3 objetivos con 2-3 estrategias, y anatomía (por etapa: meta, cómo y métrica).
+{"summary":"","journey":[{"emoji":"","label":"","desc":""}],"stages":{"atraccion":{"goal":"","tactics":[],"ideas":[{"t":"","d":"","channel":"","month":"","status":"idea"}]},"interaccion":{},"conversion":{},"fidelizacion":{}},"tmb":{"tofu":{"qa":[{"q":"","a":""}],"content":[]},"mofu":{},"bofu":{}},"objectives":[{"name":"","strategies":[{"t":"","d":""}]}],"anatomy":[{"k":"","goal":"","how":[],"metric":""}]}`,
+    compass: `Brújula de marca: resumen, propuesta de valor (line, niche, result, method), 5 pasos (Nicho, Oferta, Mensaje, Canales, Sistema de ventas) cada uno con 3-4 preguntas clave respondidas para esta marca, y 4-6 esenciales (area, why, who, how).
+{"summary":"","value":{"line":"","niche":"","result":"","method":""},"steps":[{"title":"","qa":[{"q":"","a":""}]}],"essentials":[{"area":"","why":"","who":"","how":""}]}`,
+    prodstories: `Historias de producto con StoryBrand. Toma SOLO los productos o servicios que aparecen en su sitio oficial (no inventes). Para la marca: who, forWhom, whereTo, rule. Para cada producto (máx 8): name, area, tier (now = pautar ya, content = solo contenido, no = no comunicar aún), pauta (por qué), for (company, buyer, user), hero, want, villain, problem (external, internal, philosophical), guide (empathy, authority), plan (3 pasos), cta, failure, success, message.
+{"brand":{"who":"","forWhom":"","whereTo":"","rule":""},"products":[{"name":"","area":"","tier":"now|content|no","pauta":"","for":{"company":"","buyer":"","user":""},"hero":"","want":"","villain":"","problem":{"external":"","internal":"","philosophical":""},"guide":{"empathy":"","authority":""},"plan":["","",""],"cta":"","failure":"","success":"","message":""}]}`,
+    pautastrat: `Estrategia de pauta digital. Revisa si sus competidores pautan (Biblioteca de anuncios de Meta, LinkedIn, Google) y qué dicen. Entrega: título, periodo (${Q.range}), qué revisaste (checked), titular, resumen corto y largo, encabezado de competencia, 3-4 KPIs (l, v, s), competidores (name, vs, status activo|sin pauta|desconocido, threat Alta|Media|Baja, meta, li, says[], read, links[{t,u}], short), qué hacer (3-5: title, channel, tools, amount solo si es un rango razonable explicado, why[], evidence[], kpi, stop, temp, idea), qué no hacer (2-4: title, idea, why[], evidence[], instead), ángulos de mensaje (3-4: msg, vs, why), herramientas (name, tier, pitch, comp, use, rivals), meses (name, total, parts[{l,a,v,temp}]), pendientes y fuentes (name, url).
+{"title":"","period":"","checked":"","headline":"","short":"","summary":"","compHead":"","kpis":[{"l":"","v":"","s":""}],"competitors":[{"name":"","vs":"","status":"","threat":"","meta":"","li":"","says":[],"read":"","links":[{"t":"","u":""}],"short":""}],"do":[{"title":"","channel":"","tools":"","amount":"","why":[],"evidence":[],"kpi":"","stop":"","temp":"","idea":""}],"dont":[{"title":"","idea":"","why":[],"evidence":[],"instead":""}],"angles":[{"msg":"","vs":"","why":""}],"tools":[{"name":"","tier":"","pitch":"","comp":"","use":"","rivals":""}],"months":[{"name":"","total":"","parts":[{"l":"","a":"","v":"","temp":""}]}],"pending":[],"sources":[{"name":"","url":""}]}`,
+    emailideas: `Correos de email marketing para el mes de ${MES[planDate().getUTCMonth()]}: propone 4 correos que la marca podría enviar (uno por semana), ligados a su embudo (atracción, interacción, conversión, fidelización), a las fechas y eventos del mes y a sus productos reales. Cada correo: objetivo, a quién va (segmento), semana sugerida de envío, etapa del embudo y el correo completo listo para diseñar: remitente, asunto (máx 60 caracteres), preencabezado, titular, frase de acento del titular, cuerpo (2-3 frases), 3 dolores o puntos que reconoce el lector, 3 puntos de valor (t, d), una línea de cierre o quién habla, y botón (cta). Sin precios ni promociones que la marca no haya publicado.
+{"month":"","items":[{"goal":"","segment":"","week":"","stage":"atraccion|interaccion|conversion|fidelizacion","mock":{"fromName":"","subject":"","preheader":"","headline":"","headlineAccent":"","body":"","pains":["","",""],"points":[{"t":"","d":""}],"speaker":"","when":"","meta":"","cta":""}}]}`,
+    innovation: `5 oportunidades de innovación o negocio (mercado nuevo, producto adyacente, alianza, modelo de negocio o geografía): type, market, why (ligado a una tendencia o hueco de la competencia), entry (2 frases), fit, risk, horizon (Corto|Mediano|Largo), score 1-10, firstStep. Más una tesis de crecimiento (2 frases) y 3 victorias rápidas.
+{"thesis":"","opportunities":[{"type":"","market":"","why":"","entry":"","fit":"","risk":"","horizon":"Mediano","score":7,"firstStep":""}],"quickWins":[]}`,
+  };
+  if (cur) {
+    const keep = JSON.stringify(cur).slice(0, 14000);
+    return head + `ACTUALIZACIÓN DEL MES (${monthName}). Esta es la versión vigente de la sección:\n${keep}\n\nActualízala: conserva lo que sigue vigente y lo que el equipo ya marcó (estados, avance, decisiones); cambia lo que ya pasó o perdió vigencia; suma lo nuevo de tendencias, competencia y mercado de este mes. Devuelve la sección COMPLETA con exactamente la misma forma:\n` + P[k];
+  }
+  return head + P[k];
+}
+
+
+async function hasRow(path: string) {
+  const { data } = await db.from("docs").select("path").eq("path", path).maybeSingle();
+  return !!data;
+}
+// qué le toca a esta marca ahora: primero lo que falta, luego lo que ya venció
+async function nextJob(cid: string) {
+  const res = (await getDoc(`clients/${cid}/docs/research`)) || {};
+  if (!res.at) return { k: "research", kind: "research" };
+  const mk = monthKey();
+  if (!res.plan) {
+    // primera vez: lo que ya existe cuenta como "al día" este mes; se actualiza a partir del próximo mes
+    const init: Record<string, string> = {};
+    for (const k of PLAN_ORDER) if (k !== "associations" && (await hasRow(`clients/${cid}/docs/${k}`))) init[k] = mk;
+    await put(`clients/${cid}/docs/research`, { ...res, plan: init });
+    res.plan = init;
+  }
+  const done = res.plan;
+  const qStart = [0, 3, 6, 9].includes(planDate().getUTCMonth());
+  const fails = res.planFails || {};
+  const today = gtNow().toISOString().slice(0, 10);
+  const blocked = (k: string) => fails[k] && fails[k].day === today && fails[k].n >= 3;
+  for (const k of PLAN_ORDER) {
+    if (blocked(k)) continue;
+    if (k === "associations") {
+      const { count } = await db.from("docs").select("path", { count: "exact", head: true }).eq("parent", `clients/${cid}/associations`);
+      if (!count && !done.associations) return { k, kind: "new" };
+      continue;
+    }
+    if (!(await hasRow(`clients/${cid}/docs/${k}`))) return { k, kind: "new" };
+  }
+  for (const k of PLAN_ORDER) {
+    if (k === "associations" || blocked(k)) continue;
+    const last = String(done[k] || "");
+    if (MONTHLY.has(k) && last < mk) return { k, kind: "update" };
+    if (QUARTERLY.has(k) && qStart && last < mk) return { k, kind: "update" };
+  }
+  return null;
+}
+
+async function markDone(cid: string, k: string) {
+  const res = (await getDoc(`clients/${cid}/docs/research`)) || {};
+  await put(`clients/${cid}/docs/research`, { ...res, plan: { ...(res.plan || {}), [k]: monthKey() }, planError: null });
+}
+
+async function planStep(cid: string, job: { k: string; kind: string }) {
+  if (job.kind === "research") return { step: "research", ...(await research(cid)) };
+  const c = await clientOf(cid);
+  if (!c || !c.name) throw new Error("marca sin datos públicos");
+  const k = job.k;
+  const path = `clients/${cid}/docs/${k}`;
+  const cur = job.kind === "update" ? await readPriv(path) : null;
+  if (job.kind === "update" && !cur) { await markDone(cid, k); return { cid, step: k, skipped: "no se pudo leer la versión vigente" }; }
+  const base = cur ? (() => { const x = { ...cur }; delete x._prev; return x; })() : null;
+  const r = await claude(planPrompt(k, c, await ctxOf(cid, c), base, MES[planDate().getUTCMonth()] + " " + planDate().getUTCFullYear()));
+  const t = now();
+  if (k === "webaudit") {
+    await put(path, { ...r, status: "listo", url: r.url || c.website || "", updatedAt: t, source: "agente", _prev: base || undefined });
+  } else if (k === "associations") {
+    const items = (r.items || []).filter((x: any) => x && x.name).slice(0, 8);
+    await Promise.all(items.map((x: any, i: number) => put(`clients/${cid}/associations/a${i + 1}`, { ...x, order: i + 1, updatedAt: t, source: "agente" })));
+  } else {
+    if (k === "strategy") {
+      const Q = quarterGT();
+      const sameQ = base && base.quarter === Q.label;
+      const prog: Record<string, number> = {};
+      if (sameQ) for (const x of base.strategies || []) prog[String(x.title || "").toLowerCase()] = Number(x.progress) || 0;
+      Object.assign(r, { quarter: Q.label, range: Q.range, months: Q.months, strategies: (r.strategies || []).map((x: any) => ({ ...x, progress: prog[String(x.title || "").toLowerCase()] ?? (Number(x.progress) || 0) })) });
+    }
+    await writePriv(path, { ...r, updatedAt: t, source: "agente", _prev: base ? { ...base, savedAt: t } : undefined });
+  }
+  await markDone(cid, k);
+  return { cid, step: k, kind: job.kind };
+}
+
+// ---------- Métricas orgánicas automáticas (Windsor.ai) ----------
+// Cada llamada actualiza UNA marca (la de sincronización más vieja, si pasaron más de 6 horas) y guarda cifrado.
+const WINDSOR = (Deno.env.get("WINDSOR_API_KEY") || "").trim();
+const ORG: Record<string, Record<string, string[]>> = {
+  bex: { instagram: ["17841475450632274"], linkedin_organic: ["110136197"] },
+  isicare: { instagram: ["17841475649260006"], facebook_organic: ["735660699611131"], linkedin_organic: ["100335750"] },
+  t2d: { instagram: ["17841444249203629"], facebook_organic: ["117172343521992"], linkedin_organic: ["69500254"] },
+  cyntia: { linkedin_organic: ["143902575", "104712104"] },
+  zerorisk: { facebook_organic: ["1405801559278723"] },
+};
+const nz = (v: any) => Number(v) || 0;
+const dayOf = (s: any) => String(s || "").slice(0, 10);
+const sumK = (a: any[], k: string) => a.reduce((t, x) => t + nz(x[k]), 0);
+const lastK = (a: any[], k: string) => { const r = [...a].filter((x) => x[k] != null).sort((x, y) => String(y.date || "").localeCompare(String(x.date || "")))[0]; return r ? r[k] : null; };
+async function win(connector: string, accounts: string[], preset: string, fields: string[]) {
+  const u = `https://connectors.windsor.ai/${connector}?api_key=${encodeURIComponent(WINDSOR)}&date_preset=${preset}&fields=${fields.join(",")}&select_accounts=${accounts.join(",")}`;
+  const r = await fetch(u, { signal: AbortSignal.timeout(60000) });
+  const t = await r.text();
+  let d: any; try { d = JSON.parse(t); } catch { throw new Error(`Windsor ${connector}: ${t.slice(0, 120)}`); }
+  if (!r.ok || d.error) throw new Error(`Windsor ${connector}: ${String(d.error || r.status).slice(0, 160)}`);
+  return (d.data || []) as any[];
+}
+async function syncOrganic(cid: string) {
+  const acc = ORG[cid];
+  const docs: any[] = [], errs: string[] = [];
+  const today = dayOf(new Date().toISOString());
+  if (acc.instagram) try {
+    const a = acc.instagram;
+    const posts = await win("instagram", a, "last_90d", ["media_id", "timestamp", "media_type", "media_product_type", "media_caption", "media_permalink", "media_reach", "media_views", "media_total_like_count", "media_total_comments_count", "media_saved", "media_shares", "media_engagement"]);
+    posts.filter((x) => x.media_id && x.media_product_type !== "STORY" && x.media_product_type !== "AD").forEach((x) => docs.push({ id: "ig_" + x.media_id, net: "ig", kind: "post", date: dayOf(x.timestamp), type: String(x.media_type || ""), text: String(x.media_caption || "").slice(0, 600), url: String(x.media_permalink || ""), m: { reach: nz(x.media_reach), views: nz(x.media_views), likes: nz(x.media_total_like_count), comments: nz(x.media_total_comments_count), saves: nz(x.media_saved), shares: nz(x.media_shares), eng: nz(x.media_engagement) } }));
+    const st = await win("instagram", a, "last_7dT", ["story_id", "story_timestamp", "story_reach", "story_views", "story_replies", "story_shares", "story_interactions", "story_taps_forward", "story_taps_back", "story_exits", "story_permalink"]);
+    st.filter((x) => x.story_id).forEach((x) => docs.push({ id: "igs_" + x.story_id, net: "ig", kind: "story", date: dayOf(x.story_timestamp), text: "", url: String(x.story_permalink || ""), m: { reach: nz(x.story_reach), views: nz(x.story_views), replies: nz(x.story_replies), shares: nz(x.story_shares), eng: nz(x.story_interactions), fwd: nz(x.story_taps_forward), back: nz(x.story_taps_back), exits: nz(x.story_exits) } }));
+    const prof = await win("instagram", a, "last_7d", ["followers_count", "media_count", "username"]);
+    const day = await win("instagram", a, "last_30d", ["date", "views", "accounts_engaged", "total_interactions", "reach"]);
+    docs.push({ id: "sum_ig", net: "ig", kind: "summary", date: today, text: String(prof[0]?.username || ""), m: { followers: nz(prof[0]?.followers_count), media: nz(prof[0]?.media_count), views30: sumK(day, "views"), engaged30: sumK(day, "accounts_engaged"), inter30: sumK(day, "total_interactions"), reach30: sumK(day, "reach") } });
+  } catch (e) { errs.push("Instagram: " + (e as Error).message); }
+  if (acc.facebook_organic) try {
+    const a = acc.facebook_organic;
+    const posts = await win("facebook_organic", a, "last_90d", ["post_id", "post_created_time", "post_message_oneline", "post_impressions", "post_total_media_view_unique", "post_reactions_total", "post_comments_total", "post_activity_by_action_type_share", "post_clicks", "post_engagements"]);
+    posts.filter((x) => x.post_id).forEach((x) => docs.push({ id: "fb_" + String(x.post_id).replace(/[^0-9A-Za-z_-]/g, ""), net: "fb", kind: "post", date: dayOf(x.post_created_time), type: "", text: String(x.post_message_oneline || "").slice(0, 600), url: "https://www.facebook.com/" + String(x.post_id), m: { impressions: nz(x.post_impressions), reach: nz(x.post_total_media_view_unique), likes: nz(x.post_reactions_total), comments: nz(x.post_comments_total), shares: nz(x.post_activity_by_action_type_share), clicks: nz(x.post_clicks), eng: nz(x.post_engagements) } }));
+    const pg = await win("facebook_organic", a, "last_30d", ["date", "page_follows", "page_daily_follows_unique", "page_daily_unfollows_unique", "page_impressions", "page_post_engagements", "page_views_total"]);
+    docs.push({ id: "sum_fb", net: "fb", kind: "summary", date: today, text: "", m: { followers: nz(lastK(pg, "page_follows")), newF30: sumK(pg, "page_daily_follows_unique"), lostF30: sumK(pg, "page_daily_unfollows_unique"), impr30: sumK(pg, "page_impressions"), inter30: sumK(pg, "page_post_engagements"), views30: sumK(pg, "page_views_total") } });
+  } catch (e) { errs.push("Facebook: " + (e as Error).message); }
+  if (acc.linkedin_organic) try {
+    const a = acc.linkedin_organic;
+    const posts = await win("linkedin_organic", a, "last_90d", ["share_id", "share_published_time", "share_text", "share_post_type", "share_impression_count", "share_unique_impressions_count", "share_like_count", "share_comment_count", "share_count", "share_clicks_count", "share_engagement_rate", "share_video_views"]);
+    posts.filter((x) => x.share_id).forEach((x) => docs.push({ id: "li_" + String(x.share_id).replace(/[^0-9A-Za-z_-]/g, ""), net: "li", kind: "post", date: dayOf(x.share_published_time), type: String(x.share_post_type || ""), text: String(x.share_text || "").replace(/\{hashtag\|\\?#\|([^}]+)\}/g, "#$1").replace(/\\([()])/g, "$1").slice(0, 600), url: "https://www.linkedin.com/feed/update/urn:li:share:" + String(x.share_id), m: { impressions: nz(x.share_impression_count), reach: nz(x.share_unique_impressions_count), likes: nz(x.share_like_count), comments: nz(x.share_comment_count), shares: nz(x.share_count), clicks: nz(x.share_clicks_count), er: Math.round(nz(x.share_engagement_rate) * 1000) / 10, views: nz(x.share_video_views) } }));
+    const pg = await win("linkedin_organic", a, "last_30d", ["date", "organization_follower_count", "followers_gain_organic", "followers_gain_paid", "all_page_views", "account_analytics_impression_count", "account_analytics_total_engagements"]);
+    docs.push({ id: "sum_li", net: "li", kind: "summary", date: today, text: "", m: { followers: nz(lastK(pg, "organization_follower_count")), newF30: sumK(pg, "followers_gain_organic") + sumK(pg, "followers_gain_paid"), impr30: sumK(pg, "account_analytics_impression_count"), inter30: sumK(pg, "account_analytics_total_engagements"), views30: sumK(pg, "all_page_views") } });
+  } catch (e) { errs.push("LinkedIn: " + (e as Error).message); }
+  const t = now();
+  for (const d of docs) { const { id, ...rest } = d; await writePriv(`clients/${cid}/organic/${id}`, { ...rest, syncedAt: t, source: "agente" }); }
+  const st = (await getDoc("agent/orgsync")) || {};
+  await put("agent/orgsync", { ...st, [cid]: { at: t, n: docs.length, errors: errs } });
+  return { cid, saved: docs.length, errors: errs };
+}
+
+Deno.serve(async (req) => {
+  if (!AGENT_KEY || req.headers.get("x-agent-key") !== AGENT_KEY) return json({ error: "no autorizado" }, 401);
+  if (!KEY) return json({ error: "Falta ANTHROPIC_API_KEY" }, 500);
+  const u = new URL(req.url);
+  let cid = u.searchParams.get("cid");
+  if (u.searchParams.get("mode") === "organic") {
+    if (!WINDSOR) return json({ error: "Falta WINDSOR_API_KEY" }, 500);
+    const st = (await getDoc("agent/orgsync")) || {};
+    const ak = (await getDoc("vault/agentkeys")) || {};
+    const ids = (cid ? [cid] : Object.keys(ORG)).filter((id) => ORG[id] && ak[id]?.w && (cid || now() - (st[id]?.at || 0) > 6 * 3600e3));
+    const id = ids.sort((a, b) => (st[a]?.at || 0) - (st[b]?.at || 0))[0];
+    if (!id) return json({ done: true });
+    try { return json({ ok: true, ...(await syncOrganic(id)) }); }
+    catch (err) { await put("agent/orgsync", { ...st, [id]: { ...(st[id] || {}), at: now(), errors: [String((err as Error).message || err)] } }); return json({ ok: false, cid: id, error: String((err as Error).message || err) }, 500); }
+  }
+  if (u.searchParams.get("mode") === "plan") {
+    await agentPriv(); // la primera vez crea las llaves del agente
+    const ak = (await getDoc("vault/agentkeys")) || {};
+    const all = ((await db.from("docs").select("path").eq("parent", "clients")).data || []).map((r: any) => r.path.split("/")[1]).filter((id: string) => !SKIP.includes(id));
+    const ids = cid ? [cid] : all;
+    const waiting: string[] = [];
+    for (const id of ids) {
+      const job = await nextJob(id);
+      if (!job) continue;
+      if (job.kind !== "research" && job.k !== "webaudit" && job.k !== "associations" && !ak[id]?.w) { waiting.push(id); continue; }
+      try {
+        return json({ ok: true, ...(await planStep(id, job)) });
+      } catch (err) {
+        const rs = (await getDoc(`clients/${id}/docs/research`)) || {};
+        const day = gtNow().toISOString().slice(0, 10);
+        const f0 = (rs.planFails || {})[job.k];
+        const n = f0 && f0.day === day ? f0.n + 1 : 1;
+        await put(`clients/${id}/docs/research`, { ...rs, planError: `${job.k}: ${String((err as Error).message || err)}`, planErrorAt: now(), planFails: { ...(rs.planFails || {}), [job.k]: { day, n } } }).catch(() => {});
+        return json({ ok: false, cid: id, step: job.k, error: String((err as Error).message || err) }, 500);
+      }
+    }
+    return json({ done: true, waitingKey: waiting.length });
+  }
+  if (!cid) {
+    // la marca con la investigación más vieja (y que no se haya hecho en las últimas 20 horas)
+    const { data } = await db.from("docs").select("path").eq("parent", "clients");
+    const ids = (data || []).map((r: any) => r.path.split("/")[1]).filter((id: string) => !SKIP.includes(id));
+    const ages = await Promise.all(ids.map(async (id: string) => ({ id, at: ((await getDoc(`clients/${id}/docs/research`)) || {}).at || 0 })));
+    const next = ages.filter((x) => now() - x.at > 20 * 3600e3).sort((a, b) => a.at - b.at)[0];
+    if (!next) return json({ done: true });
+    cid = next.id;
+  }
+  try {
+    return json({ ok: true, ...(await research(cid)) });
+  } catch (err) {
+    await merge(`clients/${cid}/docs/research`, { error: String((err as Error).message || err), errorAt: now() }).catch(() => {});
+    return json({ ok: false, cid, error: String((err as Error).message || err) }, 500);
+  }
+});
