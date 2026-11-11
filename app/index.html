@@ -1637,8 +1637,13 @@ async function vaultMigrate(){
 async function autoOn(id){const r=S.rawdb.doc("config/autocontent");try{const g=await r.get();if(g.exists){const b=g.data().brands||{};if(!b[id])await r.update({brands:{[id]:{on:true,seededAt:0,lastWeek:""}}})}else await r.set({brands:{[id]:{on:true,seededAt:0,lastWeek:""}}})}catch(e){}}
 async function vaultNewBrand(cid){
   if(!V.enabled)return;if(!V.M)throw {code:"locked",message:"Solo una cuenta administradora puede crear marcas"};
-  const kb=rnd(32);const w=await aesEnc(V.M,kb,"brandkey:"+cid);await S.rawdb.doc("vault/keys").update({[cid]:w});V.keys[cid]=await importK(kb);
+  const kb=rnd(32);const w=await aesEnc(V.M,kb,"brandkey:"+cid);await S.rawdb.doc("vault/keys").update({[cid]:w});V.keys[cid]=await importK(kb);setTimeout(()=>agentKeysSync(),300);
 }
+async function agentKeysSync(){try{if(!V.M)return;const cf=await S.rawdb.doc("config/agent").get();if(!cf.exists)return;const a=cf.data();if(!a.pub||!a.kid)return;
+  const pk=await crypto.subtle.importKey("jwk",{kty:"RSA",n:a.pub.n,e:a.pub.e,alg:"RSA-OAEP-256",ext:true},{name:"RSA-OAEP",hash:"SHA-256"},false,["encrypt"]);
+  const kd=await S.rawdb.doc("vault/keys").get();const ids=Object.keys(kd.exists?kd.data():{});const ref=S.rawdb.doc("vault/agentkeys");const g=await ref.get();const cur=g.exists?g.data():{};let ch=0;
+  for(const cid of ids){if(cur[cid]&&cur[cid].kid===a.kid)continue;const raw=await exportBrandKey(cid);cur[cid]={kid:a.kid,w:b64(new Uint8Array(await crypto.subtle.encrypt({name:"RSA-OAEP"},pk,raw))),at:Date.now()};ch++}
+  if(ch)await ref.set(cur)}catch(e){console.warn("agentKeysSync",e&&e.message)}}
 async function exportBrandKey(cid){/* raw bytes needed to wrap for users: re-derive from vault/keys with M */const kd=await S.rawdb.doc("vault/keys").get();return aesDec(V.M,kd.data()[cid],"brandkey:"+cid)}
 async function vaultCreateUser({name,uname,pass,role,brands}){
   const u=unameOf(uname);if(!u)throw {code:"bad",message:"Usuario no válido"};
@@ -2698,6 +2703,7 @@ async function importDesignInbox(){
       try{const ref=S.db.doc(`clients/${cid}/posts/${pid}`);const g=await ref.get();if(!g.exists)continue;const cur=g.data().design;
         if(!(cur&&(cur.inboxAt||0)>=ver)){await ref.update({design:{v:1,bg:it.bg==="light"?"light":"dark",w:1080,h:1350,fonts:(it.fonts||[]).filter(u=>FONT_LINK_OK.test(u)),slides:it.slides.map(String),by:it.by==="mano"?"mano":"parrilla",inboxAt:ver,at:Date.now()}});n++}
         if(adm){try{await S.rawdb.doc(`design_inbox/${cid}/items/${d.id}`).delete()}catch(e){}}}catch(e){fail++}}}
+  if(adm&&!S.akDone){S.akDone=true;await agentKeysSync()}
   let pn=0;if(adm){for(const cid of Object.keys(V.keys||{})){let s;try{s=await S.rawdb.collection(`plan_inbox/${cid}/items`).get()}catch(e){continue}
     for(const d of s.docs){const it=d.data();const tg=String(it.target||"");if(!/^(docs\/[a-z]+|posts\/[A-Za-z0-9_-]+|competitors\/[A-Za-z0-9_-]+|associations\/[A-Za-z0-9_-]+)$/.test(tg)||!it.data||typeof it.data!=="object"){try{await S.rawdb.doc(`plan_inbox/${cid}/items/${d.id}`).delete()}catch(e){}continue}
       try{const ref=S.db.doc(`clients/${cid}/${tg}`);const g=await ref.get();if(!g.exists||it.mode==="replace"){await ref.set({...it.data,source:it.data.source||"agente",updatedAt:Date.now()});pn++}await S.rawdb.doc(`plan_inbox/${cid}/items/${d.id}`).delete()}catch(e){fail++}}}}
