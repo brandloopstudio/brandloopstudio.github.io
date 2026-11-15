@@ -1092,6 +1092,22 @@ fieldset.field{border:0;padding:0;margin:0}
 @media (max-width:720px){.cp-vg,.cp-3{grid-template-columns:1fr}}
 .ad-card .lbl{display:block;margin-top:10px}.ad-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}.ad-g p{margin:2px 0 0}
 .ad-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+/* presentaciones */
+.dk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.dk-card{background:var(--panel);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.dk-cover{position:relative;aspect-ratio:16/9;border:0;padding:18px 20px;cursor:pointer;text-align:left;color:#f5f1eb;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;font:inherit;
+  background:radial-gradient(110% 95% at 100% 0%,color-mix(in srgb,var(--k1) 62%,transparent),transparent 62%),radial-gradient(80% 80% at 0% 100%,color-mix(in srgb,var(--k2) 34%,transparent),transparent 62%),#0b0d0f}
+.dk-cover.lt{color:#14110e;background:radial-gradient(110% 95% at 100% 0%,color-mix(in srgb,var(--k1) 38%,transparent),transparent 62%),radial-gradient(80% 80% at 0% 100%,color-mix(in srgb,var(--k2) 24%,transparent),transparent 62%),#f6f5f1}
+.dk-cover:before{content:"";position:absolute;inset:0;background-image:radial-gradient(currentColor 1px,transparent 1.4px);background-size:18px 18px;opacity:.1;pointer-events:none}
+.dk-cover i{position:absolute;top:18px;left:20px;width:38px;height:5px;border-radius:9px;background:linear-gradient(90deg,var(--k1),var(--k2))}
+.dk-cover b{position:relative;font:700 20px/1.15 var(--display);letter-spacing:-.015em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.dk-cover:hover b{transform:translateY(-3px)}
+.dk-meta{display:flex;align-items:center;gap:8px;padding:12px 14px;flex-wrap:wrap}
+.dk-meta .hint:first-child{margin-right:auto}
+#deck-layer{position:fixed;inset:0;z-index:9999;background:#0f0c0a}
+#deck-layer iframe{width:100%;height:100%;border:0;display:block}
+html.deck-open,html.deck-open body{overflow:hidden}
+@media (prefers-reduced-motion:reduce){.dk-cover b{transition:none}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -1276,8 +1292,10 @@ const GROUPS=[
   ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["strategy","Estrategia"],["audience","Audiencia"],["prodstory","Historias por producto"],["funnel","Embudo de ventas"],["compass","Brújula de marca"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
   ["innov","Innovación","bulb",[["innovation","Oportunidades de negocio"]]],
   ["ai","AI Solutions","spark",[["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"],["geo","IA Search"]]],
-  ["sales","Ventas","pipe",[["pipe","Pipeline"],["events","Eventos y asociaciones"],["export","Documentos"]]]
+  ["sales","Ventas","pipe",[["pipe","Pipeline"],["events","Eventos y asociaciones"],["export","Documentos"],["slides","Presentaciones"]]]
 ];
+/* presentaciones: estudio a pantalla completa (app/presentaciones.html). Solo recibe la marca abierta en ese momento. */
+const DK={layer:null,frame:null,cid:null,id:null,doc:null,createdAt:null,ai:{}};
 
 function moveDeal(id,stage,msg){const d=S.deals.find(x=>x.id===id);if(!d||d.stage===stage)return;write(()=>col("deals").doc(id).update({stage,updatedAt:Date.now()}),msg||"Etapa actualizada")}
 (function(){let dragId=null;
@@ -1341,6 +1359,7 @@ if(S.theme) document.documentElement.dataset.theme=S.theme;
 
 /* ---------- render ---------- */
 function render(){
+  if(S.gate&&DK.layer)closeDeck(true);
   if(S.gate){const fid=document.activeElement&&document.activeElement.id;root.innerHTML=gateScreen();root.querySelectorAll("[data-draft]").forEach(el=>{const k=el.dataset.draft;if(k in S.drafts)el.value=S.drafts[k]});const f=(fid&&document.getElementById(fid))||root.querySelector(".wl-form input:not([value]),.wl-form input");if(f&&!S.gateBusy)f.focus({preventScroll:true});return}
   const LIM=PORTAL||(V.enabled&&V.user&&V.user.role!=="admin");if(S.cwBase==null)S.cwBase=S.canWrite;S.canWrite=!!S.cwBase&&(!LIM||!["newclient","access"].includes(S.view));if(LIM&&(S.view==="newclient"||S.view==="access"))S.view="home";if(PORTAL)S.menu=false;
   try{const sel=window.getSelection&&window.getSelection();if(sel&&!sel.isCollapsed&&sel.rangeCount&&root.contains(sel.anchorNode)&&!/^(INPUT|TEXTAREA)$/.test((document.activeElement||{}).tagName||"")){S._selWait=(S._selWait||0)+1;if(S._selWait<40){clearTimeout(S._selT);S._selT=setTimeout(render,700);return}}}catch(e){}S._selWait=0;
@@ -1435,6 +1454,7 @@ function body(){
     case "track": return viewTrack(c);
     case "plan": return viewPlan(c);
     case "export": return viewExport(c);
+    case "slides": return viewSlides(c);
     case "brand": return viewBrand(c);
     default: return viewHome(c);
   }
@@ -1540,7 +1560,7 @@ function trackerCard(){
 let MRAW_SESSION=null;
 const V={enabled:false,meta:null,keys:{},M:null,user:null,cache:{}};
 const KDF_ITERS=600000;
-const SECRET_COLS=new Set(["posts","people","lposts","tasks","deals","metrics","plan","campaigns","ads","geo","organic","emailcamps"]);
+const SECRET_COLS=new Set(["posts","people","lposts","tasks","deals","metrics","plan","campaigns","ads","geo","organic","emailcamps","decks"]);
 const SECRET_DOCS=new Set(["finance","adcalc","pautastrat","funnel","compass","prodstories","investplan","strategy","audience","innovation","site","quote","emailideas"]);
 const PUBLIC_CLIENT=new Set(["name","short","industry","country","website","lang","order","color","logoUrl","logoOnDark","trendTags","createdAt","tagline","fonts","palette","portalUrl","updatedAt"]);
 const te=new TextEncoder(),td=new TextDecoder();
@@ -5044,7 +5064,7 @@ async function autopilot(id){
 }
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
-  stopSubs(); S.cid=id; lsSet("bl-client",id);
+  stopSubs(); S.cid=id; lsSet("bl-client",id);closeDeck(true);S.decks=null;S.decksOf=null;S.decksCid=null;S.decksErr=false;
   S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.funnel=null;S.compass=null;S.compSum=null;["finance","adcalc","pautastrat","funnel","compass","prodstories","investPlan","webaudit","site"].forEach(k=>{S[k+"Seen"]=false;S[k+"Cid"]=null});Object.keys(S).forEach(k=>{if(k.startsWith("_raw_")&&!k.startsWith("_raw_"+id+"_"))delete S[k]});S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
   [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["funnel","funnel"],["compass","compass"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{const nv=x.exists?x.data():null;const js=JSON.stringify(nv);if(S.cid!==id)return;const rk="_raw_"+id+"_"+k;if(S[rk]===js&&S[k+"Seen"]&&S[k+"Cid"]===id)return;S[rk]=js;S[k+"Cid"]=id;S[k]=k==="finance"&&nv&&S.finDraft?{...nv,...S.finDraft}:k==="adcalc"&&S.calDirty&&S.adcalc?S.adcalc:nv;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
@@ -5504,6 +5524,87 @@ document.addEventListener("change",e=>{const el=e.target;if(el.dataset&&el.datas
 F.search=()=>{const q=norm(S.drafts["q"]||"");if(!q)return;let hit=null;for(const g of GROUPS){for(const [k,l] of g[3]){if(norm(l).includes(q)||q.includes(norm(l))){hit=k;break}}if(hit)break;if(norm(g[1]).includes(q))hit=g[3][0][0]}
   if(!hit){toast("No encontré esa sección. Prueba con plan, eventos, pauta o competencia.");return}const [v,t]=hit.split(":");S.view=v;if(t)S.trendTab=t;S.drafts["q"]="";S.menu=false;render();window.scrollTo({top:0})};
 document.addEventListener("submit",e=>{const f=e.target.closest("form[data-form]");if(!f)return;e.preventDefault();F[f.dataset.form]?.(f)});
+
+/* ---------- presentaciones ---------- */
+async function loadDecks(cid){
+  if(!S.db||!cid||S.decksBusy===cid)return;S.decksBusy=cid;
+  try{const s=await S.db.collection(`clients/${cid}/decks`).get();if(S.cid!==cid)return;
+    S.decks=s.docs.map(d=>({id:d.id,...d.data()})).filter(d=>d&&d.deck&&Array.isArray(d.deck.laminas)).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));S.decksOf=cid;S.decksCid=cid;S.decksErr=false}
+  catch(e){if(S.cid===cid){S.decks=[];S.decksOf=cid;S.decksCid=cid;S.decksErr=true}}
+  finally{if(S.decksBusy===cid)S.decksBusy=null;if(S.cid===cid&&S.view==="slides")render()}
+}
+const dkHex=v=>/^#[0-9a-f]{6}$/i.test(v||"")?v:null;
+function deckBrand(c){
+  const pal=brandPal(c).map(p=>p.hex);const c1=pal[0];
+  const hsl=x=>{const n=parseInt(x.slice(1),16),r=(n>>16&255)/255,g=(n>>8&255)/255,b=(n&255)/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;return {s:mx===mn?0:(mx-mn)/(1-Math.abs(2*l-1)||1),l}};
+  const c2=pal.slice(1).find(x=>{const k=hsl(x);return x.toLowerCase()!==c1.toLowerCase()&&k.s>.25&&k.l>.2&&k.l<.85})||c1;
+  const f=c.fonts||{};const ok=x=>x&&FONT_OK.test(x)?x:"";
+  return {name:c.name||"",c1,c2,pal:pal.slice(0,6),fd:ok(f.display),fb:ok(f.body),logo:c.logoUrl||"",logoDark:c.logoOnDark||""};
+}
+function viewSlides(c){
+  if(S.decksCid!==c.id)loadDecks(c.id);
+  const w=S.canWrite;const list=S.decksOf===c.id&&S.decks?S.decks:null;const b=deckBrand(c);
+  const card=d=>{const k1=dkHex(d.brand?.c1)||b.c1,k2=dkHex(d.brand?.c2)||b.c2,t=d.title||"Presentación",n=d.deck.laminas.length;
+    return `<article class="dk-card"><button class="dk-cover${d.brand?.dark===false?" lt":""}" data-act="deckOpen" data-id="${esc(d.id)}" style="--k1:${k1};--k2:${k2}" aria-label="Abrir ${esc(t)}"><i></i><b>${esc(t)}</b></button>
+    <div class="dk-meta"><span class="hint">${n} ${n===1?"lámina":"láminas"}${d.updatedAt?" · "+esc(fmtTs(d.updatedAt)):""}</span>
+    ${S.confirm==="dk:"+d.id?`<span class="hint">¿Eliminar?</span><button class="btn sm" style="color:var(--bad)" data-act="deckDel" data-id="${esc(d.id)}">Sí</button><button class="btn ghost sm" data-act="cancelDel">No</button>`
+      :`<button class="btn sm" data-act="deckOpen" data-id="${esc(d.id)}">Abrir</button>${w?`<button class="btn sm ghost" data-act="deckCopy" data-id="${esc(d.id)}">Duplicar</button><button class="x" data-act="deckAskDel" data-id="${esc(d.id)}" aria-label="Eliminar ${esc(t)}">${ic("x")}</button>`:""}`}</div></article>`};
+  return `<section class="greet"><div class="hello"><h1>Presentaciones</h1><p class="sub">Presentaciones con la marca de ${esc(c.name)}: colores, logo y tipografía ya puestos. Se presentan aquí o se descargan en HTML, PowerPoint o PDF.</p></div>
+  ${w?`<button class="btn lg accent" data-act="deckNew">${ic("plus")} Nueva presentación</button>`:""}</section>
+  ${list==null?`<div class="thinkrow thinking">${loopSvg()} Cargando presentaciones…</div>`
+    :S.decksErr?emptyBox("No se pudieron cargar las presentaciones","Revisa tu conexión e intenta de nuevo.",`<button class="btn sm" data-act="deckReload">Reintentar</button>`)
+    :!list.length?emptyBox("Aún no hay presentaciones de "+c.name,w?"Crea la primera: sube tu borrador en PowerPoint, Word o texto y sale armado con la marca.":"Cuando tu equipo cree una, aparecerá aquí.")
+    :`<div class="dk-grid">${list.map(card).join("")}</div>`}`;
+}
+function openDeck(id){
+  const c=client();if(!c||DK.layer)return;
+  const doc=id?(S.decks||[]).find(d=>d.id===id):null;if(id&&!doc)return;
+  DK.cid=c.id;DK.id=doc?doc.id:rid()+rid();DK.doc=doc||null;DK.createdAt=doc?.createdAt||null;DK.createdBy=doc?.createdBy||null;DK.ai={};
+  const L=document.createElement("div");L.id="deck-layer";
+  L.innerHTML=`<iframe title="Presentaciones de ${esc(c.name)}" src="presentaciones.html?embed=1" allow="fullscreen" allowfullscreen></iframe>`;
+  document.body.appendChild(L);document.documentElement.classList.add("deck-open");DK.layer=L;DK.frame=L.firstChild;
+}
+function closeDeck(quiet){
+  if(!DK.layer)return;
+  Object.values(DK.ai).forEach(k=>{try{k.abort()}catch(e){}});DK.ai={};
+  DK.layer.remove();DK.layer=DK.frame=null;DK.cid=DK.id=DK.doc=null;
+  document.documentElement.classList.remove("deck-open");
+  if(!quiet&&S.cid){S.decksCid=null;if(S.view==="slides")render()}
+}
+window.addEventListener("message",async e=>{
+  if(!DK.frame||e.source!==DK.frame.contentWindow||e.origin!==location.origin)return;
+  const m=e.data;if(!m||typeof m!=="object")return;
+  const win=DK.frame.contentWindow;const back=x=>{try{if(DK.frame&&DK.frame.contentWindow===win)win.postMessage(x,location.origin)}catch(_){}};
+  const c=client();const cid=DK.cid,id=DK.id;
+  if(!c||!cid||cid!==S.cid||c.id!==cid){closeDeck();return} /* la marca cambió: se cierra sin enviar ni guardar nada */
+  if(m.t==="deck-ready"){back({t:"deck-init",brand:deckBrand(c),doc:DK.doc?{deck:DK.doc.deck,brand:DK.doc.brand||null}:null,canWrite:!!S.canWrite,ai:!!(S.sample&&!S.sampleOff)});return}
+  if(m.t==="deck-close"){closeDeck();return}
+  if(m.t==="deck-save"){
+    const d=m.deck;
+    if(!S.canWrite||!d||!Array.isArray(d.laminas)||!d.laminas.length||d.laminas.length>14){back({rid:m.rid,error:{code:"bad"}});return}
+    if(JSON.stringify([d,m.brand||null]).length>900000){back({rid:m.rid,error:{code:"too_large"}});return}
+    const now=Date.now();const title=String(m.title||d.titulo||"Presentación").slice(0,90);
+    const rec={title,deck:{titulo:title,laminas:d.laminas},brand:m.brand||null,updatedAt:now,createdAt:DK.createdAt||now,createdBy:DK.createdBy||myId()};
+    try{await S.db.doc(`clients/${cid}/decks/${id}`).set(rec);if(DK.id===id){DK.createdAt=rec.createdAt;DK.createdBy=rec.createdBy}back({rid:m.rid,data:true})}
+    catch(err){back({rid:m.rid,error:{code:"save"}})}
+    return}
+  if(m.t==="deck-ai"){
+    if(!S.sample||S.sampleOff){back({rid:m.rid,error:{code:"sampling_disabled"}});return}
+    const ctl=new AbortController();DK.ai[m.rid]=ctl;
+    try{const r=await S.sample.json(String(m.prompt||"").slice(0,60000),{signal:ctl.signal,cache:false});back({rid:m.rid,data:r})}
+    catch(err){back({rid:m.rid,error:{code:(err&&err.code)||(ctl.signal.aborted?"cancelled":"error")}})}
+    finally{delete DK.ai[m.rid]}
+    return}
+  if(m.t==="deck-ai-stop"){try{DK.ai[m.rid]?.abort()}catch(_){}}
+});
+A.deckNew=()=>openDeck(null);
+A.deckOpen=b=>openDeck(b.dataset.id);
+A.deckReload=()=>{S.decksCid=null;render()};
+A.deckAskDel=b=>{S.confirm="dk:"+b.dataset.id;render()};
+A.deckDel=async b=>{S.confirm=null;const id=b.dataset.id,cid=S.cid;const ok=await write(()=>S.db.doc(`clients/${cid}/decks/${id}`).delete(),"Presentación eliminada");if(ok!==false&&S.cid===cid)S.decks=(S.decks||[]).filter(d=>d.id!==id);render()};
+A.deckCopy=async b=>{const d=(S.decks||[]).find(x=>x.id===b.dataset.id),cid=S.cid;if(!d)return;const now=Date.now();const title=((d.title||"Presentación")+" (copia)").slice(0,90);
+  const ok=await write(()=>S.db.doc(`clients/${cid}/decks/${rid()+rid()}`).set({title,deck:{titulo:title,laminas:d.deck.laminas},brand:d.brand||null,updatedAt:now,createdAt:now,createdBy:myId()}),"Presentación duplicada");
+  if(ok!==false&&S.cid===cid){S.decksCid=null;render()}};
 
 /* ---------- boot ---------- */
 render();
