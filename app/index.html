@@ -1858,13 +1858,19 @@ const ofAdm=()=>!!(V.user&&V.user.role==="admin");
 const officeOn=c=>!!c&&!PORTAL&&!!V.user&&!!S.rawdb&&(ofAdm()||(((S.officeCfg||{}).on)||[]).includes(c.id));
 const ofHex=h=>/^#[0-9a-f]{6}$/i.test(h||"")?h:null;
 const ofLum=h=>{h=ofHex(h);if(!h)return 0;const v=[1,3,5].map(i=>{const x=parseInt(h.slice(i,i+2),16)/255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*v[0]+.7152*v[1]+.0722*v[2]};
-function ofBrand(c,cfg,pub){
+/* mascota de la marca (imagen, nombre y objeto): la define la dirección y solo viaja con su propia marca */
+function ofMascot(m){
+  const f=x=>typeof x==="string"&&/^m\/[a-z0-9]{6,40}\.(webp|png)$/.test(x)?x:null;
+  if(!m||!f(m.img))return null;
+  return {img:f(m.img),av:f(m.av),name:String(m.name||"").slice(0,24),role:String(m.role||"").slice(0,40),prop:["maqueta","hex","aro","cruz"].includes(m.prop)?m.prop:null,h:+m.h||0};
+}
+function ofBrand(c,cfg,pub,mas){
   const pal=(Array.isArray(c.palette)?c.palette:[]).map(p=>ofHex(p&&p.hex)).filter(Boolean);
   const c1=ofHex(c.color)||pal[0]||"#FF6A00";
   const c2=pal.find(h=>h.toLowerCase()!==c1.toLowerCase()&&ofLum(h)<.85)||c1;
   const lg=logoFor(c,false);
   return {name:c.name||"Marca",about:(cfg&&cfg.about)||"",c1,c2,pal:[c1,c2,...pal.filter(h=>h!==c1&&h!==c2&&ofLum(h)<.85)].slice(0,5),logo:lg?lg.url:null,
-    off:((ofAdm()?cfg&&cfg.off:pub&&pub.off)||[]).filter(x=>typeof x==="string"),order:0,live:(pub&&pub.live)||{}};
+    off:((ofAdm()?cfg&&cfg.off:pub&&pub.off)||[]).filter(x=>typeof x==="string"),order:0,live:(pub&&pub.live)||{},mascot:ofMascot(mas)};
 }
 function officeSubs(id){
   if(PORTAL||!V.user||!S.rawdb)return;
@@ -1895,8 +1901,8 @@ function ofHost(cid){
   const snap=rows=>({docs:rows.map(r=>({id:r.id,data:()=>JSON.parse(JSON.stringify(r))}))});
   const live=()=>OF.cid===cid&&S.cid===cid;
   const brands={where:()=>brands,
-    onSnapshot(cb,err){let cfg=null,pub=null,got=0;const need=adm?3:1;const fire=()=>{if((got&need)===need&&live())cb(snap([{id:cid,...ofBrand(S.clients.find(x=>x.id===cid)||c,cfg,pub)}]))};
-      const u=[raw.doc(`clients/${cid}/docs/office`).onSnapshot(d=>{pub=d.exists?d.data():null;got|=1;fire()},err)];
+    onSnapshot(cb,err){let cfg=null,pub=null,mas=null,got=0;const need=adm?3:1;const fire=()=>{if((got&need)===need&&live())cb(snap([{id:cid,...ofBrand(S.clients.find(x=>x.id===cid)||c,cfg,pub,mas)}]))};
+      const u=[raw.doc(`clients/${cid}/docs/office`).onSnapshot(d=>{pub=d.exists?d.data():null;got|=1;fire()},err),raw.doc(`clients/${cid}/docs/mascot`).onSnapshot(d=>{mas=d.exists?d.data():null;fire()},()=>{})];
       if(adm)u.push(raw.doc(`office/${cid}/cfg/main`).onSnapshot(d=>{cfg=d.exists?d.data():null;got|=2;fire()},err));
       return track(()=>u.forEach(f=>{try{f()}catch(e){}}))},
     doc:()=>({id:cid,set:async d=>{if(!adm)deny();await raw.doc(`office/${cid}/cfg/main`).set({about:String((d&&d.about)||"").slice(0,3000),off:Array.isArray(d&&d.off)?d.off.filter(x=>typeof x==="string").slice(0,20):[],ua:Date.now()});ofPublish(cid)},update:async()=>deny(),delete:async()=>deny()})};
