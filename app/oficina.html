@@ -55,6 +55,10 @@ h1,h2,h3,h4,p,ul{margin:0}
 .av{position:relative;flex:none;width:38px;height:38px;border-radius:50%;background:var(--h);box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--a1);overflow:hidden}
 .av:after{content:"";position:absolute;left:50%;top:58%;width:64%;height:64%;border-radius:50%;background:var(--s);transform:translate(-50%,-50%)}
 .av.pic{background:#fff center/cover no-repeat}.av.pic:after{display:none}
+#st2{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;border-radius:inherit;background:#D5CFCD}#st2.drag{cursor:grabbing}
+#st2 .wd{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}#st2 .wd>img{display:block;width:1672px;height:941px;max-width:none;user-select:none;pointer-events:none}
+#st2 .ac{position:absolute;left:0;top:0;width:0;height:0}#st2 .ac .sp{position:absolute;left:0;bottom:0;display:block;transform:translateX(-50%);transform-origin:50% 100%;background-repeat:no-repeat;cursor:pointer}
+#st2 .ac .sh{position:absolute;left:-15px;top:-5px;width:30px;height:11px;border-radius:50%;background:rgba(29,18,12,.22)}#st2 .ac.sel .sh{box-shadow:0 0 0 3px rgba(29,18,12,.8)}
 .av.fc{background:color-mix(in srgb,var(--c) 24%,#fff)}.av.fc:after{display:none}.av.fc svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ag .tx{min-width:0;display:flex;flex-direction:column}
 .ag b{font-size:14.5px;font-weight:700}
@@ -369,6 +373,7 @@ EXTRA.bruno = 'Empieza con tu lectura en dos o tres frases: cómo crees que va l
 byId.elena.does += ' También arma el plan anual de la marca: en qué eventos estar (para networking, para stand y premiaciones), en qué gremiales, qué pautar y qué campañas de correo hacer, por trimestre y sin montos. También investiga en la web lo que haga falta para la marca: la ficha de la marca a partir de su sitio oficial, siempre con fuente.'; byId.elena.gives += ' Y, cuando se lo pides, el plan anual de la marca.'; byId.lia.does += ' También prepara el perfil personal de LinkedIn de los voceros de la marca (titular, «Acerca de» y cargo) y sus publicaciones, siempre con imagen, carrusel o video y solo con datos del sitio oficial o de la directora.'; byId.lia.gives += ' Y, cuando se lo pides, el perfil y las publicaciones de LinkedIn de un vocero.'; var READS = {maya:['elena']}; byId.maya.routine = 'Arma la parrilla de contenido de la semana siguiente: 5 piezas, con al menos 2 reels y 2 carruseles y ningún post de una sola imagen. Parte del radar de tendencias de Elena de esta semana y de los próximos eventos de la marca.'; EXTRA.maya = 'Empieza con la sección «## La semana en una mirada»: objetivo de la semana, mezcla de pilares (educativo, entretenimiento, conexión y venta; como máximo 1 de las 5 piezas es de venta) y las fechas o eventos que se aprovechan. Después, una sección por pieza con un título como «## Lunes 17 · Carrusel · Educativo» (día, formato y pilar) y estas líneas, cada una escrita como «- **Etiqueta:** texto»: Objetivo; Etapa del embudo; De dónde sale (la tendencia del radar con su fuente, o el dato de la biblioteca); Gancho; Desarrollo (en carrusel, el título de cada lámina; en reel, cada escena en una frase); Copy Instagram y Facebook, variante 1; Copy Instagram y Facebook, variante 2 (otro ángulo, no un retoque); Copy LinkedIn; Hashtags (5 o 6: 1 de nicho, 1 o 2 de audiencia, 1 de ubicación y 2 del tema de la pieza; cortos y siempre los mismos para la marca); Llamada a la acción; Dirección visual (vertical 4:5, colores y logo de la marca, foto real o pantalla del producto); Hora sugerida; Qué medir. Reglas de copy: escribe desde lo que necesita quien lee, no desde lo que presume la marca; primero conecta y después informa; promueve sin exagerar; cada dato sale de la biblioteca, de la descripción de la marca o del radar con su fuente, sin escenas hipotéticas, testimonios ni cifras inventadas; termina con un siguiente paso claro, salvo en las piezas educativas.'; EXTRA.elena = 'Trabaja con información fresca: busca en la web y prioriza lo publicado en los últimos 7 días. Las tendencias que Brandloop tiene guardadas de la marca son solo punto de partida: úsalas si siguen vigentes y dilo con su fecha; no armes el radar solo con ellas. Si una búsqueda no trae nada nuevo, dilo. Empieza con la fecha en que investigaste.';
 byId.elena.routine = 'Investiga en la web qué se movió esta semana en el sector de la marca y en redes, en su país y región, y arma el radar: de 3 a 5 tendencias, cada una con fuente, enlace y fecha de publicación, y una idea de contenido para la marca.';
 
+var W2 = {"bg":"m/6cc0d8670dd4.webp","w":1672,"h":941,"ph":66,"ent":[840,475],"you":[1040,612],"ag":{"maya":{"s":"m/2f6c46bf0408.webp","av":"m/2f6c46bf0408a.webp","seat":[765,338],"via":[[800,400]],"spot":[950,486]},"dani":{"s":"m/5ddbf44ac2cb.webp","av":"m/5ddbf44ac2cba.webp","seat":[838,342],"via":[[840,400]],"spot":[996,495]},"nico":{"s":"m/426034488352.webp","av":"m/426034488352a.webp","seat":[930,287],"via":[[900,330],[860,400]],"spot":[1042,504]},"lia":{"s":"m/e24babc77022.webp","av":"m/e24babc77022a.webp","seat":[997,288],"via":[[960,330],[880,400]],"spot":[1088,514]},"elena":{"s":"m/d058b557cdaa.webp","av":"m/d058b557cdaaa.webp","seat":[852,214],"via":[[895,300],[870,400]],"spot":[1134,523]},"iris":{"s":"m/c4942659c87b.webp","av":"m/c4942659c87ba.webp","seat":[469,221],"via":[[620,300],[760,420]],"spot":[905,470]},"bruno":{"s":"m/0f22320714bd.webp","av":"m/0f22320714bda.webp","seat":[652,483],"via":[[790,500]],"spot":[866,530]},"tomas":{"s":"m/2c2e663e2e67.webp","av":"m/2c2e663e2e67a.webp","seat":[632,624],"via":[[760,560]],"spot":[838,502]},"renata":{"s":"m/4a362425680d.webp","av":"m/4a362425680da.webp","seat":[1322,556],"via":[[1250,420],[900,385]],"spot":[1180,532]},"victoria":{"s":"m/4110538f157b.webp","av":"m/4110538f157ba.webp","seat":[1168,262],"via":[[1100,340],[900,385]],"spot":[1218,588]},"mateo":{"s":"m/266022325e22.webp","av":"m/266022325e22a.webp","seat":[575,246],"via":[[650,330],[770,420]],"spot":[820,545]},"loop":{"s":"m/0c97d6194271.webp","av":"m/0c97d6194271a.webp","seat":[400,442],"via":[[600,400],[760,430]],"spot":[795,512]}}};
 /* ---------- estado ---------- */
 var SITE=true;/*site-flag*/var EMBED = SITE && window.parent !== window && /[?&]embed=1/.test(location.search), HOST = null;
 function blobUrl(id){ id = String(id || ''); return /^(https?:|data:|blob:)/.test(id) ? id : '/_blob/' + id; }
@@ -543,7 +548,7 @@ function askChanges(id, text){
 function sk(a){ var b = brand(); return (a && a.id === 'loop' && b && b.mascot) || null; }
 function nm(a){ var k = sk(a); return (k && k.name) || a.name; }
 function rl(a){ var k = sk(a); return (k && k.role) || a.role; }
-function avatar(a){ var k = sk(a); if(k && k.av) return '<span class="av pic" style="background-image:url(' + esc(k.av) + ');--c:' + a.color + '" aria-hidden="true"></span>'; return '<span class="av fc" style="--c:' + a.color + '" aria-hidden="true">' + face(a) + '</span>'; }
+function avatar(a){ var k = sk(a); if(k && k.av) return '<span class="av pic" style="background-image:url(' + esc(k.av) + ');--c:' + a.color + '" aria-hidden="true"></span>'; if(SITE && W2 && W2.ag[a.id]) return '<span class="av pic" style="background-image:url(' + W2.ag[a.id].av + ');--c:' + a.color + '" aria-hidden="true"></span>'; return '<span class="av fc" style="--c:' + a.color + '" aria-hidden="true">' + face(a) + '</span>'; }
 /* cara de cada agente en la lista: el mismo peinado, piel y lentes que su figura en la oficina */
 function face(a){
   var h = a.hair, s = a.skin, D = '#2A1F1A', p = '<svg viewBox="0 0 40 40" focusable="false">';
@@ -1232,7 +1237,88 @@ function makeWorld(){
 
 /* ---------- arranque ---------- */
 renderAll();
-try{ world = makeWorld(); }catch(e){ world = null; }
+/* ---------- oficina sobre una imagen: los agentes son figuras con cuatro vistas que caminan sobre el plano ---------- */
+function makeWorld2D(){
+  var stage = $('#v-oficina'), labels = $('#labels'), cv = $('#cv'); if(cv) cv.style.display = 'none';
+  var box = document.createElement('div'); box.id = 'st2'; var wd = document.createElement('div'); wd.className = 'wd'; box.appendChild(wd);
+  var bg = new Image(); bg.alt = ''; bg.draggable = false; bg.src = W2.bg; wd.appendChild(bg); stage.insertBefore(box, labels);
+  var CW = 100, CH = 126, K = W2.ph / 120, view = {k:1, x:0, y:0, w:1, h:1, fitK:1, user:false}, actors = {}, cur = {sel:null}, mk = null;
+  AG.forEach(function(a, i){
+    var c = W2.ag[a.id]; if(!c) return;
+    var el = document.createElement('div'); el.className = 'ac'; el.innerHTML = '<i class="sh"></i><b class="sp"></b>'; wd.appendChild(el);
+    var sp = el.lastChild; sp.addEventListener('click', function(e){ e.stopPropagation(); select(a.id); });
+    var lb = document.createElement('button'); lb.className = 'lb'; lb.setAttribute('data-id', a.id); lb.setAttribute('tabindex', '-1'); lb.innerHTML = '<i></i>' + esc(a.name); labels.appendChild(lb);
+    actors[a.id] = {a:a, c:c, el:el, sp:sp, lb:lb, x:c.seat[0], y:c.seat[1], mode:'seat', at:'seat', dest:'seat', path:null, pi:0, ph:i * 1.7, dir:0, st:'libre', on:true, h:W2.ph, img:null};
+    skin(actors[a.id]);
+  });
+  var tu = document.createElement('span'); tu.className = 'lb tu'; tu.textContent = window.innerWidth < 600 ? 'Tú' : 'Tú · sala de juntas'; labels.appendChild(tu);
+  function skin(ac){
+    var m = ac.a.id === 'loop' && mk && mk.img ? mk : null, s = ac.sp.style;
+    if(m){ ac.img = m.img; ac.h = W2.ph * 1.5; s.backgroundImage = 'url(' + m.img + ')'; s.backgroundSize = 'contain'; s.backgroundPosition = '50% 100%'; s.width = Math.round(ac.h * 0.86) + 'px'; s.height = Math.round(ac.h) + 'px'; }
+    else { ac.img = null; ac.h = W2.ph; s.backgroundImage = 'url(' + ac.c.s + ')'; s.backgroundSize = Math.round(CW * 4 * K) + 'px ' + Math.round(CH * K) + 'px'; s.width = Math.round(CW * K) + 'px'; s.height = Math.round(CH * K) + 'px'; face(ac, ac.dir); }
+  }
+  function face(ac, d){ ac.dir = d; if(!ac.img) ac.sp.style.backgroundPosition = (-d * Math.round(CW * K)) + 'px 100%'; }
+  function near(ac, pts){ var b = 0, bd = 1e12; pts.forEach(function(p, i){ var d = (p[0] - ac.x) * (p[0] - ac.x) + (p[1] - ac.y) * (p[1] - ac.y); if(d < bd){ bd = d; b = i; } }); return pts.slice(b); }
+  function go(ac, dest){
+    var c = ac.c, out = [c.seat].concat(c.via || [], [W2.ent, c.spot]), pts = dest === 'meet' ? out : out.slice().reverse(), end = pts[pts.length - 1];
+    if(ac.at === dest && ac.mode === dest) return; if(ac.mode === 'walk' && ac.dest === dest) return;
+    if(REDUCE){ ac.x = end[0]; ac.y = end[1]; ac.mode = ac.at = dest; ac.path = null; face(ac, 0); return; }
+    ac.path = near(ac, pts); ac.pi = 0; ac.mode = 'walk'; ac.dest = dest;
+  }
+  function sync(st, on, sel){
+    cur.sel = sel;
+    AG.forEach(function(a){ var ac = actors[a.id]; if(!ac) return; var s = st[a.id] || 'libre'; ac.on = !!on[a.id]; ac.st = s;
+      ac.el.hidden = ac.lb.hidden = !ac.on; ac.el.className = 'ac' + (sel === a.id ? ' sel' : '');
+      ac.lb.className = 'lb ' + s + (sel === a.id ? ' sel' : ''); ac.lb.style.setProperty('--k', ST[s].k);
+      if(ac.on) go(ac, s === 'revisar' ? 'meet' : 'seat'); });
+  }
+  function setBrand(b){
+    mk = (b && b.mascot) || null;
+    AG.forEach(function(a){ var ac = actors[a.id]; if(!ac) return; ac.lb.innerHTML = '<i></i>' + esc((a.id === 'loop' && mk && mk.name) || a.name); });
+    if(actors.loop) skin(actors.loop);
+  }
+  function clamp(){ var m = 80; view.k = Math.min(view.fitK * 3.4, Math.max(view.fitK * 0.85, view.k));
+    view.x = Math.min(view.w - m, Math.max(m - W2.w * view.k, view.x)); view.y = Math.min(view.h - m, Math.max(m - W2.h * view.k, view.y)); }
+  function fit(){ view.k = view.fitK; view.x = (view.w - W2.w * view.k) / 2; view.y = (view.h - W2.h * view.k) / 2 + (view.w > 700 ? 24 : 0); view.user = false; }
+  function resize(){ var w = stage.clientWidth, h = stage.clientHeight; if(!w || !h) return; view.w = w; view.h = h; view.fitK = Math.min(w / W2.w, h / W2.h) * (w > 700 ? 1.02 : 1.9); if(!view.user) fit(); clamp(); }
+  function zoomAt(f, px, py){ var k0 = view.k; view.k *= f; clamp(); f = view.k / k0; view.x = px - (px - view.x) * f; view.y = py - (py - view.y) * f; view.user = true; clamp(); }
+  function focus(id){ var ac = actors[id]; if(!ac) return; view.k = Math.max(view.k, view.fitK * 1.9); var cx = view.w > 900 ? view.w * 0.36 : view.w / 2; view.x = cx - ac.x * view.k; view.y = view.h * 0.56 - ac.y * view.k; view.user = true; clamp(); }
+  $('#zIn').addEventListener('click', function(){ zoomAt(1.3, view.w / 2, view.h / 2); });
+  $('#zOut').addEventListener('click', function(){ zoomAt(1 / 1.3, view.w / 2, view.h / 2); });
+  $('#zFit').addEventListener('click', fit);
+  box.addEventListener('wheel', function(e){ e.preventDefault(); var r = box.getBoundingClientRect(); zoomAt(e.deltaY < 0 ? 1.12 : 1 / 1.12, e.clientX - r.left, e.clientY - r.top); }, {passive:false});
+  var pts = {}, drag = null, pinch = null;
+  box.addEventListener('pointerdown', function(e){ pts[e.pointerId] = [e.clientX, e.clientY]; var ids = Object.keys(pts);
+    if(ids.length === 1) drag = {x:e.clientX, y:e.clientY, vx:view.x, vy:view.y, moved:false};
+    else if(ids.length === 2){ drag = null; var a = pts[ids[0]], b = pts[ids[1]]; pinch = {d:Math.hypot(a[0] - b[0], a[1] - b[1])}; } });
+  window.addEventListener('pointermove', function(e){ if(!pts[e.pointerId]) return; pts[e.pointerId] = [e.clientX, e.clientY]; var ids = Object.keys(pts);
+    if(pinch && ids.length >= 2){ var a = pts[ids[0]], b = pts[ids[1]], d = Math.hypot(a[0] - b[0], a[1] - b[1]), r = box.getBoundingClientRect(); if(pinch.d > 0) zoomAt(d / pinch.d, (a[0] + b[0]) / 2 - r.left, (a[1] + b[1]) / 2 - r.top); pinch.d = d; return; }
+    if(drag){ var dx = e.clientX - drag.x, dy = e.clientY - drag.y; if(Math.abs(dx) + Math.abs(dy) > 5){ drag.moved = true; box.classList.add('drag'); } if(drag.moved){ view.x = drag.vx + dx; view.y = drag.vy + dy; view.user = true; clamp(); } } });
+  function up(e){ if(!pts[e.pointerId]) return; delete pts[e.pointerId]; if(Object.keys(pts).length < 2) pinch = null; if(drag){ var d = drag; drag = null; box.classList.remove('drag'); if(!d.moved && e.type === 'pointerup' && (e.target === box || e.target === bg || e.target === wd)) select(null); } }
+  window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
+  var last = performance.now(), SPEED = 150;
+  function frame(now){
+    requestAnimationFrame(frame);
+    if(!(now >= 0)) now = performance.now(); var dt = Math.min(0.1, Math.max(0, (now - last) / 1000)) || 0, t = now / 1000; last = now;
+    if(stage.hidden || !view.w) return;
+    wd.style.transform = 'translate(' + view.x.toFixed(1) + 'px,' + view.y.toFixed(1) + 'px) scale(' + view.k.toFixed(4) + ')';
+    AG.forEach(function(a){ var ac = actors[a.id]; if(!ac || !ac.on) return; var bob = 0, tilt = 0, hov = ac.img && mk && mk.walk && mk.walk.mode === 'hover';
+      if(ac.mode === 'walk' && ac.path){ var g = ac.path[ac.pi], dx = g[0] - ac.x, dy = g[1] - ac.y, d = Math.hypot(dx, dy), st = SPEED * dt;
+        if(d <= st){ ac.x = g[0]; ac.y = g[1]; ac.pi++; if(ac.pi >= ac.path.length){ ac.path = null; ac.mode = ac.at = ac.dest; face(ac, 0); } }
+        else { ac.x += dx / d * st; ac.y += dy / d * st; face(ac, Math.abs(dx) > Math.abs(dy) * 0.7 ? (dx > 0 ? 1 : 2) : (dy > 0 ? 0 : 3)); }
+        ac.ph += dt * 11; bob = Math.abs(Math.sin(ac.ph)) * 3.2; tilt = Math.sin(ac.ph) * 3.5; }
+      else if(!REDUCE){ bob = (ac.st === 'trabajando' || ac.st === 'cambios') ? Math.abs(Math.sin(t * 6 + ac.ph)) * 1.6 : Math.sin(t * 1.8 + ac.ph) * 0.5 + 0.5; }
+      if(hov) bob += 7 + Math.sin(t * 2.2) * 2.5;
+      ac.el.style.transform = 'translate(' + ac.x.toFixed(1) + 'px,' + ac.y.toFixed(1) + 'px)'; ac.el.style.zIndex = Math.round(ac.y);
+      ac.sp.style.transform = 'translateX(-50%) translateY(' + (-bob).toFixed(1) + 'px) rotate(' + tilt.toFixed(1) + 'deg)';
+      ac.lb.style.transform = 'translate(-50%,-100%) translate(' + (view.x + ac.x * view.k).toFixed(1) + 'px,' + (view.y + (ac.y - ac.h - 5 - (hov ? 9 : 0)) * view.k).toFixed(1) + 'px)'; });
+    tu.style.transform = 'translate(-50%,-100%) translate(' + (view.x + W2.you[0] * view.k).toFixed(1) + 'px,' + (view.y + W2.you[1] * view.k).toFixed(1) + 'px)';
+  }
+  resize(); fit(); setBrand(null); requestAnimationFrame(frame);
+  if(window.ResizeObserver) new ResizeObserver(resize).observe(stage); else window.addEventListener('resize', resize);
+  return {sync:sync, focus:focus, resize:resize, brand:setBrand, fit:fit};
+}
+try{ world = (SITE && W2) ? makeWorld2D() : makeWorld(); }catch(e){ try{ world = makeWorld(); }catch(e2){ world = null; } }
 if(!world){ var n = document.createElement('div'); n.className = 'nogl'; n.innerHTML = '<p>La oficina en 3D no pudo abrirse en este navegador.<br>La fila de revisión y el pizarrón funcionan igual.</p>'; $('#v-oficina').appendChild(n); }
 (function(){
   if(SITE){
