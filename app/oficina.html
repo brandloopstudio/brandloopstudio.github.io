@@ -55,6 +55,7 @@ h1,h2,h3,h4,p,ul{margin:0}
 .av{position:relative;flex:none;width:38px;height:38px;border-radius:50%;background:var(--h);box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--a1);overflow:hidden}
 .av:after{content:"";position:absolute;left:50%;top:58%;width:64%;height:64%;border-radius:50%;background:var(--s);transform:translate(-50%,-50%)}
 .av.pic{background:#fff center/cover no-repeat}.av.pic:after{display:none}
+.av.fc{background:color-mix(in srgb,var(--c) 24%,#fff)}.av.fc:after{display:none}.av.fc svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ag .tx{min-width:0;display:flex;flex-direction:column}
 .ag b{font-size:14.5px;font-weight:700}
 .ag .tx span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -542,7 +543,22 @@ function askChanges(id, text){
 function sk(a){ var b = brand(); return (a && a.id === 'loop' && b && b.mascot) || null; }
 function nm(a){ var k = sk(a); return (k && k.name) || a.name; }
 function rl(a){ var k = sk(a); return (k && k.role) || a.role; }
-function avatar(a){ var k = sk(a); if(k && k.av) return '<span class="av pic" style="background-image:url(' + esc(k.av) + ');--c:' + a.color + '" aria-hidden="true"></span>'; return '<span class="av" style="--h:' + a.hair + ';--s:' + a.skin + ';--c:' + a.color + '" aria-hidden="true"></span>'; }
+function avatar(a){ var k = sk(a); if(k && k.av) return '<span class="av pic" style="background-image:url(' + esc(k.av) + ');--c:' + a.color + '" aria-hidden="true"></span>'; return '<span class="av fc" style="--c:' + a.color + '" aria-hidden="true">' + face(a) + '</span>'; }
+/* cara de cada agente en la lista: el mismo peinado, piel y lentes que su figura en la oficina */
+function face(a){
+  var h = a.hair, s = a.skin, D = '#2A1F1A', p = '<svg viewBox="0 0 40 40" focusable="false">';
+  if(a.style === 'long') p += '<rect x="6.5" y="11" width="27" height="29" rx="10" fill="' + h + '"/>';
+  if(a.style === 'bun') p += '<circle cx="20" cy="6" r="5.2" fill="' + h + '"/>';
+  if(a.style === 'pony') p += '<path d="M30 14 Q38 16 35 30 Q32 24 30 22Z" fill="' + h + '"/>';
+  p += '<circle cx="20" cy="24" r="12" fill="' + s + '"/>';
+  if(a.style === 'curly') p += [[9,17],[12,11.5],[17,8.5],[23,8.5],[28,11.5],[31,17],[20,7.5]].map(function(c){ return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="4.6" fill="' + h + '"/>'; }).join('');
+  else p += '<path d="M7.6 24 Q6.5 9.5 20 9.5 Q33.5 9.5 32.4 24 Q30.5 16.5 24 15.6 Q14 14.6 7.6 24Z" fill="' + h + '"/>';
+  p += '<circle cx="12.6" cy="28.6" r="2.1" fill="#F29B8F" opacity=".5"/><circle cx="27.4" cy="28.6" r="2.1" fill="#F29B8F" opacity=".5"/>' +
+    '<circle cx="15.6" cy="24.6" r="1.55" fill="' + D + '"/><circle cx="24.4" cy="24.6" r="1.55" fill="' + D + '"/>' +
+    '<path d="M16.2 29.2 Q20 32.6 23.8 29.2" fill="none" stroke="' + D + '" stroke-width="1.5" stroke-linecap="round"/>';
+  if(a.glasses) p += '<g fill="none" stroke="' + D + '" stroke-width="1.1"><circle cx="15.6" cy="24.6" r="3.5"/><circle cx="24.4" cy="24.6" r="3.5"/><path d="M19.1 24.2h1.8"/></g>';
+  return p + '</svg>';
+}
 function chip(st){ return '<span class="chip" style="--k:' + ST[st].k + '"><i></i>' + ST[st].t + '</span>'; }
 function md(t){
   var h = '', ul = false, sec = false;
@@ -1008,25 +1024,52 @@ function makeWorld(){
   ring.rotation.x = -Math.PI / 2; ring.visible = false; scene.add(ring);
 
   var actors = {}, hits = [], cur = {sel:null};
-  /* mascota de la marca: su imagen real, siempre de frente a la cámara, en lugar de la figura del jefe de oficina */
-  var MS = {sp:null, sh:null, url:null, on:false};
+  /* mascota de la marca: su imagen real, siempre de frente a la cámara, en lugar de la figura del jefe de oficina.
+     Según la marca camina levantando una pierna y luego la otra, flota, o avanza a saltitos. */
+  var MS = {g:null, sh:null, tx:null, url:null, on:false, h:2.7, mode:'skip', L:null, R:null, lift:0};
+  function mPlane(tx, u0, u1, v0, v1, w, h){
+    var gm = new T.PlaneGeometry((u1 - u0) * w, (v1 - v0) * h), uv = gm.attributes.uv, i;
+    gm.translate(((u0 + u1) / 2 - 0.5) * w, (v0 + v1) / 2 * h, 0);
+    for(i = 0; i < uv.count; i++) uv.setXY(i, u0 + uv.getX(i) * (u1 - u0), v0 + uv.getY(i) * (v1 - v0));
+    return new T.Mesh(gm, new T.MeshBasicMaterial({map:tx, transparent:true, alphaTest:0.06, depthWrite:false}));
+  }
   function setMascot(m){
     var ac = actors.loop, url = (m && m.img) || null; if(!ac || !ac.u.human) return;
-    if(!url){ MS.url = null; MS.on = false; if(MS.sp){ MS.sp.visible = false; MS.sh.visible = false; } ac.u.human(true); return; }
+    if(!url){ MS.url = null; MS.on = false; if(MS.g){ MS.g.visible = false; MS.sh.visible = false; } ac.u.human(true); return; }
     if(url === MS.url) return; MS.url = url;
     var im = new Image();
     im.onload = function(){
       if(MS.url !== url) return;
       var tx = new T.Texture(im); tx.encoding = T.sRGBEncoding; tx.needsUpdate = true;
-      if(!MS.sp){
-        MS.sp = new T.Sprite(new T.SpriteMaterial({map:tx, transparent:true, alphaTest:0.06, depthWrite:false})); MS.sp.center.set(0.5, 0); MS.sp.visible = false; scene.add(MS.sp);
+      if(!MS.g){
+        MS.g = new T.Group(); MS.g.visible = false; scene.add(MS.g);
         MS.sh = new T.Mesh(new T.CircleGeometry(0.55, 28), new T.MeshBasicMaterial({color:0x1D120C, transparent:true, opacity:0.17, depthWrite:false})); MS.sh.rotation.x = -Math.PI / 2; MS.sh.visible = false; scene.add(MS.sh);
-      } else { if(MS.sp.material.map) MS.sp.material.map.dispose(); MS.sp.material.map = tx; MS.sp.material.needsUpdate = true; }
-      var h = Math.min(3.4, Math.max(1.4, +m.h || 2.7)); MS.sp.scale.set(h * im.naturalWidth / im.naturalHeight, h, 1);
+      }
+      while(MS.g.children.length){ var c = MS.g.children[0]; MS.g.remove(c); c.geometry.dispose(); c.material.dispose(); }
+      if(MS.tx) MS.tx.dispose(); MS.tx = tx;
+      var h = Math.min(3.4, Math.max(1.4, +m.h || 2.7)), w = h * im.naturalWidth / im.naturalHeight, wk = m.walk || {}, fy = +wk.fy || 0;
+      MS.h = h; MS.L = MS.R = null; MS.mode = wk.mode === 'hover' ? 'hover' : (wk.mode === 'step' && fy > 0.05 && fy < 0.6) ? 'step' : 'skip';
+      if(MS.mode === 'step'){
+        var fx = Math.min(0.8, Math.max(0.2, +wk.fx || 0.5)), b = mPlane(tx, 0, 1, fy, 1, w, h);
+        MS.L = mPlane(tx, 0, fx, 0, fy + 0.05, w, h); MS.R = mPlane(tx, fx, 1, 0, fy + 0.05, w, h);
+        MS.L.renderOrder = MS.R.renderOrder = 2; b.renderOrder = 3; b.position.z = 0.01; MS.g.add(MS.L, MS.R, b);
+        MS.lift = h * Math.min(0.08, Math.max(0.02, +wk.lift || 0.05));
+      } else { var p = mPlane(tx, 0, 1, 0, 1, w, h); p.renderOrder = 2; MS.g.add(p); }
       MS.on = true; ac.u.human(false);
     };
     im.onerror = function(){ if(MS.url === url){ MS.url = null; MS.on = false; ac.u.human(true); } };
     im.src = url;
+  }
+  function poseMascot(ac, t){
+    var f = ac.f, mv = MS.on && ac.on; MS.g.visible = MS.sh.visible = mv; if(!mv) return;
+    var k = REDUCE ? 0 : 1, walk = ac.mode === 'walk', s = Math.sin(ac.ph), y = 0.05, tilt = 0, sy = 1, sh = 1;
+    if(MS.L){ MS.L.position.y = walk ? Math.max(0, s) * MS.lift : 0; MS.R.position.y = walk ? Math.max(0, -s) * MS.lift : 0; }
+    if(MS.mode === 'hover'){ y += 0.2 + Math.sin(t * 2.2 + 1) * 0.07 * k; tilt = walk ? s * 0.05 : 0; sh = 0.78; }
+    else if(walk){ if(MS.mode === 'step'){ tilt = s * 0.035; y += Math.abs(Math.cos(ac.ph)) * 0.03; } else { tilt = s * 0.09; y += Math.abs(s) * 0.16; sh = 0.9; } }
+    else sy = 1 + Math.sin(t * 2 + 0.6) * 0.012 * k;
+    MS.g.position.set(f.position.x + DIR.x * 0.5, y + DIR.y * 0.5, f.position.z + DIR.z * 0.5);
+    MS.g.quaternion.copy(cam.quaternion); MS.g.rotateZ(tilt); MS.g.scale.set(1, sy, 1);
+    MS.sh.position.set(f.position.x, 0.1, f.position.z); MS.sh.scale.setScalar(sh);
   }
   AG.forEach(function(a, i){
     var p = places[a.id], f = figure(a), u = f.userData;
@@ -1142,10 +1185,10 @@ function makeWorld(){
     view.zoom += (view.gzoom - view.zoom) * e; applyCam();
     AG.forEach(function(a){
       var ac = actors[a.id], f = ac.f;
-      if(a.id === 'loop' && MS.sp){ var mv = MS.on && ac.on; MS.sp.visible = MS.sh.visible = mv; if(mv){ var gy = Math.max(0.05, f.position.y); MS.sp.position.set(f.position.x + DIR.x * 0.5, gy + DIR.y * 0.5, f.position.z + DIR.z * 0.5); MS.sh.position.set(f.position.x, 0.1, f.position.z); } }
+      if(a.id === 'loop' && MS.g) poseMascot(ac, t);
       if(!ac.on){ ac.bn.visible = ac.bc.visible = false; return; }
       pose(ac, t, dt);
-      var top = (a.id === 'loop' && MS.on && MS.sp) ? Math.max(0.05, f.position.y) + MS.sp.scale.y / Math.hypot(DIR.x, DIR.z) + 0.12 : f.position.y + 1.68 * SC, need = ac.st === 'revisar' && ac.mode !== 'seat', chg = ac.st === 'cambios' && ac.mode === 'seat';
+      var top = (a.id === 'loop' && MS.on && MS.g) ? 0.05 + MS.h / Math.hypot(DIR.x, DIR.z) + (MS.mode === 'hover' ? 0.37 : 0.12) : f.position.y + 1.68 * SC, need = ac.st === 'revisar' && ac.mode !== 'seat', chg = ac.st === 'cambios' && ac.mode === 'seat';
       ac.bn.visible = need; ac.bc.visible = chg;
       var by = top + 0.45 + (REDUCE ? 0 : Math.sin(t * 3.2 + ac.ph) * 0.07);
       if(need) ac.bn.position.set(f.position.x, by, f.position.z); if(chg) ac.bc.position.set(f.position.x, by, f.position.z);
