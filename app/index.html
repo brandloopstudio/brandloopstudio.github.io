@@ -1143,6 +1143,22 @@ html.of-open,html.of-open body{overflow:hidden}
 .chico svg{width:18px;height:18px;display:block}
 .chico+.chico{margin-left:4px}
 
+
+/* pantallas angostas: encabezado ordenado (marca y menú en una franja, saludo + acciones en otra) */
+@media (max-width:900px){
+  .side{padding:8px 10px;gap:4px;border-radius:20px}
+  .side .side-foot,.side .sitelink{display:none!important}
+  .ws{flex:1 1 100%}
+  .side .nav{padding-top:4px;scrollbar-width:none}.side .nav::-webkit-scrollbar{display:none}
+  .top{display:flex!important;flex-wrap:wrap!important;align-items:center;gap:10px 8px;margin-top:4px}
+  .top .hi{flex:1 1 0;min-width:0}
+  .top .hi b{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+  .top .spacer{display:none}
+  .top .search{order:9;flex:1 1 100%!important;max-width:none!important}
+  .top .btn.tb .tbl{display:none}
+  .top .btn.accent.tb{padding:0 14px}
+}
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
