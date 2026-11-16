@@ -2059,8 +2059,8 @@ function askCard(c,K){
   const tt=t=>{const o=String(t.out||"");const h=(o.match(/^\s*#{1,4}\s+(.+)$/m)||[])[1]||"";return (h||String(t.brief||"").replace(/^Rutina( de madrugada)?:\s*/i,"")).replace(/\*\*/g,"").trim()};
   return `<article class="card d12 hask"><h2 class="t">Necesitamos tu aprobación</h2><p class="s">Nada se publica sin visto bueno. Revisa y aprueba, o pide cambios.</p>
    ${K.pending?`<div class="hitem"><span><b>${K.pending} ${K.pending===1?"pieza de contenido":"piezas de contenido"}</b><span class="s">Posts de la parrilla por aprobar</span></span><button class="btn sm" data-act="pendingPosts">Revisar ${ic("arrow")}</button></div>`:""}
-   ${rev.slice(0,S.askAll?50:4).map(t=>`<div class="hitem"><span><b>${esc(tt(t).slice(0,90))}</b><span class="s">${esc(nm(t.agent))}${t.ver>1?" · versión "+t.ver:""}</span></span><span class="row"><button class="btn sm" data-act="ofOpen" data-id="${esc(t.id)}">Ver</button><button class="btn ok sm" data-act="ofApprove" data-id="${esc(t.id)}">Aprobar</button></span></div>`).join("")}
-   ${rev.length>4?`<div class="hitem"><button class="btn txt sm" data-act="askAll">${S.askAll?"Ver menos":"Ver las "+rev.length+" entregas"}</button></div>`:""}
+   ${rev.slice(0,S.askAll?50:3).map(t=>`<div class="hitem"><span><b>${esc(tt(t).slice(0,90))}</b><span class="s">${esc(nm(t.agent))}${t.ver>1?" · versión "+t.ver:""}</span></span><span class="row"><button class="btn sm" data-act="ofOpen" data-id="${esc(t.id)}">Ver</button><button class="btn ok sm" data-act="ofApprove" data-id="${esc(t.id)}">Aprobar</button></span></div>`).join("")}
+   ${rev.length>3?`<div class="hitem"><button class="btn txt sm" data-act="askAll">${S.askAll?"Ver menos":"Ver las "+rev.length+" entregas pendientes"}</button></div>`:""}
   </article>`;
 }
 function ofSheet(c){
