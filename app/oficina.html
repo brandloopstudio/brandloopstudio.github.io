@@ -150,8 +150,8 @@ body.ro .give,body.ro [data-act="approve"],body.ro [data-act="openFb"],body.ro [
 .col .none{font-size:13px;color:var(--muted);padding:6px 2px}
 .col .tk .who{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700}
 .col .tk .who .av{width:24px;height:24px;box-shadow:0 0 0 2px var(--a1)}
-.board.six{grid-template-columns:repeat(6,minmax(0,1fr))}
-@media (max-width:1250px) and (min-width:901px){.board.six{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.board.six{grid-template-columns:repeat(7,minmax(0,1fr))}.board.six .slot b,.board.six h3{overflow-wrap:anywhere}
+@media (max-width:1250px) and (min-width:901px){.board.six{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .slot{background:var(--soft);border-radius:14px;padding:9px 11px;font-size:13.5px;display:flex;flex-direction:column;gap:2px}
 .slot b{font-size:14px}
 .slot span{color:var(--muted);font-size:12.5px}
@@ -298,17 +298,17 @@ var AG = [
    no:['No usa música ni audios con derechos de autor.','No inventa testimonios ni frases de clientes.','No graba, no edita y no publica.'],
    routine:'Escribe los guiones de los 2 reels más importantes de la parrilla de esta semana. Si no tienes la parrilla en el encargo, propone 2 temas a partir de la descripción de la marca y dilo.',
    color:'#E0523A', skin:'#EBC1A2', hair:'#4A2B1B', style:'pony', top:'#E0523A', bottom:'#33293A'},
-  {id:'nico', name:'Nico', role:'Producción de video', mode:'Programado y por encargo', sched:'Miércoles · 1:00', plan:[[2,'1:00','Plan de producción de los guiones aprobados']], tier:'default',
+  {id:'nico', name:'Nico', role:'Producción de video', mode:'Programado y por encargo', sched:'Sábado · 1:00', plan:[[5,'Sábado · 1:00','Plan de producción de los guiones aprobados']], tier:'default',
    does:'Convierte un guion aprobado en un plan de producción: estilo visual, escena por escena, movimiento, texto en pantalla, voz y sonido. Siempre propone 2 variantes.',
    gives:'El plan de producción listo para animar o grabar, en 2 variantes de estilo.',
    no:['No genera video, voz ni imágenes que gasten créditos sin tu aprobación.','No usa rostros ni voces de personas reales sin permiso.','No cambia los colores ni la tipografía de la marca.'],
    routine:'Prepara el plan de producción de los guiones aprobados que vengan en el encargo. Si no viene ningún guion, dilo y pide cuál producir.',
    color:'#7D5CE0', skin:'#F0C7A4', hair:'#6B4A2B', style:'short', top:'#7D5CE0', bottom:'#2B2F3A', glasses:true},
-  {id:'lia', name:'Lía', role:'Carruseles y posts', mode:'Programada y por encargo', sched:'Martes · 2:00', plan:[[1,'2:00','Carruseles de la parrilla aprobada']], tier:'complex',
+  {id:'lia', name:'Lía', role:'Carruseles y posts', mode:'Programada y por encargo', sched:'Sábado · 2:00', plan:[[5,'Sábado · 2:00','Carruseles y posts de la parrilla aprobada']], tier:'complex',
    does:'Estructura cada carrusel lámina por lámina: título, texto y qué imagen o gráfico lleva. Formato vertical, portada distinta en cada uno.',
    gives:'El carrusel completo en texto, con la dirección visual de cada lámina y su copy.',
    no:['No usa fotos sin licencia ni logos de terceros.','No pone textos chiquitos, numeración de láminas ni pies de página.','No publica.'],
-   routine:'Estructura los 2 carruseles de la parrilla de esta semana. Si no tienes la parrilla en el encargo, propone 2 temas a partir de la descripción de la marca y dilo.',
+   routine:'Estructura los carruseles y posts de la parrilla de la próxima semana: todas las piezas que no son video. Si no tienes la parrilla en el encargo, propone 2 temas a partir de la descripción de la marca y dilo.',
    color:'#C48407', skin:'#D9A47E', hair:'#3A2A22', style:'curly', top:'#E2A62B', bottom:'#3A3F4A'},
   {id:'elena', name:'Elena', role:'Tendencias', mode:'Programada', sched:'Lunes · 1:00', plan:[[0,'1:00','Radar de tendencias de la semana']], tier:'default',
    does:'Revisa qué se está moviendo en el sector y en redes, y lo convierte en ideas de contenido para la marca.',
@@ -316,7 +316,7 @@ var AG = [
    no:['No afirma una tendencia sin fuente: si no la tiene, lo dice.','No recomienda subirse a temas polémicos sin avisarte del riesgo.','No copia contenido de otros.'],
    routine:'Con el material que haya en el encargo o en los archivos (notas, enlaces, textos), arma el radar de tendencias de la semana para la marca. Si no hay material con fuentes, no inventes tendencias: entrega la lista de qué investigar y dónde.',
    color:'#1B8FB3', skin:'#8E5C3F', hair:'#17100D', style:'curly', top:'#1B8FB3', bottom:'#3B2F28'},
-  {id:'iris', name:'Iris', role:'IA Search', mode:'Programada', sched:'Días 1 y 15 · 2:00', plan:[[5,'Días 1 y 15 · 2:00','Informe de visibilidad en IA']], tier:'default',
+  {id:'iris', name:'Iris', role:'IA Search', mode:'Programada', sched:'Días 1 y 15 · 2:00', plan:[[6,'Días 1 y 15 · 2:00','Informe de visibilidad en IA']], tier:'default',
    does:'Mide si la marca aparece cuando alguien le pregunta a la IA por su categoría, y propone qué publicar o corregir para aparecer más.',
    gives:'El informe de visibilidad en IA y la lista de acciones propuestas, en orden de impacto.',
    no:['No edita la página web ni los perfiles de la marca.','No inventa resultados de medición: sin datos, dice «sin datos».','No promete posiciones.'],
@@ -328,7 +328,7 @@ var AG = [
    no:['No lanza, pausa ni cambia campañas.','No toca presupuestos ni medios de pago: no gasta un centavo.','No inventa métricas: usa solo los datos que le pases.'],
    routine:'Con los datos de campañas que haya en el encargo o en los archivos, prepara la revisión semanal de pauta: qué rindió, qué no, y qué ajustes propones. Si no hay datos, entrega la lista exacta de datos que necesitas.',
    color:'#8F5A2B', skin:'#F0CFAE', hair:'#C9A36B', style:'short', top:'#F4EDE4', bottom:'#8F5A2B'},
-  {id:'tomas', name:'Tomás', role:'Reportes y correo', mode:'Programada y por encargo', sched:'Día 1 de cada mes · 3:00', plan:[[5,'Día 1 · 3:00','Reporte mensual y análisis interno']], tier:'default',
+  {id:'tomas', name:'Tomás', role:'Reportes y correo', mode:'Programada y por encargo', sched:'Día 1 de cada mes · 3:00', plan:[[6,'Día 1 · 3:00','Reporte mensual y análisis interno']], tier:'default',
    does:'Prepara el reporte mensual de la marca y redacta borradores de correos, seguimientos y respuestas a clientes.',
    gives:'El reporte del mes para el cliente, un análisis interno aparte, y los borradores de correo que le pidas.',
    no:['No envía correos ni responde a clientes: todo queda como borrador.','No inventa métricas: si falta un número, escribe «sin datos».','No comparte información de una marca con otra.'],
@@ -340,14 +340,21 @@ var AG = [
    no:['No envía propuestas ni cotizaciones.','No pone precios, descuentos ni plazos que no estén en la biblioteca de la marca o en el encargo.','No promete resultados.'],
    routine:'',
    color:'#B0468F', skin:'#A9714F', hair:'#120D0B', style:'bun', top:'#B0468F', bottom:'#262B3B'},
-  {id:'victoria', name:'Victoria', role:'Finanzas', mode:'Programada y por encargo', sched:'Viernes · 3:00 y día 1 de cada mes', plan:[[4,'3:00','Cierre financiero de la semana'],[5,'Día 1 · 3:30','Cierre financiero del mes']], tier:'complex',
+  {id:'victoria', name:'Victoria', role:'Finanzas', mode:'Programada y por encargo', sched:'Viernes · 3:00 y día 1 de cada mes', plan:[[4,'3:00','Cierre financiero de la semana'],[6,'Día 1 · 3:30','Cierre financiero del mes']], tier:'complex',
    does:'Lleva los números: flujo de caja, rentabilidad por cliente o por producto, presupuesto de marketing contra resultados, punto de equilibrio, precios y proyecciones con escenarios.',
    gives:'El cierre de la semana o del mes: qué entró, qué salió, márgenes, alertas y qué decisión te toca tomar.',
    no:['No mueve dinero: no paga, no cobra, no factura y no toca cuentas.','No presenta impuestos ni da asesoría fiscal o de inversión: eso lo confirma tu contador.','No inventa cifras: trabaja con tus archivos y marca cada supuesto.'],
    routine:'Con las cifras que haya en el encargo o en los archivos, prepara el cierre financiero: ingresos, costos, margen, flujo de caja y alertas. Si no hay cifras, entrega la plantilla exacta de datos que necesitas.',
-   color:'#0E7C66', skin:'#F2D0B3', hair:'#1A1210', style:'long', top:'#0E7C66', bottom:'#22272B', glasses:true}
+   color:'#0E7C66', skin:'#F2D0B3', hair:'#1A1210', style:'long', top:'#0E7C66', bottom:'#22272B', glasses:true},
+  {id:'mateo', name:'Mateo', role:'Oportunidades de negocio', mode:'Programado y por encargo', sched:'Miércoles · 1:00', plan:[[2,'1:00','Oportunidades de negocio y eventos']], tier:'default',
+   does:'Busca oportunidades nuevas para la marca: empresas que podrían ser clientes y dan una señal reciente (anuncios, expansiones, lanzamientos, licitaciones), eventos donde conviene estar (networking, stand y premiaciones), gremiales y posibles alianzas. Todo con fuente y fecha.',
+   gives:'La lista de oportunidades de la semana: quién es, por qué ahora, la fuente y el siguiente paso que te sugiere.',
+   no:['No contacta a nadie: no escribe, no llama ni envía correos.','No inventa empresas, contactos, cifras ni fechas: cada oportunidad lleva su fuente.','No comparte oportunidades de una marca con otra.'],
+   routine:'Busca en la web oportunidades nuevas para la marca: hasta 6 empresas o instituciones que podrían ser clientes y muestran una señal de los últimos 30 días, y los eventos, premiaciones o convocatorias de gremiales de los próximos 90 días donde conviene estar. Si no encuentras nada verificable, dilo.',
+   color:'#6B7A1F', skin:'#E0B48F', hair:'#2A1D17', style:'short', top:'#6B7A1F', bottom:'#2A2F33'}
 ];
 var EXTRA = {
+  mateo:'Empieza con «Fecha de investigación: AAAA-MM-DD». Investiga en la web y cita cada oportunidad con su fuente y enlace. Usa estas secciones: «## Empresas con señal reciente», «## Eventos y premiaciones» y «## Gremiales y alianzas». En cada punto: quién es, por qué ahora (la señal o la fecha), la fuente y el siguiente paso sugerido. No des teléfonos ni correos de personas: solo la empresa y su canal público. Si en una sección no hay nada verificable, dilo en una línea.',
   victoria:'Trabaja como una directora financiera con experiencia: muestra cada cálculo con su fórmula y sus números, cuadra los totales, separa datos de supuestos, y cuando proyectes entrega tres escenarios (conservador, base y optimista) diciendo qué supuesto cambia en cada uno. Señala riesgos de caja antes que oportunidades. Usa la moneda de las cifras recibidas; si no viene indicada, pregunta en «Para tu revisión».',
   dani:'Cada guion lleva: 3 opciones de gancho para los primeros 2 segundos, las escenas numeradas (qué se ve, texto en pantalla, voz en off), la duración estimada y el cierre con llamada a la acción.',
   lia:'Cada carrusel lleva de 5 a 8 láminas. Por lámina: título corto, texto (máximo 25 palabras) y dirección visual. Solo título, texto, imagen y logo: nada de numeración ni etiquetas pequeñas. La portada debe poder entenderse sola.',
@@ -357,7 +364,7 @@ var EXTRA = {
 };
 var byId = {}; AG.forEach(function(a){ byId[a.id] = a; });
 EXTRA.bruno = 'Empieza con tu lectura en dos o tres frases: cómo crees que va la pauta y por qué. Después, qué rindió, qué no y los ajustes que propones, con el dato que respalda cada uno.';
-byId.elena.does += ' También arma el plan anual de la marca: en qué eventos estar (para networking, para stand y premiaciones), en qué gremiales, qué pautar y qué campañas de correo hacer, por trimestre y sin montos. También investiga en la web lo que haga falta para la marca: la ficha de la marca a partir de su sitio oficial y oportunidades nuevas de venta, siempre con fuente.'; byId.elena.gives += ' Y, cuando se lo pides, el plan anual de la marca.'; byId.lia.does += ' También prepara el perfil personal de LinkedIn de los voceros de la marca (titular, «Acerca de» y cargo) y sus publicaciones, siempre con imagen, carrusel o video y solo con datos del sitio oficial o de la directora.'; byId.lia.gives += ' Y, cuando se lo pides, el perfil y las publicaciones de LinkedIn de un vocero.'; var READS = {maya:['elena']}; byId.maya.routine = 'Arma la parrilla de contenido de la semana siguiente: 5 piezas, con al menos 2 reels y 2 carruseles y ningún post de una sola imagen. Parte del radar de tendencias de Elena de esta semana y de los próximos eventos de la marca.'; EXTRA.maya = 'Empieza con la sección «## La semana en una mirada»: objetivo de la semana, mezcla de pilares (educativo, entretenimiento, conexión y venta; como máximo 1 de las 5 piezas es de venta) y las fechas o eventos que se aprovechan. Después, una sección por pieza con un título como «## Lunes 17 · Carrusel · Educativo» (día, formato y pilar) y estas líneas, cada una escrita como «- **Etiqueta:** texto»: Objetivo; Etapa del embudo; De dónde sale (la tendencia del radar con su fuente, o el dato de la biblioteca); Gancho; Desarrollo (en carrusel, el título de cada lámina; en reel, cada escena en una frase); Copy Instagram y Facebook, variante 1; Copy Instagram y Facebook, variante 2 (otro ángulo, no un retoque); Copy LinkedIn; Hashtags (5 o 6: 1 de nicho, 1 o 2 de audiencia, 1 de ubicación y 2 del tema de la pieza; cortos y siempre los mismos para la marca); Llamada a la acción; Dirección visual (vertical 4:5, colores y logo de la marca, foto real o pantalla del producto); Hora sugerida; Qué medir. Reglas de copy: escribe desde lo que necesita quien lee, no desde lo que presume la marca; primero conecta y después informa; promueve sin exagerar; cada dato sale de la biblioteca, de la descripción de la marca o del radar con su fuente, sin escenas hipotéticas, testimonios ni cifras inventadas; termina con un siguiente paso claro, salvo en las piezas educativas.'; EXTRA.elena = 'Trabaja con información fresca: busca en la web y prioriza lo publicado en los últimos 7 días. Las tendencias que Brandloop tiene guardadas de la marca son solo punto de partida: úsalas si siguen vigentes y dilo con su fecha; no armes el radar solo con ellas. Si una búsqueda no trae nada nuevo, dilo. Empieza con la fecha en que investigaste.';
+byId.elena.does += ' También arma el plan anual de la marca: en qué eventos estar (para networking, para stand y premiaciones), en qué gremiales, qué pautar y qué campañas de correo hacer, por trimestre y sin montos. También investiga en la web lo que haga falta para la marca: la ficha de la marca a partir de su sitio oficial, siempre con fuente.'; byId.elena.gives += ' Y, cuando se lo pides, el plan anual de la marca.'; byId.lia.does += ' También prepara el perfil personal de LinkedIn de los voceros de la marca (titular, «Acerca de» y cargo) y sus publicaciones, siempre con imagen, carrusel o video y solo con datos del sitio oficial o de la directora.'; byId.lia.gives += ' Y, cuando se lo pides, el perfil y las publicaciones de LinkedIn de un vocero.'; var READS = {maya:['elena']}; byId.maya.routine = 'Arma la parrilla de contenido de la semana siguiente: 5 piezas, con al menos 2 reels y 2 carruseles y ningún post de una sola imagen. Parte del radar de tendencias de Elena de esta semana y de los próximos eventos de la marca.'; EXTRA.maya = 'Empieza con la sección «## La semana en una mirada»: objetivo de la semana, mezcla de pilares (educativo, entretenimiento, conexión y venta; como máximo 1 de las 5 piezas es de venta) y las fechas o eventos que se aprovechan. Después, una sección por pieza con un título como «## Lunes 17 · Carrusel · Educativo» (día, formato y pilar) y estas líneas, cada una escrita como «- **Etiqueta:** texto»: Objetivo; Etapa del embudo; De dónde sale (la tendencia del radar con su fuente, o el dato de la biblioteca); Gancho; Desarrollo (en carrusel, el título de cada lámina; en reel, cada escena en una frase); Copy Instagram y Facebook, variante 1; Copy Instagram y Facebook, variante 2 (otro ángulo, no un retoque); Copy LinkedIn; Hashtags (5 o 6: 1 de nicho, 1 o 2 de audiencia, 1 de ubicación y 2 del tema de la pieza; cortos y siempre los mismos para la marca); Llamada a la acción; Dirección visual (vertical 4:5, colores y logo de la marca, foto real o pantalla del producto); Hora sugerida; Qué medir. Reglas de copy: escribe desde lo que necesita quien lee, no desde lo que presume la marca; primero conecta y después informa; promueve sin exagerar; cada dato sale de la biblioteca, de la descripción de la marca o del radar con su fuente, sin escenas hipotéticas, testimonios ni cifras inventadas; termina con un siguiente paso claro, salvo en las piezas educativas.'; EXTRA.elena = 'Trabaja con información fresca: busca en la web y prioriza lo publicado en los últimos 7 días. Las tendencias que Brandloop tiene guardadas de la marca son solo punto de partida: úsalas si siguen vigentes y dilo con su fecha; no armes el radar solo con ellas. Si una búsqueda no trae nada nuevo, dilo. Empieza con la fecha en que investigaste.';
 byId.elena.routine = 'Investiga en la web qué se movió esta semana en el sector de la marca y en redes, en su país y región, y arma el radar: de 3 a 5 tendencias, cada una con fuente, enlace y fecha de publicación, y una idea de contenido para la marca.';
 
 /* ---------- estado ---------- */
@@ -620,7 +627,7 @@ function renderBoard(){
     return '<div class="col"><h3 style="--k:' + ST[c[0]].k + '"><i></i>' + c[1] + '<em>' + l.length + '</em></h3>' + (l.length ? '<ul class="tl">' + l.map(function(t){ return taskRow(t, true); }).join('') + '</ul>' : '<p class="none">Nada por aquí.</p>') + '</div>';
   }).join('');
 }
-var DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Cada mes'];
+var DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Fin de semana','Cada mes'];
 function renderSched(){
   var on = active();
   $('#sched').innerHTML = DAYS.map(function(d, i){
@@ -852,6 +859,10 @@ function makeWorld(){
     cyl(root, 3.0, 3.0, 0.03, BM.rug, -11.0, 0.075, 0).castShadow = false;
     places.loop = {g:g, seat:[-11.4, 0], out:[[-8.9, 0]], spot:[-4.05, 0]};
   })();
+  (function(){
+    var g = new T.Group(); g.position.set(11.1, 0.05, 1.9); root.add(g);
+    places.mateo = {g:g, seat:[10.6, 0.7], out:[[8.6, 0.7], [8.6, 3.25], [0, 3.25], [0, 2.05]], spot:[3.6, 1.75]};
+  })();
 
   function desk(g, a){
     box(g, 2.4, 0.08, 1.0, WOOD, -0.5, 0.78, -0.15);
@@ -908,6 +919,8 @@ function makeWorld(){
       box(g, 0.8, 0.9, 0.7, '#3B3431', -2.35, 0.45, 1.95); cyl(g, 0.16, 0.16, 0.05, '#C9C0B6', -2.35, 0.5, 2.32).rotation.x = Math.PI / 2;
       for(i = 0; i < 6; i++) cyl(g, 0.17, 0.17, 0.05, '#E2A62B', -1.55 + (i % 2) * 0.05, 0.03 + i * 0.055, 2.05, {metalness:0.3, roughness:0.4});
       for(i = 0; i < 3; i++) cyl(g, 0.17, 0.17, 0.05, '#E2A62B', -1.15, 0.03 + i * 0.055, 2.3, {metalness:0.3, roughness:0.4}); },
+    mateo:function(g){ box(g, 0.5, 0.36, 0.16, '#6B4A2B', 1.0, 0.2, -0.9); box(g, 0.2, 0.06, 0.04, '#3B3431', 1.0, 0.41, -0.9);
+      cyl(g, 0.03, 0.03, 1.3, '#8D847C', 1.5, 0.65, 0.2); box(g, 0.5, 0.32, 0.03, '#6B7A1F', 1.76, 1.14, 0.2); },
     loop:function(g){ var a = add(g, new T.TorusGeometry(0.42, 0.11, 16, 40), BM.art, -2.75, 1.25, -1.6), b = add(g, new T.TorusGeometry(0.42, 0.11, 16, 40), BM.art, -2.0, 1.25, -1.6);
       a.rotation.y = b.rotation.y = 0.35; cyl(g, 0.5, 0.6, 0.6, '#1D120C', -2.37, 0.3, -1.6); }
   };
@@ -1073,7 +1086,7 @@ function makeWorld(){
   function frame(now){
     requestAnimationFrame(frame);
     if(!running || !vis || stage.hidden){ last = now; return; }
-    var dt = Math.min(0.1, (now - last) / 1000), t = now / 1000; last = now;
+    if(!(now >= 0)) now = performance.now(); var dt = Math.min(0.1, Math.max(0, (now - last) / 1000)) || 0, t = now / 1000; last = now;
     var e = REDUCE ? 1 : 1 - Math.pow(0.002, dt);
     if(!drag){ view.tx += (view.gx - view.tx) * e; view.tz += (view.gz - view.tz) * e; }
     view.zoom += (view.gzoom - view.zoom) * e; applyCam();

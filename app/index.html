@@ -1853,7 +1853,7 @@ const bellIc=()=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="current
    (las reglas de la base de datos no dejan leer esa ruta a nadie más). La marca ve a su equipo, en qué va cada
    agente (clients/{marca}/docs/office) y sube su biblioteca de precios y catálogo (clients/{marca}/office_kb). */
 const OF={layer:null,frame:null,cid:null,subs:[],pubT:null};
-const OF_AG=[["loop", "Loop", "#F2620A"], ["maya", "Maya", "#D6457A"], ["dani", "Dani", "#E0523A"], ["nico", "Nico", "#7D5CE0"], ["lia", "Lía", "#C48407"], ["elena", "Elena", "#1B8FB3"], ["iris", "Iris", "#2F9E6F"], ["bruno", "Bruno", "#8F5A2B"], ["tomas", "Tomás", "#4A6FE3"], ["renata", "Renata", "#B0468F"], ["victoria", "Victoria", "#0E7C66"]];
+const OF_AG=[["loop", "Loop", "#F2620A"], ["maya", "Maya", "#D6457A"], ["dani", "Dani", "#E0523A"], ["nico", "Nico", "#7D5CE0"], ["lia", "Lía", "#C48407"], ["elena", "Elena", "#1B8FB3"], ["iris", "Iris", "#2F9E6F"], ["bruno", "Bruno", "#8F5A2B"], ["tomas", "Tomás", "#4A6FE3"], ["renata", "Renata", "#B0468F"], ["victoria", "Victoria", "#0E7C66"], ["mateo", "Mateo", "#6B7A1F"]];
 const ofAdm=()=>!!(V.user&&V.user.role==="admin");
 const officeOn=c=>!!c&&!PORTAL&&!!V.user&&!!S.rawdb&&(ofAdm()||(((S.officeCfg||{}).on)||[]).includes(c.id));
 const ofHex=h=>/^#[0-9a-f]{6}$/i.test(h||"")?h:null;
@@ -1967,7 +1967,7 @@ function viewOffice(c){
   return `<section class="dash-head"><div><h1>Oficina de agentes</h1><p class="sub">El equipo de ${esc(c.name)}: quién hace qué, cuándo trabaja y en qué va cada encargo.</p></div></section>
   <section class="dash" style="${cvars(c)};--c2:var(--c)">
    ${officeCard(c)}
-   <div class="card d12 ofc-info"><div><b>${OF_AG.length} agentes, cada uno con su oficio</b><span>Parrilla, guiones, video, carruseles, tendencias, pauta, reportes, propuestas y finanzas.</span></div>
+   <div class="card d12 ofc-info"><div><b>${OF_AG.length} agentes, cada uno con su oficio</b><span>Parrilla, guiones, video, carruseles, tendencias, pauta, reportes, propuestas, finanzas y oportunidades de negocio.</span></div>
     <div><b>Listo antes de las 5:00 a.m.</b><span>El equipo trabaja de madrugada. Lo que termina queda en la fila de revisión.</span></div>
     <div><b>Nada sale sin aprobación</b><span>Los agentes investigan y proponen. No publican, no envían y no gastan.</span></div></div>
    ${adm?`<div class="card d12 ofc-vis"><div><b>Quién ve esta oficina</b><span class="s">${shown?`El equipo de ${esc(c.name)} ve a los agentes, en qué va cada uno y puede subir precios y catálogo. Las entregas solo las ves tú.`:`Solo tú. El equipo de ${esc(c.name)} todavía no la ve.`}</span></div><button class="btn" data-act="officeToggle">${shown?"Dejar de mostrarla":"Mostrarla a "+esc(c.name)}</button></div>`:""}
