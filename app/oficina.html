@@ -54,7 +54,7 @@ h1,h2,h3,h4,p,ul{margin:0}
 .ag[aria-current="true"]{background:color-mix(in srgb,var(--a1) 12%,#fff)}
 .av{position:relative;flex:none;width:38px;height:38px;border-radius:50%;background:var(--h);box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--a1);overflow:hidden}
 .av:after{content:"";position:absolute;left:50%;top:58%;width:64%;height:64%;border-radius:50%;background:var(--s);transform:translate(-50%,-50%)}
-.av.bot{background:#0076B6}.av.bot:after{top:57%;width:68%;height:48%;border-radius:44%;background:radial-gradient(circle at 33% 46%,#173646 0 12%,transparent 13%),radial-gradient(circle at 67% 46%,#173646 0 12%,transparent 13%),#fff;box-shadow:0 0 0 3px #00A7E1}
+.av.bot:after{top:57%;width:68%;height:48%;border-radius:44%;background:radial-gradient(circle at 33% 46%,var(--e) 0 12%,transparent 13%),radial-gradient(circle at 67% 46%,var(--e) 0 12%,transparent 13%),var(--f);box-shadow:0 0 0 3px var(--r)}
 .ag .tx{min-width:0;display:flex;flex-direction:column}
 .ag b{font-size:14.5px;font-weight:700}
 .ag .tx span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -539,11 +539,12 @@ function askChanges(id, text){
 }
 
 /* ---------- interfaz ---------- */
-var SKIN = {isicare:{loop:{name:'Isilio', role:'Jefe de oficina', robot:true}}};
+var SKIN = {isicare:{loop:{name:'Isilio', role:'Jefe de oficina', bot:'isicare', av:['#0076B6','#FFFFFF','#173646','#00A7E1']}},
+  bex:{loop:{bot:'bex', av:['#EFE9DC','#141414','#F1CF78','#D9B45A']}}, cyntia:{loop:{bot:'cyntia', av:['#D9D9D9','#111111','#FFFFFF','#8E8E8E']}}, t2d:{loop:{bot:'t2d', av:['#F4F4F4','#111111','#FFFFFF','#9BE22D']}}};
 function sk(a){ var s = SKIN[S.bid]; return (s && a && s[a.id]) || null; }
-function nm(a){ var k = sk(a); return k ? k.name : a.name; }
-function rl(a){ var k = sk(a); return k ? k.role : a.role; }
-function avatar(a){ var k = sk(a); if(k && k.robot) return '<span class="av bot" style="--c:' + a.color + '" aria-hidden="true"></span>'; return '<span class="av" style="--h:' + a.hair + ';--s:' + a.skin + ';--c:' + a.color + '" aria-hidden="true"></span>'; }
+function nm(a){ var k = sk(a); return (k && k.name) || a.name; }
+function rl(a){ var k = sk(a); return (k && k.role) || a.role; }
+function avatar(a){ var k = sk(a); if(k && k.bot) return '<span class="av bot" style="--h:' + k.av[0] + ';--f:' + k.av[1] + ';--e:' + k.av[2] + ';--r:' + k.av[3] + ';--c:' + a.color + '" aria-hidden="true"></span>'; return '<span class="av" style="--h:' + a.hair + ';--s:' + a.skin + ';--c:' + a.color + '" aria-hidden="true"></span>'; }
 function chip(st){ return '<span class="chip" style="--k:' + ST[st].k + '"><i></i>' + ST[st].t + '</span>'; }
 function md(t){
   var h = '', ul = false, sec = false;
@@ -975,18 +976,58 @@ function makeWorld(){
     var hit = new T.Mesh(new T.CylinderGeometry(0.55, 0.55, 2.1, 10), new T.MeshBasicMaterial({visible:false})); hit.position.y = 1.0; hit.userData.agent = a.id; g.add(hit); u.hit = hit;
     if(a.id === 'loop'){
       var hp = []; g.traverse(function(o){ if(o.isMesh && o !== hit) hp.push(o); });
-      var BL = '#00A7E1', DB = '#0076B6', OR = '#F79031', NV = '#173646', rp = [], R = function(m){ rp.push(m); return m; };
-      [u.legL, u.legR].forEach(function(L, i){ R(box(L, 0.2, 0.5, 0.24, DB, 0, -0.25, 0)); R(box(L, 0.3, 0.11, 0.36, DB, i ? 0.05 : -0.05, -0.5, 0.05)); });
-      R(box(g, 0.42, 0.56, 0.3, BL, 0, HIP + 0.3, 0)); R(box(g, 0.66, 0.2, 0.28, BL, 0, HIP + 0.36, 0)); R(box(g, 0.16, 0.1, 0.16, BL, 0, HIP + 0.61, 0));
-      [u.armL, u.armR].forEach(function(A){ R(sph(A, 0.075, NV, 0, 0, 0)); R(box(A, 0.13, 0.2, 0.14, OR, 0, -0.13, 0)); R(sph(A, 0.058, NV, 0, -0.26, 0)); R(box(A, 0.11, 0.15, 0.12, OR, 0, -0.35, 0)); R(sph(A, 0.075, '#23C2F3', 0, -0.47, 0)); });
-      R(sph(u.head, 0.28, BL, 0, 0, 0));
-      var cap = R(add(u.head, new T.SphereGeometry(0.3, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.52), mat(DB, {roughness:0.6}), 0, 0.01, -0.012)); cap.rotation.x = -0.35;
-      var face = R(sph(u.head, 0.2, '#FFFFFF', 0, -0.01, 0.19, {roughness:0.4})); face.scale.set(1, 0.74, 0.5);
-      var ey = mat(NV, {roughness:0.3});
-      [-0.075, 0.075].forEach(function(x){ var e = R(add(u.head, new T.SphereGeometry(0.03, 12, 10), ey, x, 0.01, 0.285, false)); e.scale.y = 1.5; });
-      var sm = R(add(u.head, new T.TorusGeometry(0.045, 0.011, 8, 16, Math.PI), ey, 0, -0.045, 0.283, false)); sm.rotation.z = Math.PI;
-      rp.forEach(function(m){ m.visible = false; });
-      u.skin = function(on){ hp.forEach(function(m){ m.visible = !on; }); rp.forEach(function(m){ m.visible = on; }); };
+      var sets = {}, cs = null;
+      var R = function(m){ cs.push(m); return m; };
+      var B = function(par, w, h, d, c, x, y, z, o){ return R(box(par, w, h, d, c, x, y, z, o)); };
+      var Sp = function(par, r, c, x, y, z, o){ return R(sph(par, r, c, x, y, z, o)); };
+      var eyes = function(c, dx, y, z, r){ [-dx, dx].forEach(function(x){ R(add(u.head, new T.TorusGeometry(r, 0.013, 8, 16, Math.PI), mat(c, {roughness:0.3, emissive:new T.Color(c), emissiveIntensity:0.5}), x, y, z, false)); }); };
+      var BOT = {
+        isicare:function(){ var BL = '#00A7E1', DB = '#0076B6', OR = '#F79031', NV = '#173646';
+          [u.legL, u.legR].forEach(function(L, i){ B(L, 0.2, 0.5, 0.24, DB, 0, -0.25, 0); B(L, 0.3, 0.11, 0.36, DB, i ? 0.05 : -0.05, -0.5, 0.05); });
+          B(g, 0.42, 0.56, 0.3, BL, 0, HIP + 0.3, 0); B(g, 0.66, 0.2, 0.28, BL, 0, HIP + 0.36, 0); B(g, 0.16, 0.1, 0.16, BL, 0, HIP + 0.61, 0);
+          [u.armL, u.armR].forEach(function(A){ Sp(A, 0.075, NV, 0, 0, 0); B(A, 0.13, 0.2, 0.14, OR, 0, -0.13, 0); Sp(A, 0.058, NV, 0, -0.26, 0); B(A, 0.11, 0.15, 0.12, OR, 0, -0.35, 0); Sp(A, 0.075, '#23C2F3', 0, -0.47, 0); });
+          Sp(u.head, 0.28, BL, 0, 0, 0);
+          R(add(u.head, new T.SphereGeometry(0.3, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.52), mat(DB, {roughness:0.6}), 0, 0.01, -0.012)).rotation.x = -0.35;
+          Sp(u.head, 0.2, '#FFFFFF', 0, -0.01, 0.19, {roughness:0.4}).scale.set(1, 0.74, 0.5);
+          var ey = mat(NV, {roughness:0.3});
+          [-0.075, 0.075].forEach(function(x){ R(add(u.head, new T.SphereGeometry(0.03, 12, 10), ey, x, 0.01, 0.285, false)).scale.y = 1.5; });
+          R(add(u.head, new T.TorusGeometry(0.045, 0.011, 8, 16, Math.PI), ey, 0, -0.045, 0.283, false)).rotation.z = Math.PI; },
+        bex:function(){ var K = '#17171A', G = '#D9B45A', C = '#EFE9DC';
+          [u.legL, u.legR].forEach(function(L, i){ var s = i ? 1 : -1; B(L, 0.2, 0.5, 0.24, K, 0, -0.25, 0); B(L, 0.215, 0.13, 0.255, G, 0, -0.2, 0); B(L, 0.3, 0.12, 0.38, K, s * 0.04, -0.49, 0.06); B(L, 0.31, 0.04, 0.39, G, s * 0.04, -0.555, 0.06); });
+          B(g, 0.46, 0.56, 0.3, K, 0, HIP + 0.3, 0); B(g, 0.16, 0.1, 0.16, K, 0, HIP + 0.61, 0);
+          [0.78, -0.78].forEach(function(r){ B(g, 0.56, 0.1, 0.03, G, 0, HIP + 0.31, 0.155).rotation.z = r; });
+          [u.armL, u.armR].forEach(function(A){ Sp(A, 0.085, C, 0, 0, 0); B(A, 0.12, 0.22, 0.13, K, 0, -0.14, 0); B(A, 0.115, 0.15, 0.125, C, 0, -0.33, 0); Sp(A, 0.075, K, 0, -0.46, 0); });
+          B(u.head, 0.58, 0.42, 0.44, C, 0, 0.02, 0); B(u.head, 0.5, 0.31, 0.06, '#0B0B0D', 0, 0.02, 0.2, {roughness:0.25}); eyes('#F1CF78', 0.12, 0.0, 0.235, 0.05);
+          B(u.head, 0.26, 0.07, 0.24, G, 0, 0.265, 0); B(u.head, 0.14, 0.07, 0.14, G, 0, 0.33, 0).rotation.y = Math.PI / 4; },
+        cyntia:function(){ var K = '#151515', W = '#F2F2F2', Gy = '#8E8E8E';
+          [u.legL, u.legR].forEach(function(L, i){ var s = i ? 1 : -1; B(L, 0.2, 0.5, 0.24, K, 0, -0.25, 0); B(L, 0.21, 0.2, 0.25, W, 0, -0.33, 0); B(L, 0.26, 0.1, 0.34, K, s * 0.03, -0.5, 0.05); });
+          B(g, 0.42, 0.54, 0.28, K, 0, HIP + 0.3, 0); B(g, 0.15, 0.1, 0.15, K, 0, HIP + 0.61, 0);
+          R(add(g, new T.CylinderGeometry(0.12, 0.12, 0.03, 6), mat(W), 0, HIP + 0.36, 0.145)).rotation.x = Math.PI / 2;
+          R(add(g, new T.CylinderGeometry(0.065, 0.065, 0.035, 6), mat(K), 0, HIP + 0.36, 0.15)).rotation.x = Math.PI / 2;
+          [u.armL, u.armR].forEach(function(A){ Sp(A, 0.08, Gy, 0, 0, 0); B(A, 0.12, 0.22, 0.13, K, 0, -0.14, 0); B(A, 0.115, 0.15, 0.125, W, 0, -0.33, 0); Sp(A, 0.075, K, 0, -0.46, 0); });
+          R(add(u.head, new T.SphereGeometry(0.3, 7, 5), mat(K, {flatShading:true, roughness:0.6}), 0, 0, -0.01));
+          [-1, 1].forEach(function(s){ B(u.head, 0.07, 0.24, 0.3, W, s * 0.275, 0.0, -0.03).rotation.z = s * -0.12; });
+          R(add(u.head, new T.TorusGeometry(0.2, 0.028, 8, 28), mat(W), 0, -0.01, 0.225, false)).scale.y = 0.78;
+          eyes('#FFFFFF', 0.085, -0.02, 0.29, 0.045);
+          B(u.head, 0.16, 0.08, 0.3, Gy, 0, 0.28, -0.04).rotation.x = -0.25; },
+        t2d:function(){ var K = '#151515', W = '#F4F4F4', LM = '#9BE22D';
+          [u.legL, u.legR].forEach(function(L, i){ var s = i ? 1 : -1; B(L, 0.19, 0.5, 0.23, W, 0, -0.25, 0); B(L, 0.205, 0.2, 0.245, K, 0, -0.1, 0); B(L, 0.3, 0.13, 0.4, K, s * 0.04, -0.49, 0.07); B(L, 0.31, 0.045, 0.41, LM, s * 0.04, -0.555, 0.07); });
+          R(cyl(g, 0.24, 0.22, 0.52, K, 0, HIP + 0.3, 0)).scale.z = 0.8; B(g, 0.16, 0.1, 0.16, W, 0, HIP + 0.61, 0);
+          R(add(g, new T.TorusGeometry(0.39, 0.03, 10, 40), mat(LM, {roughness:0.4}), 0, HIP + 0.2, 0)).rotation.x = Math.PI / 2 + 0.2;
+          var cv = document.createElement('canvas'); cv.width = 256; cv.height = 110; var cx = cv.getContext('2d'); cx.font = '800 92px system-ui, Arial, sans-serif'; cx.textBaseline = 'middle';
+          cx.fillStyle = '#FFFFFF'; cx.fillText('T2', 14, 60); cx.fillStyle = LM; cx.fillText('D', 14 + cx.measureText('T2').width, 60);
+          var tx = new T.CanvasTexture(cv); tx.encoding = T.sRGBEncoding;
+          R(add(g, new T.PlaneGeometry(0.3, 0.13), new T.MeshBasicMaterial({map:tx, transparent:true}), 0, HIP + 0.4, 0.2, false));
+          [u.armL, u.armR].forEach(function(A){ Sp(A, 0.085, W, 0, 0, 0); B(A, 0.12, 0.2, 0.13, K, 0, -0.13, 0); Sp(A, 0.06, W, 0, -0.25, 0); B(A, 0.115, 0.15, 0.125, K, 0, -0.34, 0); Sp(A, 0.08, K, 0, -0.47, 0); });
+          Sp(u.head, 0.3, W, 0, 0, 0);
+          R(add(u.head, new T.SphereGeometry(0.31, 24, 12, 0, Math.PI * 2, 0, Math.PI * 0.42), mat(K), 0, 0.005, -0.01)).rotation.x = -0.25;
+          Sp(u.head, 0.255, '#060606', 0, -0.01, 0.19, {roughness:0.2}).scale.set(1, 0.76, 0.5);
+          eyes('#FFFFFF', 0.1, -0.02, 0.312, 0.048);
+          [-1, 1].forEach(function(s){ R(add(u.head, new T.TorusGeometry(0.11, 0.04, 10, 24), mat(LM, {roughness:0.4}), s * 0.31, -0.01, 0)).rotation.y = Math.PI / 2; });
+          R(add(u.head, new T.TorusGeometry(0.325, 0.028, 8, 28, Math.PI), mat(LM, {roughness:0.4}), 0, 0, 0)); }
+      };
+      Object.keys(BOT).forEach(function(k){ cs = sets[k] = []; BOT[k](); cs.forEach(function(m){ m.visible = false; }); });
+      u.skin = function(key){ var on = sets[key] || null; hp.forEach(function(m){ m.visible = !on; }); Object.keys(sets).forEach(function(k){ var v = sets[k] === on; sets[k].forEach(function(m){ m.visible = v; }); }); };
     }
     g.scale.setScalar(SC); g.userData = u; return g;
   }
@@ -1030,7 +1071,7 @@ function makeWorld(){
   var logoImg = null, logoId = null, curC = '#F2620A';
   function vivid(h){ var c = new T.Color(h), hs = {h:0, s:0, l:0}; c.getHSL(hs); return hs.s > 0.25 && hs.l > 0.18 && hs.l < 0.82; }
   function setBrand(b){
-    AG.forEach(function(a){ var ac = actors[a.id]; if(!ac) return; var k = (b && SKIN[b.id] && SKIN[b.id][a.id]) || null; ac.el.innerHTML = '<i></i>' + esc(k ? k.name : a.name); if(ac.u.skin) ac.u.skin(!!(k && k.robot)); });
+    AG.forEach(function(a){ var ac = actors[a.id]; if(!ac) return; var k = (b && SKIN[b.id] && SKIN[b.id][a.id]) || null; ac.el.innerHTML = '<i></i>' + esc((k && k.name) || a.name); if(ac.u.skin) ac.u.skin(k && k.bot); });
     var c1 = (b && hexOk(b.c1)) || '#F2620A', c2 = (b && hexOk(b.c2)) || c1;
     var P = [c1, c2].concat(((b && b.pal) || []).map(hexOk).filter(Boolean)).filter(function(h, i, l){ return l.indexOf(h) === i; }).slice(0, 5);
     var lit = P.filter(vivid)[0] || c1; curC = lit;
