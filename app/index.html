@@ -1341,7 +1341,7 @@ const CLIENT_GROUPS=[
   ["res","Visibilidad en IA","geo",[["geo","¿Las IA nos recomiendan?"]]]
 ];
 const isClient=()=>!!(V.user&&V.user.role!=="admin");
-const navG=()=>isClient()?CLIENT_GROUPS:GROUPS_ALL;
+const navG=()=>GROUPS_ALL;
 const CLIENT_VIEWS=new Set(["home","plan","strategy","campaigns","ads","email","cal","posts","mc","organic","geo","brand"]);
 
 function moveDeal(id,stage,msg){const d=S.deals.find(x=>x.id===id);if(!d||d.stage===stage)return;write(()=>col("deals").doc(id).update({stage,updatedAt:Date.now()}),msg||"Etapa actualizada")}
@@ -1438,7 +1438,7 @@ function rail(){
   ${c?`<div class="switch ws"><button class="ws-btn" ${PORTAL?"disabled":`data-act="menu" aria-expanded="${S.menu}"`} id="sw-btn">${lf?`<span class="swlogo"><img src="${esc(lf.url)}" alt="" style="${lf.f?"filter:"+lf.f:""}"></span>`:`${monoHTML(c,"")}`}<span class="who"><b>${esc(c.name)}</b><span>${esc(c.industry||"Cliente")}</span></span>${PORTAL?"":`<span class="updown" aria-hidden="true">${ic("chev")}</span>`}</button>
    ${S.menu?`<div class="menu" role="menu">${S.clients.filter(k=>!S.meet||k.id===S.meet).map(k=>`<button role="menuitem" data-act="client" data-id="${esc(k.id)}" aria-current="${k.id===S.cid}">${monoHTML(k,"")}<span>${esc(k.name)}<br><span class="hint">${esc(k.industry||"")}</span></span></button>`).join("")}
      ${S.clients.length>1?`<button data-act="meet">${S.meet?"Salir del modo reunión":"Modo reunión: mostrar solo esta marca"}</button>`:""}${S.meet?"":S.canWrite&&V.user?.role!=="admin"&&V.enabled?"":S.canWrite?`<button data-act="view" data-v="newclient">${ic("plus")} Agregar cliente</button>`:""}</div>`:""}</div>`:`<a class="logo" href="${SITE_URL}" target="_blank" rel="noopener" title="Ir a la página de Brandloop">${loopSvg()}</a>`}
-  <nav class="nav" aria-label="Áreas">${isClient()?`<ul>${navG().map(item).join("")}</ul>`:`<span class="sec">Estrategia y contenido</span><ul>${navG().slice(0,5).map(item).join("")}</ul><span class="sec">Marca, ventas y equipo</span><ul>${navG().slice(5).map(item).join("")}</ul>`}</nav>
+  <nav class="nav" aria-label="Áreas">${false?``:`<span class="sec">Estrategia y contenido</span><ul>${navG().slice(0,5).map(item).join("")}</ul><span class="sec">Marca, ventas y equipo</span><ul>${navG().slice(5).map(item).join("")}</ul>`}</nav>
   <div class="side-foot"><div class="themes" role="group" aria-label="Tema"><button class="ic2" data-act="theme" data-t="light" aria-pressed="${th==="light"}" aria-label="Tema claro" title="Tema claro">${ic("sun")}</button><button class="ic2" data-act="theme" data-t="dark" aria-pressed="${th==="dark"}" aria-label="Tema oscuro" title="Tema oscuro">${ic("moon")}</button></div>
    ${V.user?.role==="admin"?`<button class="nv" data-act="view" data-v="access" ${S.view==="access"?'aria-current="page"':""}><span class="ic">${ic("brand")}</span><span class="nl">Usuarios y accesos</span></button>`:""}
    <div class="me">${(()=>{const bl=V.user&&V.user.role!=="admin"&&c?logoFor(c,false):null;return bl?`<span class="mono hilogo"><img src="${esc(bl.url)}" alt="${esc(c.name)}" style="${bl.f?"filter:"+bl.f:""}"></span>`:`<span class="mono" style="--c:#f2620a;--c-on:#fff">${esc((V.user?.name||S.me?.name||"BL").slice(0,2).toUpperCase())}</span>`})()}<span class="who"><b>${esc(V.user?.name||S.me?.name||"Tu equipo")}</b><span class="brandrow">${V.user?esc("@"+V.user.uname):`${loopSvg(3)} Brandloop`}</span></span></div>${V.user?`<button class="logoutbtn" data-act="logout">${ic("logout")} Cerrar sesión</button>`:""}</div>${siteLink("sitelink")}</aside>`;
@@ -1467,7 +1467,6 @@ function body(){
   if(PORTAL&&!S.clients.length) return emptyBox("Tu portal se está preparando","Tu equipo de Brandloop está cargando la información de tu marca. Vuelve a abrir esta página en unos minutos.");
   if(S.view==="newclient"||!S.clients.length) return viewNewClient();
   const c=client(); if(!c) return "";
-  if(isClient()&&!CLIENT_VIEWS.has(S.view))S.view="home";
   switch(S.view){
     case "posts": return viewPosts(c);
     case "mc": return viewMC(c);
