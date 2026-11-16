@@ -564,6 +564,13 @@ function face(a){
   if(a.glasses) p += '<g fill="none" stroke="' + D + '" stroke-width="1.1"><circle cx="15.6" cy="24.6" r="3.5"/><circle cx="24.4" cy="24.6" r="3.5"/><path d="M19.1 24.2h1.8"/></g>';
   return p + '</svg>';
 }
+function audioHTML(t){
+  if(t.aerr && !(t.audio || []).length) return '<div><span class="lbl">Audio</span><p class="err">No se pudo generar el audio: ' + esc(t.aerr) + '</p></div>';
+  if(!(t.audio || []).length) return (t.agent === 'dani' && t.st === 'aprobado') ? '<div><span class="lbl">Audio</span><p class="note">La voz y la música se generan en el próximo turno de madrugada.</p></div>' : '';
+  return '<div><span class="lbl">Audio listo</span>' + t.audio.map(function(v){ return '<div class="brief" style="margin-bottom:8px"><b>' + esc(v.titulo) + '</b>' +
+    (v.voz ? '<div style="margin-top:6px">Voz en off<br><audio controls preload="none" src="' + esc(v.voz) + '" style="width:100%"></audio></div>' : '') +
+    (v.musica ? '<div style="margin-top:6px">Música<br><audio controls preload="none" src="' + esc(v.musica) + '" style="width:100%"></audio></div>' : '') + '</div>'; }).join('') + '</div>';
+}
 function chip(st){ return '<span class="chip" style="--k:' + ST[st].k + '"><i></i>' + ST[st].t + '</span>'; }
 function md(t){
   var h = '', ul = false, sec = false;
@@ -672,6 +679,7 @@ function renderModal(){ keepFocus(function(){
     '<header><div class="qhead">' + avatar(a) + '<span><b>' + esc(nm(a)) + '</b><br><span>' + esc(rl(a)) + (t.ver > 1 ? ' · versión ' + t.ver : '') + '</span></span></div>' + chip(t.st) + '</header>' +
     '<div class="scroll"><div><span class="lbl">Encargo</span><div class="brief">' + esc(t.brief) + '</div>' + ((t.files || []).length ? '<div class="files" style="margin-top:8px">' + t.files.map(function(f){ return '<span><b>' + esc(f.n) + '</b></span>'; }).join('') + '</div>' : '') + '</div>' +
       (t.st === 'cambios' && t.fb ? '<div><span class="lbl">Cambios que pediste</span><div class="brief">' + esc(t.fb) + '</div></div>' : '') +
+      audioHTML(t) +
       (busy ? '<div><span class="lbl">' + esc(nm(a)) + ' está escribiendo <span class="dots"><i></i><i></i><i></i></span></span><div class="out" id="live-' + t.id + '" style="white-space:pre-wrap">' + esc(live[t.id] || '') + '</div></div>'
         : (t.out ? '<div><span class="lbl">Entrega</span><div class="out">' + md(t.out) + '</div></div>' : '')) +
       (t.err ? '<p class="err">' + esc(t.err) + '</p>' : stuck ? (EMBED && !S.sample ? '<p class="note">En cola. El equipo lo trabaja en el turno de madrugada y lo deja aquí antes de las 5:00 a.m.</p>' : '<p class="err">Este trabajo se quedó a medias: la oficina se cerró mientras lo hacía.</p>') : '') + '</div>' +
