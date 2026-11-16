@@ -107,6 +107,7 @@ textarea:focus,input[type=text]:focus{border-color:var(--ink);outline:none}
 .chip i{width:8px;height:8px;border-radius:50%;background:var(--k)}
 body.ro .give,body.ro [data-act="approve"],body.ro [data-act="openFb"],body.ro [data-act="delAsk"],body.ro [data-act="routine"]{display:none !important}
 @media (max-width:560px){body.embed #bNew .bk{display:none}.tabs{max-width:100%;overflow-x:auto;scrollbar-width:none}.tabs button{padding:7px 11px}}
+.out .blk{background:var(--soft);border-radius:16px;padding:14px 16px;margin:0 0 10px}.out .blk h4{margin:0 0 8px;font-size:15.5px;line-height:1.3}.out .blk ul{margin:0;padding-left:18px;display:grid;gap:7px}.out .blk p{margin:0 0 6px}.out .blk li b:first-child{font-weight:700}.out a{color:inherit;text-decoration:underline;word-break:break-word}
 .give{background:var(--soft);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
 .give textarea{min-height:84px}
 .give .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -356,7 +357,7 @@ var EXTRA = {
 };
 var byId = {}; AG.forEach(function(a){ byId[a.id] = a; });
 EXTRA.bruno = 'Empieza con tu lectura en dos o tres frases: cómo crees que va la pauta y por qué. Después, qué rindió, qué no y los ajustes que propones, con el dato que respalda cada uno.';
-EXTRA.elena = 'Trabaja con información fresca: busca en la web y prioriza lo publicado en los últimos 7 días. Las tendencias que Brandloop tiene guardadas de la marca son solo punto de partida: úsalas si siguen vigentes y dilo con su fecha; no armes el radar solo con ellas. Si una búsqueda no trae nada nuevo, dilo. Empieza con la fecha en que investigaste.';
+var READS = {maya:['elena']}; byId.maya.routine = 'Arma la parrilla de contenido de la semana siguiente: 5 piezas, con al menos 2 reels y 2 carruseles y ningún post de una sola imagen. Parte del radar de tendencias de Elena de esta semana y de los próximos eventos de la marca.'; EXTRA.maya = 'Empieza con la sección «## La semana en una mirada»: objetivo de la semana, mezcla de pilares (educativo, entretenimiento, conexión y venta; como máximo 1 de las 5 piezas es de venta) y las fechas o eventos que se aprovechan. Después, una sección por pieza con un título como «## Lunes 17 · Carrusel · Educativo» (día, formato y pilar) y estas líneas, cada una escrita como «- **Etiqueta:** texto»: Objetivo; Etapa del embudo; De dónde sale (la tendencia del radar con su fuente, o el dato de la biblioteca); Gancho; Desarrollo (en carrusel, el título de cada lámina; en reel, cada escena en una frase); Copy Instagram y Facebook, variante 1; Copy Instagram y Facebook, variante 2 (otro ángulo, no un retoque); Copy LinkedIn; Hashtags (5 o 6: 1 de nicho, 1 o 2 de audiencia, 1 de ubicación y 2 del tema de la pieza; cortos y siempre los mismos para la marca); Llamada a la acción; Dirección visual (vertical 4:5, colores y logo de la marca, foto real o pantalla del producto); Hora sugerida; Qué medir. Reglas de copy: escribe desde lo que necesita quien lee, no desde lo que presume la marca; primero conecta y después informa; promueve sin exagerar; cada dato sale de la biblioteca, de la descripción de la marca o del radar con su fuente, sin escenas hipotéticas, testimonios ni cifras inventadas; termina con un siguiente paso claro, salvo en las piezas educativas.'; EXTRA.elena = 'Trabaja con información fresca: busca en la web y prioriza lo publicado en los últimos 7 días. Las tendencias que Brandloop tiene guardadas de la marca son solo punto de partida: úsalas si siguen vigentes y dilo con su fecha; no armes el radar solo con ellas. Si una búsqueda no trae nada nuevo, dilo. Empieza con la fecha en que investigaste.';
 byId.elena.routine = 'Investiga en la web qué se movió esta semana en el sector de la marca y en redes, en su país y región, y arma el radar: de 3 a 5 tendencias, cada una con fuente, enlace y fecha de publicación, y una idea de contenido para la marca.';
 
 /* ---------- estado ---------- */
@@ -471,6 +472,7 @@ function prompt(t, a, b){
   var lib = S.kb.slice().sort(function(x, y){ return (x.cat === 'precios' ? 0 : 1) - (y.cat === 'precios' ? 0 : 1); }), room = 36000, parts = [];
   lib.forEach(function(k){ if(room <= 0 || !k.t) return; var tx = String(k.t).slice(0, room); room -= tx.length; parts.push('--- ' + (KCAT[k.cat] || 'Otro') + ' · ' + k.n + ' ---\n' + tx); });
   p.push('BIBLIOTECA DE LA MARCA\n' + (parts.length ? 'Es la fuente oficial de la marca. Precios, servicios, productos y condiciones salen solo de aquí o del encargo.\n\n' + parts.join('\n\n') : 'La marca todavía no ha subido su lista de precios ni su catálogo. Si el trabajo necesita un precio o un dato de producto, escribe «[dato por confirmar]» y pídelo en «Para tu revisión».'));
+  (READS[a.id] || []).forEach(function(rid){ var l = S.tasks.filter(function(x){ return x.agent === rid && x.out && x.id !== t.id && (x.st === 'aprobado' || x.st === 'revisar'); }).sort(function(x, y){ return x.st === y.st ? (y.ua || 0) - (x.ua || 0) : x.st === 'aprobado' ? -1 : 1; })[0]; if(l) p.push('ENTREGA MÁS RECIENTE DE ' + byId[rid].name.toUpperCase() + ' (' + (l.st === 'aprobado' ? 'aprobada' : 'todavía en revisión') + ')\n' + String(l.out).slice(0, 14000)); });
   if(HOST && HOST.context){ var cx = ''; try{ cx = HOST.context(a.id) || ''; }catch(e){} if(cx) p.push('DATOS DE LA MARCA EN BRANDLOOP\n' + cx); }
   p.push('ENCARGO DE LA DIRECTORA\n"""\n' + t.brief + '\n"""');
   var txt = (t.files || []).filter(function(f){ return f.k === 'txt' && f.t; });
@@ -497,7 +499,7 @@ function run(id){
     return S.sample(prompt(t, a, b), o);
   }).then(function(r){
     var text = String((r && r.text) || '').trim(); if(!text) throw {code:'empty'};
-    return saveTask(id, {st:'revisar', out:text.slice(0, 16000), ver:(t.ver || 0) + 1, err:null, fb:null});
+    return saveTask(id, {st:'revisar', out:text.slice(0, 24000), ver:(t.ver || 0) + 1, err:null, fb:null});
   }).catch(function(e){
     var code = e && e.code;
     if(code === 'not_granted' || code === 'sampling_disabled' || code === 'capability_disabled') S.sample = null;
@@ -532,16 +534,16 @@ function askChanges(id, text){
 function avatar(a){ return '<span class="av" style="--h:' + a.hair + ';--s:' + a.skin + ';--c:' + a.color + '" aria-hidden="true"></span>'; }
 function chip(st){ return '<span class="chip" style="--k:' + ST[st].k + '"><i></i>' + ST[st].t + '</span>'; }
 function md(t){
-  var h = '', ul = false;
-  function inl(s){ return s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }
+  var h = '', ul = false, sec = false;
+  function inl(s){ return s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/(https?:\/\/[^\s<)]+[^\s<).,;:])/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'); }
   esc(t).split(/\r?\n/).forEach(function(l){
     var m = /^\s*[-•*]\s+(.*)$/.exec(l);
     if(m){ if(!ul){ h += '<ul>'; ul = true; } h += '<li>' + inl(m[1]) + '</li>'; return; }
     if(ul){ h += '</ul>'; ul = false; }
-    if(/^\s*#{1,4}\s+/.test(l)) h += '<h4>' + inl(l.replace(/^\s*#{1,4}\s+/, '')) + '</h4>';
+    if(/^\s*#{1,4}\s+/.test(l)){ h += (sec ? '</section>' : '') + '<section class="blk"><h4>' + inl(l.replace(/^\s*#{1,4}\s+/, '')) + '</h4>'; sec = true; }
     else if(l.trim()) h += '<p>' + inl(l) + '</p>';
   });
-  return h + (ul ? '</ul>' : '');
+  return h + (ul ? '</ul>' : '') + (sec ? '</section>' : '');
 }
 function keepFocus(fn){
   var a = document.activeElement, id = a && a.id, s = null, e = null; try{ s = a.selectionStart; e = a.selectionEnd; }catch(_){}
@@ -1105,7 +1107,7 @@ if(!world){ var n = document.createElement('div'); n.className = 'nogl'; n.inner
   if(SITE){
     try{ HOST = EMBED && window.parent.BLOffice ? window.parent.BLOffice.attach(window) : null; }catch(e){ HOST = null; }
     if(!HOST){ document.body.innerHTML = '<div style="min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center;font:16px/1.5 system-ui,sans-serif;color:#2A211B;background:#F6F1EA"><div><p style="font-weight:600;margin:0 0 8px">La oficina de agentes se abre desde Brandloop.</p><a href="./" style="color:#C24E08">Ir a Brandloop</a></div></div>'; return; }
-    S.db = HOST.db; S.mem = false; S.sample = HOST.sample || null; S.assets = null; S.ro = !HOST.admin; if(HOST.roster) try{ HOST.roster(AG.map(function(a){ return {id:a.id, name:a.name, role:a.role, does:a.does, gives:a.gives, no:a.no, routine:a.routine || '', extra:EXTRA[a.id] || ''}; })); }catch(e){}
+    S.db = HOST.db; S.mem = false; S.sample = HOST.sample || null; S.assets = null; S.ro = !HOST.admin; if(HOST.roster) try{ HOST.roster(AG.map(function(a){ return {id:a.id, name:a.name, role:a.role, does:a.does, gives:a.gives, no:a.no, routine:a.routine || '', extra:EXTRA[a.id] || '', reads:READS[a.id] || []}; })); }catch(e){}
     document.body.classList.add('embed'); if(S.ro) document.body.classList.add('ro');
     var bn = $('#bNew'); bn.innerHTML = '← <span class=bk>Brandloop</span>'; bn.setAttribute('aria-label', 'Volver a Brandloop'); bn.style.width = 'auto'; bn.style.padding = '0 12px';
     if(S.ro){ $('#bEdit').textContent = 'Biblioteca'; $('#tab-revisar').hidden = true; }
