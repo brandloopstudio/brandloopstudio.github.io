@@ -1172,6 +1172,7 @@ html.of-open,html.of-open body{overflow:hidden}
 .tour-s{display:grid;gap:4px;padding:12px;border-radius:14px;background:var(--accent-soft)}
 .tour-s span{font-size:13px;opacity:.85}
 .nv.modsall{opacity:.7}
+.slg.chrow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.slg.chrow>span{display:inline-flex;align-items:center;gap:5px}.slg.chrow em{font-style:normal;font-size:12px;opacity:.8}.slg.chrow .chico,.slg.chrow .chico svg{width:22px;height:22px}.ctable .cn .chico{margin-right:6px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -1359,7 +1360,7 @@ const GROUPS_ALL=[
   ["ads","Campañas","ads",[["campaigns","Campañas y eventos"],["email","Email marketing"],["events","Eventos y asociaciones"]]],
   ["brandg","Marca","brand",[["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"],["prodstory","Historias por producto"],["web","Página web"],["people","Perfiles profesionales"]]],
   ["sales","Ventas","pipe",[["pipe","Pipeline"],["track","Trackers"],["export","Documentos"]]],
-  ["ai","Equipo de IA","spark",[["office","Oficina de agentes"],["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"]]]
+  ["ai","Equipo de IA","spark",[["office","Oficina de agentes"],["agents","Agentes"],["loop","Loop"]]]
 ];
 /* vista del dueño de la marca: de lo macro (el plan) a lo micro (cada pieza), sin herramientas internas */
 const CLIENT_GROUPS=[
@@ -1381,8 +1382,12 @@ const MODULES=[
   ["campaigns","Campañas y email","Campañas por evento o lanzamiento y correos a tu base.","Se proponen campañas ligadas al plan; los correos se redactan y tú decides si salen.",["campaigns","email","events"],true],
   ["brand","Marca","Perfil, identidad visual, historias por producto, página web y perfiles de LinkedIn.","La identidad de la marca es la base de todo lo demás: el equipo la usa para que cada pieza suene a ti.",["brand","identity","mockups","prodstory","web","people"],false],
   ["sales","Ventas","Pipeline de prospectos, indicadores y documentos.","Se registran los prospectos y su etapa; los indicadores se cruzan con el resto para medir resultados.",["pipe","track","export"],false],
-  ["office","Equipo de IA","La oficina de agentes: quién hace qué y las entregas por aprobar.","Los agentes trabajan de madrugada y dejan todo listo para tu revisión.",["office","agents","loop","reply"],true]
+  ["office","Equipo de IA","La oficina de agentes: quién hace qué y las entregas por aprobar.","Los agentes trabajan de madrugada y dejan todo listo para tu revisión.",["office","agents","loop"],true]
 ];
+const AUTO_LEVELS=[
+  ["auto","Autopiloto","Todo sale solo. Solo te consultamos gastos nuevos y temas sensibles. Recibes un resumen semanal."],
+  ["avisar","Me avisas antes","Todo sale solo, pero te avisamos 24 horas antes para que frenes lo que no quieras."],
+  ["aprobar","Yo apruebo todo","Nada se publica ni cambia sin tu visto bueno, pieza por pieza."]];
 const MOD_VIEWS=Object.fromEntries(MODULES.flatMap(m=>m[4].map(v=>[v.split(":")[0]+(v.includes(":")?":"+v.split(":")[1]:""),m[0]])));
 const modOf=v=>MOD_VIEWS[v]||MOD_VIEWS[String(v).split(":")[0]]||null;
 const modOn=k=>{const m=(S.modCfg&&S.modCfg.m)||{};return !(m[k]&&m[k].on===false)};
@@ -1604,8 +1609,8 @@ function channelsCard(){
   const list=nets.map(n=>[n,tot[n]||0]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);const top=list[0];
   return `<article class="card d4 an4"><div class="ph"><div class="t"><span class="s">Canal principal</span><div class="kv"><b>${top?Math.round(top[1]/all*100)+"%":"—"}</b>${top?`<span class="dp eq">${esc(chLabel(top[0]))}</span>`:""}</div></div><button class="btn sm" data-act="view" data-v="track">Trackers</button></div>
    ${list.length?`<div class="sbar">${list.map(([n,v])=>`<i style="${chVar(n)};flex:${v}" title="${esc(chLabel(n))} ${Math.round(v/all*100)}%"></i>`).join("")}</div>
-   <div class="slg">${list.slice(0,4).map(([n])=>`<span style="${chVar(n)}">${chIco(n)}</span>`).join("")}</div>
-   <table class="ctable"><thead><tr><th>Canal</th><th>Porcentaje</th><th>Piezas</th></tr></thead><tbody>${list.slice(0,4).map(([n,v])=>`<tr style="${chVar(n)}"><td><span class="cn"><span class="cic">${esc(chLabel(n).slice(0,1))}</span>${esc(chLabel(n))}</span></td><td>${Math.round(v/all*100)}%</td><td>${v}</td></tr>`).join("")}</tbody></table>`
+   <div class="slg chrow">${list.slice(0,4).map(([n,v])=>`<span style="${chVar(n)}" title="${esc(chLabel(n))} ${Math.round(v/all*100)}%">${chIco(n)}<em>${Math.round(v/all*100)}%</em></span>`).join("")}</div>
+   <table class="ctable"><thead><tr><th>Canal</th><th>Porcentaje</th><th>Piezas</th></tr></thead><tbody>${list.slice(0,4).map(([n,v])=>`<tr style="${chVar(n)}"><td><span class="cn">${SOC_ICO[n]?chIco(n):`<span class="cic">${esc(chLabel(n).slice(0,1))}</span>`}${esc(chLabel(n))}</span></td><td>${Math.round(v/all*100)}%</td><td>${v}</td></tr>`).join("")}</tbody></table>`
    :`<p class="s">Aún no hay piezas por canal.</p>`}
    <button class="btn" style="margin-top:auto" data-act="view" data-v="cal">Ver calendario</button></article>`;
 }
@@ -1905,8 +1910,6 @@ function viewHome(c){
   ${!PORTAL&&c.portalUrl?`<div class="portalbar"><span>${ic("brand")}<span><b>${esc(c.name)} ya tiene su portal.</b> Su equipo entra con su cuenta de Claude y ahí viven sus datos al día.</span></span><a class="btn ink sm" href="${esc(c.portalUrl)}" target="_blank" rel="noopener">Abrir portal ${ic("arrow")}</a></div>`:""}
   <section class="dash" style="${cvars(c)};--c2:var(--c)">
    ${askCard(c,k)}
-   ${activityCard(c)}
-   ${modulesCard(c)}
    ${officeCard(c)}
    ${profileCard(c,pct,k)}
    ${(()=>{const pi=planInfo();const ml=monthLabel(S.month);return meshCard("warm","Avance del plan",pct==null?"—":pi.fut?"—":pct+"%",pct==null?"Aún sin plan para "+ml:pi.fut?ml+" aún no empieza":!pi.k?"Ningún objetivo de "+ml+" tiene dato todavía":pi.k<pi.n?`${ml} · ${pi.k} de ${pi.n} objetivos con dato`:`${ml} · promedio de ${pi.n} objetivos`,"plan","plan")})()}
@@ -1927,6 +1930,8 @@ function viewHome(c){
    ${historyCard(c)}
    ${tasksPanel()}
    ${marketBand(c)}
+   ${activityCard(c)}
+   ${modulesCard(c)}
   </section>${ofSheet(c)}`;
 }
 /* ---------- «Cómo vamos»: el inicio del dueño de la marca ---------- */
@@ -1999,7 +2004,7 @@ function modulesCard(c){
   };
   const M=MODULES.map(([k,l,,,views])=>[k,l,views[0],...(D[k]||[false,0,""])]);
   const cfg=(S.modCfg&&S.modCfg.m)||{},adm=true;
-  return `<article class="card d12 mods"><div class="ph"><div><h2 class="t">Módulos de ${esc(c.name)}</h2><span class="s">Elige qué ver. Lo apagado no se borra: se oculta del menú y se enciende cuando quieras${S.modCfg&&S.modCfg.ua?" · ajustado el "+esc(fmtTs(S.modCfg.ua))+(S.modCfg.by?" por @"+esc(S.modCfg.by):""):""}</span></div><button class="btn sm" data-act="tourOpen">${ic("spark")} Volver a configurar</button></div>
+  return `<article class="card d12 mods"><div class="ph"><div><h2 class="t">Módulos de ${esc(c.name)}</h2><span class="s">${S.modCfg&&S.modCfg.auto?`<b>Nivel: ${esc((AUTO_LEVELS.find(x=>x[0]===S.modCfg.auto)||[])[1]||"")}</b> · `:""}Elige qué ver. Lo apagado no se borra: se oculta del menú y se enciende cuando quieras${S.modCfg&&S.modCfg.ua?" · ajustado el "+esc(fmtTs(S.modCfg.ua))+(S.modCfg.by?" por @"+esc(S.modCfg.by):""):""}</span></div><button class="btn sm" data-act="tourOpen">${ic("spark")} Volver a configurar</button></div>
   <div style="overflow-x:auto"><table class="htable modt"><thead><tr><th>Módulo</th><th>Estado</th><th>Datos</th><th>Última actualización</th><th>Nota</th><th><span class="sr">Abrir</span></th></tr></thead><tbody>
   ${M.map(([k,l,v,has,up,info])=>{const on=(cfg[k]||{}).on!==false,note=(cfg[k]||{}).note||"";return `<tr class="${on?"":"dim"}"><td><b>${esc(l)}</b></td>
    <td>${adm?`<button class="chip" data-act="modOn" data-k="${k}" aria-pressed="${on}" title="${on?"Activo: clic para apagar":"Apagado: clic para encender"}">${on?"Activo":"Apagado"}</button>`:`<span class="chip">${on?"Activo":"Apagado"}</span>`}</td>
@@ -2011,17 +2016,22 @@ function modulesCard(c){
 }
 /* Recorrido inicial: el usuario elige sus módulos y ve un resumen de lo que el sistema hará por cada decisión */
 function tourHTML(c){
-  const step=S.tour||1,sel=S.tourSel||MODULES.filter(m=>m[5]).map(m=>m[0]);
+  const step=S.tour||1,sel=S.tourSel||MODULES.filter(m=>m[5]).map(m=>m[0]),auto=S.tourAuto||((S.modCfg&&S.modCfg.auto)||"avisar");
   const box=`<div class="tour" role="dialog" aria-modal="true" aria-label="Configura Brandloop"><div class="tour-in" style="${cvars(c)}">`;
-  if(step===1)return box+`<span class="eyebrow">Paso 1 de 3</span><h1>Bienvenido a Brandloop, ${esc(c.name)}</h1>
+  if(step===1)return box+`<span class="eyebrow">Paso 1 de 4</span><h1>Bienvenido a Brandloop, ${esc(c.name)}</h1>
    <p>Brandloop ordena tu marketing de lo macro a lo micro: primero el plan, luego las campañas y el contenido, y al final los resultados. Un equipo de IA hace el trabajo pesado; tú apruebas.</p>
    <p>En el siguiente paso eliges qué módulos quieres ver. Lo que no elijas sigue existiendo y lo puedes encender después desde tu inicio.</p>
    <div class="row" style="justify-content:flex-end;gap:8px"><button class="btn" data-act="tourSkip">Ver todo, sin configurar</button><button class="btn ink" data-act="tourNext">Elegir módulos ${ic("arrow")}</button></div></div></div>`;
-  if(step===2)return box+`<span class="eyebrow">Paso 2 de 3</span><h1>¿Qué quieres ver en Brandloop?</h1><p>Marca los módulos que te interesan. Puedes cambiarlo cuando quieras.</p>
+  if(step===2)return box+`<span class="eyebrow">Paso 2 de 4</span><h1>¿Qué quieres ver en Brandloop?</h1><p>Marca los módulos que te interesan. Puedes cambiarlo cuando quieras.</p>
    <div class="tour-mods">${MODULES.map(([k,l,what])=>`<label class="tour-m ${sel.includes(k)?"on":""}"><input type="checkbox" data-act="tourPick" data-k="${k}" ${sel.includes(k)?"checked":""}><span><b>${esc(l)}</b><span class="s">${esc(what)}</span></span></label>`).join("")}</div>
    <div class="row" style="justify-content:space-between;gap:8px"><button class="btn" data-act="tourBack">Atrás</button><button class="btn ink" data-act="tourNext" ${sel.length?"":"disabled"}>Ver qué hará el sistema ${ic("arrow")}</button></div></div></div>`;
-  const on=MODULES.filter(m=>sel.includes(m[0])),off=MODULES.filter(m=>!sel.includes(m[0]));
-  return box+`<span class="eyebrow">Paso 3 de 3</span><h1>Esto es lo que hará Brandloop por ${esc(c.name)}</h1><p>Un resumen de cada decisión, para que sepas qué esperar.</p>
+  if(step===3)return box+`<span class="eyebrow">Paso 3 de 4</span><h1>¿Cuánto quieres que Brandloop haga solo?</h1><p>Brandloop es tu agencia: produce, publica, mide y ajusta. Tú decides cuánto te consulta.</p>
+   <div class="tour-mods auto">${AUTO_LEVELS.map(([k,l,d])=>`<label class="tour-m ${auto===k?"on":""}"><input type="radio" name="auto" data-act="tourAuto" data-k="${k}" ${auto===k?"checked":""}><span><b>${esc(l)}</b><span class="s">${esc(d)}</span></span></label>`).join("")}</div>
+   <p class="s">En cualquier nivel, los gastos nuevos y los mensajes en nombre de una persona real siempre te los consultamos.</p>
+   <div class="row" style="justify-content:space-between;gap:8px"><button class="btn" data-act="tourBack">Atrás</button><button class="btn ink" data-act="tourNext">Ver qué hará el sistema ${ic("arrow")}</button></div></div></div>`;
+  const on=MODULES.filter(m=>sel.includes(m[0])),off=MODULES.filter(m=>!sel.includes(m[0])),AL=AUTO_LEVELS.find(x=>x[0]===auto)||AUTO_LEVELS[1];
+  return box+`<span class="eyebrow">Paso 4 de 4</span><h1>Esto es lo que hará Brandloop por ${esc(c.name)}</h1><p>Un resumen de cada decisión, para que sepas qué esperar.</p>
+   <div class="tour-s" style="background:var(--loop);color:var(--on-loop)"><b>Nivel: ${esc(AL[1])}</b><span>${esc(AL[2])}</span></div>
    <div class="tour-sum">${on.map(([k,l,,does])=>`<div class="tour-s"><b>${esc(l)}</b><span>${esc(does)}</span></div>`).join("")}</div>
    ${off.length?`<p class="s" style="margin-top:12px"><b>Apagados por ahora:</b> ${off.map(m=>esc(m[1])).join(", ")}. Siguen trabajando en segundo plano y los puedes encender desde tu inicio.</p>`:""}
    <div class="row" style="justify-content:space-between;gap:8px"><button class="btn" data-act="tourBack">Atrás</button><button class="btn ink" data-act="tourDone">Empezar ${ic("arrow")}</button></div></div></div>`;
@@ -5714,11 +5724,12 @@ const A={
     catch(e){toast("No se pudo: "+(e&&e.message||"Meta no respondió"))}
     S.adBusy=false;render()},
   tourOpen:()=>{S.tour=1;S.tourSel=MODULES.map(m=>m[0]).filter(k=>modOn(k));render()},
-  tourNext:()=>{S.tour=Math.min(3,(S.tour||1)+1);render()},
+  tourNext:()=>{S.tour=Math.min(4,(S.tour||1)+1);render()},
+  tourAuto:b=>{S.tourAuto=b.dataset.k;render()},
   tourBack:()=>{S.tour=Math.max(1,(S.tour||1)-1);render()},
   tourPick:b=>{const k=b.dataset.k,cur=S.tourSel||MODULES.filter(m=>m[5]).map(m=>m[0]);S.tourSel=cur.includes(k)?cur.filter(x=>x!==k):[...cur,k];render()},
   tourSkip:async()=>{S.tour=null;const m={};MODULES.forEach(x=>m[x[0]]={on:true});S.modCfg={...(S.modCfg||{}),m,done:true};render();try{await S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,done:true,ua:Date.now(),by:V.user.uname})}catch(e){toast("No se pudo guardar")}},
-  tourDone:async()=>{const sel=S.tourSel||[];const cur=(S.modCfg&&S.modCfg.m)||{};const m={};MODULES.forEach(x=>m[x[0]]={...(cur[x[0]]||{}),on:sel.includes(x[0])});S.tour=null;S.modCfg={...(S.modCfg||{}),m,done:true};render();try{await S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,done:true,ua:Date.now(),by:V.user.uname});toast("Listo: Brandloop quedó a tu medida");logAct("modulos",MODULES.filter(x=>sel.includes(x[0])).map(x=>x[1]).join(", "))}catch(e){toast("No se pudo guardar")}},
+  tourDone:async()=>{const sel=S.tourSel||[];const cur=(S.modCfg&&S.modCfg.m)||{};const m={};MODULES.forEach(x=>m[x[0]]={...(cur[x[0]]||{}),on:sel.includes(x[0])});const auto=S.tourAuto||((S.modCfg&&S.modCfg.auto)||"avisar");S.tour=null;S.modCfg={...(S.modCfg||{}),m,auto,done:true};render();try{await S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,auto,done:true,ua:Date.now(),by:V.user.uname});toast("Listo: Brandloop quedó a tu medida");logAct("modulos",MODULES.filter(x=>sel.includes(x[0])).map(x=>x[1]).join(", "))}catch(e){toast("No se pudo guardar")}},
   evPast:()=>{S.evPast=!S.evPast;render()},
   modOn:b=>{const k=b.dataset.k,cur=(S.modCfg&&S.modCfg.m)||{},x={...(cur[k]||{})};x.on=!(x.on!==false);const m={...cur,[k]:x};S.modCfg={...(S.modCfg||{}),m};render();S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,ua:Date.now(),by:V.user.uname}).catch(()=>toast("No se pudo guardar"))},
   modNote:b=>{const k=b.dataset.k,cur=(S.modCfg&&S.modCfg.m)||{},v=String(S.drafts["mn-"+k]||"").slice(0,160),m={...cur,[k]:{...(cur[k]||{}),note:v}};S.modCfg={...(S.modCfg||{}),m};S.modEdit=null;render();S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,ua:Date.now(),by:V.user.uname}).catch(()=>toast("No se pudo guardar"))},
