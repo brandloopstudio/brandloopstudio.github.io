@@ -1092,6 +1092,31 @@ fieldset.field{border:0;padding:0;margin:0}
 @media (max-width:720px){.cp-vg,.cp-3{grid-template-columns:1fr}}
 .ad-card .lbl{display:block;margin-top:10px}.ad-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px}.ad-g p{margin:2px 0 0}
 .ad-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+
+/* oficina de agentes */
+.ofc{grid-column:span 12;display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:22px 24px;border-radius:24px;border:0;cursor:pointer;text-align:left;font:inherit;background:var(--c,var(--ink));color:var(--on,#fff);position:relative;overflow:hidden;transition:transform .18s ease}
+.ofc:hover{transform:translateY(-2px)}
+.ofc:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+.ofc::before{content:"";position:absolute;right:-60px;top:-90px;width:260px;height:260px;border-radius:50%;background:currentColor;opacity:.08;pointer-events:none}
+.ofc-t{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 260px}
+.ofc-t b{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.ofc-t span{font-size:14px;opacity:.86;line-height:1.4}
+.ofc-av{display:flex;padding-left:8px}
+.ofc-av i{width:38px;height:38px;border-radius:50%;margin-left:-8px;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:14px;color:#fff;background:var(--h,#555);box-shadow:0 0 0 2.5px var(--c,var(--ink))}
+.ofc-av i.more{background:rgba(127,127,127,.35);color:inherit;font-size:12px}
+.ofc-n{min-width:30px;height:30px;padding:0 9px;border-radius:999px;background:var(--on,#fff);color:var(--c,#111);display:grid;place-items:center;font-weight:800;font-size:14px}
+.ofc-go{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:999px;background:var(--on,#fff);color:var(--c,#111);font-weight:700;font-size:14px;white-space:nowrap}
+.ofc-go svg{width:16px;height:16px}
+.ofc-info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.ofc-info b{display:block;font-size:15px;margin-bottom:4px}
+.ofc-info span{font-size:13.5px;color:var(--muted);line-height:1.45}
+.ofc-vis{flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ofc-vis .s{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
+#of-layer{position:fixed;inset:0;z-index:9990;background:#F6F1EA}
+#of-layer iframe{width:100%;height:100%;border:0;display:block}
+html.of-open,html.of-open body{overflow:hidden}
+@media (max-width:760px){.ofc{padding:18px}.ofc-av{display:none}.ofc-info{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.ofc{transition:none}.ofc:hover{transform:none}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -1275,7 +1300,7 @@ const GROUPS=[
   ["ads","Campañas y pauta","ads",[["campaigns","Campañas y eventos"],["email","Email marketing"],["ads","Pauta"]]],
   ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["strategy","Estrategia"],["audience","Audiencia"],["prodstory","Historias por producto"],["funnel","Embudo de ventas"],["compass","Brújula de marca"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
   ["innov","Innovación","bulb",[["innovation","Oportunidades de negocio"]]],
-  ["ai","AI Solutions","spark",[["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"],["geo","IA Search"]]],
+  ["ai","AI Solutions","spark",[["office","Oficina de agentes"],["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"],["geo","IA Search"]]],
   ["sales","Ventas","pipe",[["pipe","Pipeline"],["events","Eventos y asociaciones"],["export","Documentos"]]]
 ];
 
@@ -1341,7 +1366,7 @@ if(S.theme) document.documentElement.dataset.theme=S.theme;
 
 /* ---------- render ---------- */
 function render(){
-  if(S.gate){const fid=document.activeElement&&document.activeElement.id;root.innerHTML=gateScreen();root.querySelectorAll("[data-draft]").forEach(el=>{const k=el.dataset.draft;if(k in S.drafts)el.value=S.drafts[k]});const f=(fid&&document.getElementById(fid))||root.querySelector(".wl-form input:not([value]),.wl-form input");if(f&&!S.gateBusy)f.focus({preventScroll:true});return}
+  if(S.gate){closeOffice(true);const fid=document.activeElement&&document.activeElement.id;root.innerHTML=gateScreen();root.querySelectorAll("[data-draft]").forEach(el=>{const k=el.dataset.draft;if(k in S.drafts)el.value=S.drafts[k]});const f=(fid&&document.getElementById(fid))||root.querySelector(".wl-form input:not([value]),.wl-form input");if(f&&!S.gateBusy)f.focus({preventScroll:true});return}
   const LIM=PORTAL||(V.enabled&&V.user&&V.user.role!=="admin");if(S.cwBase==null)S.cwBase=S.canWrite;S.canWrite=!!S.cwBase&&(!LIM||!["newclient","access"].includes(S.view));if(LIM&&(S.view==="newclient"||S.view==="access"))S.view="home";if(PORTAL)S.menu=false;
   try{const sel=window.getSelection&&window.getSelection();if(sel&&!sel.isCollapsed&&sel.rangeCount&&root.contains(sel.anchorNode)&&!/^(INPUT|TEXTAREA)$/.test((document.activeElement||{}).tagName||"")){S._selWait=(S._selWait||0)+1;if(S._selWait<40){clearTimeout(S._selT);S._selT=setTimeout(render,700);return}}}catch(e){}S._selWait=0;
   const _sy=window.scrollY;const _ms=(document.querySelector("main.main")||{}).scrollTop||0;
@@ -1379,7 +1404,7 @@ function rail(){
 }
 function subnav(){
   const g=groupOf(S.view);if(g[3].length<2)return "";
-  return `<nav class="subnav" aria-label="${esc(g[1])}">${g[3].filter(([k])=>k!=="mc"||hasMC()).map(([k,l])=>{const [v,t]=k.split(":");const on=S.view===v&&(!t||S.trendTab===t);return `<button data-act="view" data-v="${k}" ${on?'aria-current="page"':""}>${esc(l)}</button>`}).join("")}</nav>`;
+  return `<nav class="subnav" aria-label="${esc(g[1])}">${g[3].filter(([k])=>(k!=="mc"||hasMC())&&(k!=="office"||officeOn(client()))).map(([k,l])=>{const [v,t]=k.split(":");const on=S.view===v&&(!t||S.trendTab===t);return `<button data-act="view" data-v="${k}" ${on?'aria-current="page"':""}>${esc(l)}</button>`}).join("")}</nav>`;
 }
 
 function topbar(){
@@ -1408,6 +1433,7 @@ function body(){
     case "trends": return viewTrends(c);
     case "comp": return viewComp(c);
     case "geo": return viewGeo(c);
+    case "office": return viewOffice(c);
     case "agents": return viewAgents(c);
     case "loop": return viewLoop(c);
     case "cal": return viewCal(c);
@@ -1777,6 +1803,7 @@ function viewHome(c){
    <div class="row">${rangeSeg()}<button class="btn" data-act="view" data-v="loop">${ic("spark")} Preguntar a Loop</button></div></section>
   ${!PORTAL&&c.portalUrl?`<div class="portalbar"><span>${ic("brand")}<span><b>${esc(c.name)} ya tiene su portal.</b> Su equipo entra con su cuenta de Claude y ahí viven sus datos al día.</span></span><a class="btn ink sm" href="${esc(c.portalUrl)}" target="_blank" rel="noopener">Abrir portal ${ic("arrow")}</a></div>`:""}
   <section class="dash" style="${cvars(c)};--c2:var(--c)">
+   ${officeCard(c)}
    ${profileCard(c,pct,k)}
    ${(()=>{const pi=planInfo();const ml=monthLabel(S.month);return meshCard("warm","Avance del plan",pct==null?"—":pi.fut?"—":pct+"%",pct==null?"Aún sin plan para "+ml:pi.fut?ml+" aún no empieza":!pi.k?"Ningún objetivo de "+ml+" tiene dato todavía":pi.k<pi.n?`${ml} · ${pi.k} de ${pi.n} objetivos con dato`:`${ml} · promedio de ${pi.n} objetivos`,"plan","plan")})()}
    ${meshCard("brand","Piezas aprobadas",apprPct+"%",`${done} de ${k.total} piezas listas`,"posts","posts")}
@@ -1819,6 +1846,111 @@ function upcomingCard(c){
 }
 const calIc=()=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>`;
 const bellIc=()=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>`;
+/* ---------- Oficina de agentes ----------
+   Cada marca tiene la suya. Lo que el equipo entrega vive en office/{marca}/tasks: ahí solo entra la dirección
+   (las reglas de la base de datos no dejan leer esa ruta a nadie más). La marca ve a su equipo, en qué va cada
+   agente (clients/{marca}/docs/office) y sube su biblioteca de precios y catálogo (clients/{marca}/office_kb). */
+const OF={layer:null,frame:null,cid:null,subs:[],pubT:null};
+const OF_AG=[["loop", "Loop", "#F2620A"], ["maya", "Maya", "#D6457A"], ["dani", "Dani", "#E0523A"], ["nico", "Nico", "#7D5CE0"], ["lia", "Lía", "#C48407"], ["elena", "Elena", "#1B8FB3"], ["iris", "Iris", "#2F9E6F"], ["bruno", "Bruno", "#8F5A2B"], ["tomas", "Tomás", "#4A6FE3"], ["renata", "Renata", "#B0468F"], ["victoria", "Victoria", "#0E7C66"]];
+const ofAdm=()=>!!(V.user&&V.user.role==="admin");
+const officeOn=c=>!!c&&!PORTAL&&!!V.user&&!!S.rawdb&&(ofAdm()||(((S.officeCfg||{}).on)||[]).includes(c.id));
+const ofHex=h=>/^#[0-9a-f]{6}$/i.test(h||"")?h:null;
+const ofLum=h=>{h=ofHex(h);if(!h)return 0;const v=[1,3,5].map(i=>{const x=parseInt(h.slice(i,i+2),16)/255;return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4)});return .2126*v[0]+.7152*v[1]+.0722*v[2]};
+function ofBrand(c,cfg,pub){
+  const pal=(Array.isArray(c.palette)?c.palette:[]).map(p=>ofHex(p&&p.hex)).filter(Boolean);
+  const c1=ofHex(c.color)||pal[0]||"#FF6A00";
+  const c2=pal.find(h=>h.toLowerCase()!==c1.toLowerCase()&&ofLum(h)<.85)||c1;
+  const lg=logoFor(c,false);
+  return {name:c.name||"Marca",about:(cfg&&cfg.about)||"",c1,c2,pal:[c1,c2,...pal.filter(h=>h!==c1&&h!==c2&&ofLum(h)<.85)].slice(0,5),logo:lg?lg.url:null,
+    off:((ofAdm()?cfg&&cfg.off:pub&&pub.off)||[]).filter(x=>typeof x==="string"),order:0,live:(pub&&pub.live)||{}};
+}
+function officeSubs(id){
+  if(PORTAL||!V.user||!S.rawdb)return;
+  const hot=()=>{if(S.view==="home"||S.view==="office")render()};
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/office`).onSnapshot(d=>{if(S.cid!==id)return;S.ofPub=d.exists?d.data():null;hot()},()=>{}));
+  if(ofAdm())unsubs.push(S.rawdb.collection(`office/${id}/tasks`).onSnapshot(s=>{if(S.cid!==id)return;S.ofTasks=s.docs.map(d=>({...d.data(),id:d.id}));clearTimeout(OF.pubT);OF.pubT=setTimeout(()=>ofPublish(id),1200);hot()},()=>{}));
+}
+/* la dirección publica solo el estado de cada agente (trabajando, para revisar, con cambios): nunca el contenido */
+async function ofPublish(cid){
+  if(!ofAdm()||S.cid!==cid||!S.ofTasks)return;
+  const rank={cambios:3,trabajando:2,revisar:1},l={};
+  for(const t of S.ofTasks){if(rank[t.st]&&rank[t.st]>(rank[l[t.agent]]||0))l[t.agent]=t.st}
+  const sorted=o=>Object.fromEntries(Object.keys(o||{}).sort().map(k=>[k,o[k]]));
+  let off=[];try{const m=await S.rawdb.doc(`office/${cid}/cfg/main`).get();off=(m.exists&&m.data().off)||[]}catch(e){return}
+  const next=JSON.stringify({live:sorted(l),off}),cur=JSON.stringify({live:sorted(S.ofPub&&S.ofPub.live),off:(S.ofPub&&S.ofPub.off)||[]});
+  if(next===cur||S.cid!==cid)return;
+  try{await S.rawdb.doc(`clients/${cid}/docs/office`).set({live:sorted(l),off,at:Date.now()})}catch(e){}
+}
+function ofHost(cid){
+  const c=S.clients.find(x=>x.id===cid);if(!c)return null;
+  const adm=ofAdm(),raw=S.rawdb,deny=()=>{throw {code:"permission-denied"}};
+  const track=u=>{OF.subs.push(u);return u};
+  const snap=rows=>({docs:rows.map(r=>({id:r.id,data:()=>JSON.parse(JSON.stringify(r))}))});
+  const live=()=>OF.cid===cid&&S.cid===cid;
+  const brands={where:()=>brands,
+    onSnapshot(cb,err){let cfg=null,pub=null,got=0;const need=adm?3:1;const fire=()=>{if((got&need)===need&&live())cb(snap([{id:cid,...ofBrand(S.clients.find(x=>x.id===cid)||c,cfg,pub)}]))};
+      const u=[raw.doc(`clients/${cid}/docs/office`).onSnapshot(d=>{pub=d.exists?d.data():null;got|=1;fire()},err)];
+      if(adm)u.push(raw.doc(`office/${cid}/cfg/main`).onSnapshot(d=>{cfg=d.exists?d.data():null;got|=2;fire()},err));
+      return track(()=>u.forEach(f=>{try{f()}catch(e){}}))},
+    doc:()=>({id:cid,set:async d=>{if(!adm)deny();await raw.doc(`office/${cid}/cfg/main`).set({about:String((d&&d.about)||"").slice(0,3000),off:Array.isArray(d&&d.off)?d.off.filter(x=>typeof x==="string").slice(0,20):[],ua:Date.now()});ofPublish(cid)},update:async()=>deny(),delete:async()=>deny()})};
+  const tp=`office/${cid}/tasks`;
+  const tasks={where:()=>tasks,
+    onSnapshot(cb,err){if(!adm){setTimeout(()=>{if(live())cb(snap([]))},0);return track(()=>{})}
+      return track(raw.collection(tp).onSnapshot(s=>{if(live())cb(snap(s.docs.map(d=>({...d.data(),id:d.id,brand:cid}))))},err))},
+    doc:id=>{id=String(id||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,60);const r=raw.doc(`${tp}/${id}`);
+      return {id,set:async d=>{if(!adm||!id)deny();const x={...d};delete x.id;x.brand=cid;await r.set(x)},update:async p=>{if(!adm||!id)deny();await r.update(p)},delete:async()=>{if(!adm||!id)deny();await r.delete()}}}};
+  const kp=`clients/${cid}/office_kb`;
+  const kb={where:()=>kb,
+    onSnapshot(cb,err){return track(raw.collection(kp).onSnapshot(s=>{if(live())cb(snap(s.docs.map(d=>({...d.data(),id:d.id,brand:cid}))))},err))},
+    doc:id=>{id=String(id||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,60);const r=raw.doc(`${kp}/${id}`);
+      return {id,set:async d=>{if(!id)deny();const x={...d};delete x.id;x.brand=cid;await r.set(x)},update:async p=>{if(!id)deny();await r.update(p)},delete:async()=>{if(!id)deny();await r.delete()}}}};
+  const none={where:()=>none,onSnapshot(cb){setTimeout(()=>cb(snap([])),0);return ()=>{}},doc:()=>({set:async()=>deny(),update:async()=>deny(),delete:async()=>deny()})};
+  return {v:1,cid,admin:adm,sample:null,db:{collection:n=>n==="brands"?brands:n==="tasks"?tasks:n==="kb"?kb:none},close:()=>closeOffice()};
+}
+window.BLOffice={attach(win){try{if(!OF.frame||win!==OF.frame.contentWindow||!OF.cid||OF.cid!==S.cid||S.gate)return null;const c=client();if(!officeOn(c))return null;return ofHost(OF.cid)}catch(e){return null}}};
+function openOffice(){
+  const c=client();if(!c||!officeOn(c)||S.gate)return;closeOffice(true);
+  const l=document.createElement("div");l.id="of-layer";
+  const f=document.createElement("iframe");f.title="Oficina de agentes de "+(c.name||"la marca");f.src="oficina.html?embed=1";f.setAttribute("allow","clipboard-write");
+  l.appendChild(f);document.body.appendChild(l);document.documentElement.classList.add("of-open");
+  OF.layer=l;OF.frame=f;OF.cid=c.id;
+}
+function closeOffice(quiet){
+  OF.subs.splice(0).forEach(u=>{try{u()}catch(e){}});
+  if(!OF.layer)return;
+  OF.layer.remove();OF.layer=null;OF.frame=null;OF.cid=null;document.documentElement.classList.remove("of-open");
+  if(!quiet)render();
+}
+function officeToggle(){
+  const c=client();if(!c||!ofAdm())return;
+  const on=new Set(((S.officeCfg||{}).on)||[]);on.has(c.id)?on.delete(c.id):on.add(c.id);
+  S.rawdb.doc("config/office").set({...(S.officeCfg||{}),on:[...on],ua:Date.now()}).catch(()=>{});
+}
+function officeCard(c){
+  if(!officeOn(c))return "";
+  const adm=ofAdm(),T=S.ofTasks||[];
+  const rev=T.filter(t=>t.st==="revisar").length,q=T.filter(t=>t.st==="trabajando"||t.st==="cambios").length;
+  const w=Object.values((S.ofPub&&S.ofPub.live)||{}).filter(x=>x==="trabajando"||x==="cambios").length;
+  const sub=adm?(rev?`${rev} ${rev===1?"entrega lista":"entregas listas"} para que la revises${q?` · ${q} en cola`:""}`:q?`${q} ${q===1?"encargo":"encargos"} en cola para el turno de madrugada`:"Nada pendiente. El equipo trabaja de madrugada y deja todo listo antes de las 5:00 a.m.")
+    :(w?`${w} ${w===1?"persona del equipo está trabajando":"personas del equipo están trabajando"} ahora`:`El equipo de marketing de ${c.name}: quién hace qué y cuándo trabaja.`);
+  const on=ofLum(ofHex(c.color)||"#111111")>.5?"#16110D":"#FFFFFF";
+  return `<button class="ofc d12" data-act="officeOpen" style="--on:${on}"><span class="ofc-t"><b>Oficina de agentes</b><span>${esc(sub)}</span></span>
+   <span class="ofc-av" aria-hidden="true">${OF_AG.slice(0,7).map(([id,n,h])=>`<i style="--h:${h}">${esc(n[0])}</i>`).join("")}<i class="more">+${OF_AG.length-7}</i></span>
+   ${adm&&rev?`<span class="ofc-n" aria-hidden="true">${rev}</span>`:""}<span class="ofc-go">Entrar ${ic("arrow")}</span></button>`;
+}
+function viewOffice(c){
+  if(!officeOn(c))return `<section class="dash-head"><div><h1>Oficina de agentes</h1><p class="sub">La oficina de ${esc(c.name)} todavía no está abierta.</p></div></section>`;
+  const adm=ofAdm(),shown=(((S.officeCfg||{}).on)||[]).includes(c.id);
+  return `<section class="dash-head"><div><h1>Oficina de agentes</h1><p class="sub">El equipo de ${esc(c.name)}: quién hace qué, cuándo trabaja y en qué va cada encargo.</p></div></section>
+  <section class="dash" style="${cvars(c)};--c2:var(--c)">
+   ${officeCard(c)}
+   <div class="card d12 ofc-info"><div><b>${OF_AG.length} agentes, cada uno con su oficio</b><span>Parrilla, guiones, video, carruseles, tendencias, pauta, reportes, propuestas y finanzas.</span></div>
+    <div><b>Listo antes de las 5:00 a.m.</b><span>El equipo trabaja de madrugada. Lo que termina queda en la fila de revisión.</span></div>
+    <div><b>Nada sale sin aprobación</b><span>Los agentes investigan y proponen. No publican, no envían y no gastan.</span></div></div>
+   ${adm?`<div class="card d12 ofc-vis"><div><b>Quién ve esta oficina</b><span class="s">${shown?`El equipo de ${esc(c.name)} ve a los agentes, en qué va cada uno y puede subir precios y catálogo. Las entregas solo las ves tú.`:`Solo tú. El equipo de ${esc(c.name)} todavía no la ve.`}</span></div><button class="btn" data-act="officeToggle">${shown?"Dejar de mostrarla":"Mostrarla a "+esc(c.name)}</button></div>`:""}
+  </section>`;
+}
+
 function agentsStrip(c){
   const up=Math.max(0,...S.trends.map(t=>t.updatedAt||0),...S.comps.map(t=>t.updatedAt||0),...S.events.map(t=>t.updatedAt||0));
   const av=[["trends","Tendencias"],["comp","Competencia"],["pipe","Eventos"],["posts","Contenido"]];
@@ -5044,7 +5176,7 @@ async function autopilot(id){
 }
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
-  stopSubs(); S.cid=id; lsSet("bl-client",id);
+  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; officeSubs(id);
   S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.funnel=null;S.compass=null;S.compSum=null;["finance","adcalc","pautastrat","funnel","compass","prodstories","investPlan","webaudit","site"].forEach(k=>{S[k+"Seen"]=false;S[k+"Cid"]=null});Object.keys(S).forEach(k=>{if(k.startsWith("_raw_")&&!k.startsWith("_raw_"+id+"_"))delete S[k]});S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
   [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["funnel","funnel"],["compass","compass"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{const nv=x.exists?x.data():null;const js=JSON.stringify(nv);if(S.cid!==id)return;const rk="_raw_"+id+"_"+k;if(S[rk]===js&&S[k+"Seen"]&&S[k+"Cid"]===id)return;S[rk]=js;S[k+"Cid"]=id;S[k]=k==="finance"&&nv&&S.finDraft?{...nv,...S.finDraft}:k==="adcalc"&&S.calDirty&&S.adcalc?S.adcalc:nv;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
@@ -5252,6 +5384,8 @@ let tt;function toast(m){const t=document.getElementById("toast");t.textContent=
 
 /* ---------- events ---------- */
 const A={
+  officeOpen:()=>openOffice(),
+  officeToggle:()=>officeToggle(),
   saveCalc:()=>saveCalc(),
   view:b=>{const [v,t]=b.dataset.v.split(":");S.view=v;if(t)S.trendTab=t;S.menu=false;S.changeFor=null;S.confirm=null;render();window.scrollTo({top:0})},
   gate:b=>{S.gate=b.dataset.v;S.gateErr=null;render()},
@@ -5516,6 +5650,7 @@ render();
   if(user){try{S.me=await user.me();const cw=await user.can("data.write");S.canWrite=cw!==false;S.cwBase=S.canWrite;S.isAdmin=await user.canEdit()}catch(e){}}
   try{await Promise.race([vaultLoadMeta(),new Promise((_,rj)=>setTimeout(()=>rj(new Error("timeout")),15000))])}catch(e){console.error("meta",e);try{await window.BL_SIGNOUT()}catch(x){}try{await vaultLoadMeta()}catch(x){S.gate="neterr";render();return}}
   S.gate=V.enabled?"login":(S.isAdmin?"setup":"pending");render();
+  db.doc("config/office").onSnapshot(d=>{S.officeCfg=d.exists?d.data():{};render()},()=>{});
   db.doc("config/besttimes").onSnapshot(d=>{S.bestTimes=d.exists?d.data():{};render()},()=>{});
   C.use("downloads").then(d=>{S.dl=d;render()});
   C.use("assets").then(a=>{S.assets=a;render()});
