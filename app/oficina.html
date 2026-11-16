@@ -58,7 +58,7 @@ h1,h2,h3,h4,p,ul{margin:0}
 #st2{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;border-radius:inherit;background:#D5CFCD}#st2.drag{cursor:grabbing}
 #st2 .wd{position:absolute;left:0;top:0;transform-origin:0 0}#st2 .wd>img{display:block;width:1672px;height:941px;max-width:none;user-select:none;pointer-events:none}
 #st2 .ac{position:absolute;left:0;top:0;width:0;height:0}#st2 .ac .sp{position:absolute;left:0;bottom:0;display:block;transform:translateX(-50%);transform-origin:50% 100%;cursor:pointer}#st2 .sp>*{position:absolute;left:0;display:block;background-repeat:no-repeat;text-decoration:none}
-#st2 .sg{position:absolute;background:#F6F3EE;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;padding:5px 8px;box-sizing:border-box;pointer-events:none}#st2 .sg[hidden]{display:none}#st2 .sg img{max-width:100%;max-height:100%;object-fit:contain}#st2 .ac .sh{position:absolute;left:-15px;top:-5px;width:30px;height:11px;border-radius:50%;background:rgba(29,18,12,.22)}#st2 .ac.sel .sh{box-shadow:0 0 0 3px rgba(29,18,12,.8)}
+#st2 .sg{position:absolute;display:flex;align-items:center;justify-content:center;box-sizing:border-box;pointer-events:none}#st2 .sg[hidden]{display:none}#st2 .sg img{max-width:100%;max-height:100%;object-fit:contain}#st2 .sg1 img{filter:brightness(0) invert(1) drop-shadow(0 0 2px rgba(255,236,200,.55));opacity:.92}#st2 .sg2{background:#F6F3EE;padding:4px 7px}#st2 .ac .sh{position:absolute;left:-15px;top:-5px;width:30px;height:11px;border-radius:50%;background:rgba(29,18,12,.22)}#st2 .ac.sel .sh{box-shadow:0 0 0 3px rgba(29,18,12,.8)}
 .av.fc{background:color-mix(in srgb,var(--c) 24%,#fff)}.av.fc:after{display:none}.av.fc svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ag .tx{min-width:0;display:flex;flex-direction:column}
 .ag b{font-size:14.5px;font-weight:700}
@@ -1297,7 +1297,7 @@ function makeWorld2D(){
       ac.lb.className = 'lb ' + s + (sel === a.id ? ' sel' : ''); ac.lb.style.setProperty('--k', ST[s].k);
       if(ac.on) go(ac, s === 'revisar' ? 'meet' : 'seat'); });
   }
-  var signs = [['sg1', 'left:58px;top:356px;width:104px;height:56px;transform:skewY(-46.5deg);transform-origin:0 0'],
+  var signs = [['sg1', 'left:46px;top:376px;width:122px;height:44px;transform:skewY(-47.5deg);transform-origin:0 0'],
     ['sg2', 'left:1013px;top:405px;width:96px;height:35px;transform:skewY(11deg);transform-origin:0 0']].map(function(d){
     var e = document.createElement('div'); e.className = 'sg ' + d[0]; e.style.cssText = d[1]; e.hidden = true; e.innerHTML = '<img alt="">'; wd.appendChild(e); return e; });
   function setBrand(b){
