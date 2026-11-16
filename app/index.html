@@ -1940,7 +1940,7 @@ window.BLOffice={attach(win){try{if(!OF.frame||win!==OF.frame.contentWindow||!OF
 function openOffice(){
   const c=client();if(!c||!officeOn(c)||S.gate)return;closeOffice(true);
   const l=document.createElement("div");l.id="of-layer";
-  const f=document.createElement("iframe");f.title="Oficina de agentes de "+(c.name||"la marca");f.src="oficina.html?embed=1";f.setAttribute("allow","clipboard-write");
+  const f=document.createElement("iframe");f.title="Oficina de agentes de "+(c.name||"la marca");f.src="oficina.html?embed=1&v="+Math.floor(Date.now()/6e5);f.setAttribute("allow","clipboard-write");
   l.appendChild(f);document.body.appendChild(l);document.documentElement.classList.add("of-open");
   OF.layer=l;OF.frame=f;OF.cid=c.id;
 }

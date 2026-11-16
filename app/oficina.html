@@ -1300,7 +1300,7 @@ function makeWorld2D(){
   var signs = [['sg2', 'left:1013px;top:406px;width:96px;height:35px;transform:skewY(11deg);transform-origin:0 0']].map(function(d){
     var e = document.createElement('div'); e.className = 'sg ' + d[0]; e.style.cssText = d[1]; e.hidden = true; e.innerHTML = '<img alt="">'; wd.appendChild(e); return e; });
   /* escultura de la marca en la esquina vacía (según el objeto de su mascota) */
-  var SCULPT = {"maqueta": {"u": "m/103756bda8e7.webp", "w": 185, "h": 208}, "aro": {"u": "m/138172b747e2.webp", "w": 174, "h": 161}, "hex": {"u": "m/3fe51d34058a.webp", "w": 170, "h": 176}, "cruz": {"u": "m/c70aaa55fdb8.webp", "w": 164, "h": 167}, "def": {"u": "m/1fc74d576682.webp", "w": 166, "h": 152}};
+  var SCULPT = {"maqueta": {"u": "m/103756bda8e7.webp", "w": 185, "h": 208}, "aro": {"u": "m/31ccdae8b5ac.webp", "w": 133, "h": 210}, "hex": {"u": "m/3fe51d34058a.webp", "w": 170, "h": 176}, "cruz": {"u": "m/c70aaa55fdb8.webp", "w": 164, "h": 167}, "def": {"u": "m/1fc74d576682.webp", "w": 166, "h": 152}};
   var sc = document.createElement('div'); sc.className = 'sc'; sc.style.left = W2.sc[0] + 'px'; sc.style.top = W2.sc[1] + 'px'; sc.style.zIndex = W2.sc[1]; sc.innerHTML = '<img alt="">'; wd.appendChild(sc);
   function setSculpt(k){ var o = SCULPT[k] || SCULPT.def, im = sc.firstChild, f = 0.4; im.src = o.u; im.style.width = Math.round(o.w * f) + 'px'; im.style.height = Math.round(o.h * f) + 'px'; im.style.left = -Math.round(o.w * f / 2) + 'px'; }
   function setBrand(b){
