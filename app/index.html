@@ -1112,6 +1112,7 @@ fieldset.field{border:0;padding:0;margin:0}
 .ofc-info span{font-size:13.5px;color:var(--muted);line-height:1.45}
 .ofc-vis{flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .ofc-vis .s{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
+.p27 h2{font-size:17px;margin:0 0 10px}.p27 ul{margin:0;padding-left:18px;display:grid;gap:9px}.p27 li,.p27 p{font-size:14.5px;line-height:1.5}.p27 p{margin:0 0 6px}.p27 p:last-child{margin:0}.p27 a{color:inherit;text-decoration:underline;word-break:break-word}
 #of-layer{position:fixed;inset:0;z-index:9990;background:#F6F1EA}
 #of-layer iframe{width:100%;height:100%;border:0;display:block}
 html.of-open,html.of-open body{overflow:hidden}
@@ -1299,7 +1300,7 @@ const GROUPS=[
   ["social","Social Media","posts",[["posts","Parrilla diaria"],["mc","Masterclass"],["cal","Calendario"],["organic","Métricas orgánicas"],["trends:social","Tendencias en redes"]]],
   ["people","Perfiles","people",[["people","Perfiles profesionales"]]],
   ["ads","Campañas y pauta","ads",[["campaigns","Campañas y eventos"],["email","Email marketing"],["ads","Pauta"]]],
-  ["mkt","Branding & Marketing","plan",[["plan","Plan de marketing"],["invest","Números e inversión"],["strategy","Estrategia"],["audience","Audiencia"],["prodstory","Historias por producto"],["funnel","Embudo de ventas"],["compass","Brújula de marca"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
+  ["mkt","Branding & Marketing","plan",[["plan","Plan 2027"],["strategy","Estrategia"],["audience","Audiencia"],["prodstory","Historias por producto"],["funnel","Embudo de ventas"],["compass","Brújula de marca"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
   ["innov","Innovación","bulb",[["innovation","Oportunidades de negocio"]]],
   ["ai","AI Solutions","spark",[["office","Oficina de agentes"],["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"],["geo","IA Search"]]],
   ["sales","Ventas","pipe",[["pipe","Pipeline"],["events","Eventos y asociaciones"],["export","Documentos"]]]
@@ -1460,7 +1461,7 @@ function body(){
     case "innovation": return viewInnovation(c);
     case "pipe": return viewPipe(c);
     case "track": return viewTrack(c);
-    case "plan": return viewPlan(c);
+    case "plan": return viewPlan27(c);
     case "export": return viewExport(c);
     case "brand": return viewBrand(c);
     default: return viewHome(c);
@@ -1867,13 +1868,18 @@ function ofBrand(c,cfg,pub){
 }
 function officeSubs(id){
   if(PORTAL||!V.user||!S.rawdb)return;
-  const hot=()=>{if(S.view==="home"||S.view==="office")render()};
+  const hot=()=>{if(S.view==="home"||S.view==="office"||S.view==="plan")render()};
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/plan2027`).onSnapshot(d=>{if(S.cid!==id)return;S.plan27=d.exists?d.data():null;S.plan27L=true;hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/office`).onSnapshot(d=>{if(S.cid!==id)return;S.ofPub=d.exists?d.data():null;hot()},()=>{}));
   if(ofAdm())unsubs.push(S.rawdb.collection(`office/${id}/tasks`).onSnapshot(s=>{if(S.cid!==id)return;S.ofTasks=s.docs.map(d=>({...d.data(),id:d.id}));clearTimeout(OF.pubT);OF.pubT=setTimeout(()=>ofPublish(id),1200);hot()},()=>{}));
 }
 /* la dirección publica solo el estado de cada agente (trabajando, para revisar, con cambios): nunca el contenido */
 async function ofPublish(cid){
   if(!ofAdm()||S.cid!==cid||!S.ofTasks)return;
+  /* el Plan 2027 llega a la marca solo cuando la dirección lo aprueba; si vuelve a cambios, deja de verse */
+  try{const pl=S.ofTasks.find(t=>t.id==="plan2027"),pub=S.plan27,ref=S.rawdb.doc(`clients/${cid}/docs/plan2027`);
+    if(pl&&pl.st==="aprobado"&&pl.out){if(!pub||pub.ua!==(pl.ua||0))await ref.set({out:String(pl.out),ua:pl.ua||0,ver:pl.ver||1,at:Date.now()})}
+    else if(S.plan27L&&pub)await ref.delete()}catch(e){}
   const rank={cambios:3,trabajando:2,revisar:1},l={};
   for(const t of S.ofTasks){if(rank[t.st]&&rank[t.st]>(rank[l[t.agent]]||0))l[t.agent]=t.st}
   const sorted=o=>Object.fromEntries(Object.keys(o||{}).sort().map(k=>[k,o[k]]));
@@ -1966,6 +1972,29 @@ function viewOffice(c){
     <div><b>Nada sale sin aprobación</b><span>Los agentes investigan y proponen. No publican, no envían y no gastan.</span></div></div>
    ${adm?`<div class="card d12 ofc-vis"><div><b>Quién ve esta oficina</b><span class="s">${shown?`El equipo de ${esc(c.name)} ve a los agentes, en qué va cada uno y puede subir precios y catálogo. Las entregas solo las ves tú.`:`Solo tú. El equipo de ${esc(c.name)} todavía no la ve.`}</span></div><button class="btn" data-act="officeToggle">${shown?"Dejar de mostrarla":"Mostrarla a "+esc(c.name)}</button></div>`:""}
   </section>`;
+}
+
+/* ---------- Plan 2027: dónde estar y qué mover en el año (eventos, premiaciones, gremiales, pauta y correo) ---------- */
+function ofMd(t){
+  let h="",ul=false,sec=false;
+  const inl=s=>s.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/(https?:\/\/[^\s<)]+[^\s<).,;:])/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  esc(String(t||"")).split(/\r?\n/).forEach(l=>{
+    const m=/^\s*[-•*]\s+(.*)$/.exec(l);
+    if(m){if(!ul){h+="<ul>";ul=true}h+="<li>"+inl(m[1])+"</li>";return}
+    if(ul){h+="</ul>";ul=false}
+    if(/^\s*#{1,4}\s+/.test(l)){const tt=l.replace(/^\s*#{1,4}\s+/,"");h+=(sec?"</article>":"")+`<article class="card ${/mirada|calendario|revisi/i.test(tt)?"d12":"d6"} p27"><h2>${inl(tt)}</h2>`;sec=true}
+    else if(l.trim())h+=(sec?"":'<article class="card d12 p27">')+"<p>"+inl(l)+"</p>",sec=true;
+  });
+  return h+(ul?"</ul>":"")+(sec?"</article>":"");
+}
+function viewPlan27(c){
+  const adm=ofAdm(),t=adm?(S.ofTasks||[]).find(x=>x.id==="plan2027"):null;
+  let txt=adm?((t&&t.out)||""):((S.plan27&&S.plan27.out)||"");
+  if(!adm)txt=txt.split(/\n\s*#{1,4}\s*Para tu revisi[oó]n/i)[0].replace(/\n\s*Cambios aplicados:[^\n]*$/i,"");
+  const st=t?t.st:"",lab={trabajando:"En preparación",cambios:"Con cambios pedidos",revisar:"Listo para que lo revises",aprobado:"Aprobado"}[st]||"";
+  const head=`<section class="dash-head"><div><h1>Plan 2027</h1><p class="sub">Dónde debe estar ${esc(c.name)} y qué debe mover durante el año: eventos, premiaciones, gremiales, pauta y email marketing.</p></div>${adm&&t&&officeOn(c)?`<div class="row" style="align-items:center;gap:12px"><span class="s">${esc(lab)}</span><button class="btn" data-act="officeOpen">${st==="revisar"?"Revisarlo en la oficina":"Abrir la oficina"}</button></div>`:""}</section>`;
+  if(!txt)return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)"><div class="card d12 p27"><p>${adm?(t?"El equipo está armando el plan. Aparece aquí en cuanto esté listo.":"Todavía no hay Plan 2027 para esta marca."):"El Plan 2027 está en preparación."}</p></div></section>`;
+  return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)">${adm&&st&&st!=="aprobado"?`<div class="card d12 p27"><p><b>Borrador.</b> Solo tú lo ves. ${esc(c.name)} lo verá aquí cuando lo apruebes en la oficina.</p></div>`:""}${ofMd(txt)}</section>`;
 }
 
 function agentsStrip(c){
@@ -5193,7 +5222,7 @@ async function autopilot(id){
 }
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
-  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; officeSubs(id);
+  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.plan27=null; S.plan27L=false; officeSubs(id);
   S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.funnel=null;S.compass=null;S.compSum=null;["finance","adcalc","pautastrat","funnel","compass","prodstories","investPlan","webaudit","site"].forEach(k=>{S[k+"Seen"]=false;S[k+"Cid"]=null});Object.keys(S).forEach(k=>{if(k.startsWith("_raw_")&&!k.startsWith("_raw_"+id+"_"))delete S[k]});S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
   [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["funnel","funnel"],["compass","compass"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{const nv=x.exists?x.data():null;const js=JSON.stringify(nv);if(S.cid!==id)return;const rk="_raw_"+id+"_"+k;if(S[rk]===js&&S[k+"Seen"]&&S[k+"Cid"]===id)return;S[rk]=js;S[k+"Cid"]=id;S[k]=k==="finance"&&nv&&S.finDraft?{...nv,...S.finDraft}:k==="adcalc"&&S.calDirty&&S.adcalc?S.adcalc:nv;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
