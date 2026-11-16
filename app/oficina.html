@@ -355,6 +355,7 @@ var EXTRA = {
   loop:'Sé breve: el resumen debe leerse en un minuto.'
 };
 var byId = {}; AG.forEach(function(a){ byId[a.id] = a; });
+EXTRA.bruno = 'Empieza con tu lectura en dos o tres frases: cómo crees que va la pauta y por qué. Después, qué rindió, qué no y los ajustes que propones, con el dato que respalda cada uno.';
 
 /* ---------- estado ---------- */
 var SITE=true;/*site-flag*/var EMBED = SITE && window.parent !== window && /[?&]embed=1/.test(location.search), HOST = null;
@@ -468,6 +469,7 @@ function prompt(t, a, b){
   var lib = S.kb.slice().sort(function(x, y){ return (x.cat === 'precios' ? 0 : 1) - (y.cat === 'precios' ? 0 : 1); }), room = 36000, parts = [];
   lib.forEach(function(k){ if(room <= 0 || !k.t) return; var tx = String(k.t).slice(0, room); room -= tx.length; parts.push('--- ' + (KCAT[k.cat] || 'Otro') + ' · ' + k.n + ' ---\n' + tx); });
   p.push('BIBLIOTECA DE LA MARCA\n' + (parts.length ? 'Es la fuente oficial de la marca. Precios, servicios, productos y condiciones salen solo de aquí o del encargo.\n\n' + parts.join('\n\n') : 'La marca todavía no ha subido su lista de precios ni su catálogo. Si el trabajo necesita un precio o un dato de producto, escribe «[dato por confirmar]» y pídelo en «Para tu revisión».'));
+  if(HOST && HOST.context){ var cx = ''; try{ cx = HOST.context(a.id) || ''; }catch(e){} if(cx) p.push('DATOS DE LA MARCA EN BRANDLOOP\n' + cx); }
   p.push('ENCARGO DE LA DIRECTORA\n"""\n' + t.brief + '\n"""');
   var txt = (t.files || []).filter(function(f){ return f.k === 'txt' && f.t; });
   if(txt.length) p.push('ARCHIVOS ADJUNTOS\n' + txt.map(function(f){ return '--- ' + f.n + ' ---\n' + f.t; }).join('\n\n'));
@@ -488,7 +490,7 @@ function run(id){
   var a = byId[t.agent], b = brand(); if(!a || !b || t.brand !== b.id) return;
   var ctl = new AbortController(); runners[id] = ctl; live[id] = ''; renderAll();
   imagesOf(t).then(function(imgs){
-    var o = {signal:ctl.signal, cache:false, modelTier:a.tier || 'default', onText:function(u){ live[id] = (u && u.text) || ''; var el = document.getElementById('live-' + id); if(el) el.textContent = live[id]; }};
+    var o = {agent:a.id, signal:ctl.signal, cache:false, modelTier:a.tier || 'default', onText:function(u){ live[id] = (u && u.text) || ''; var el = document.getElementById('live-' + id); if(el) el.textContent = live[id]; }};
     if(imgs.length && S.imgOk) o.images = imgs;
     return S.sample(prompt(t, a, b), o);
   }).then(function(r){
@@ -1101,7 +1103,7 @@ if(!world){ var n = document.createElement('div'); n.className = 'nogl'; n.inner
   if(SITE){
     try{ HOST = EMBED && window.parent.BLOffice ? window.parent.BLOffice.attach(window) : null; }catch(e){ HOST = null; }
     if(!HOST){ document.body.innerHTML = '<div style="min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center;font:16px/1.5 system-ui,sans-serif;color:#2A211B;background:#F6F1EA"><div><p style="font-weight:600;margin:0 0 8px">La oficina de agentes se abre desde Brandloop.</p><a href="./" style="color:#C24E08">Ir a Brandloop</a></div></div>'; return; }
-    S.db = HOST.db; S.mem = false; S.sample = HOST.sample || null; S.assets = null; S.ro = !HOST.admin;
+    S.db = HOST.db; S.mem = false; S.sample = HOST.sample || null; S.assets = null; S.ro = !HOST.admin; if(HOST.roster) try{ HOST.roster(AG.map(function(a){ return {id:a.id, name:a.name, role:a.role, does:a.does, gives:a.gives, no:a.no, routine:a.routine || '', extra:EXTRA[a.id] || ''}; })); }catch(e){}
     document.body.classList.add('embed'); if(S.ro) document.body.classList.add('ro');
     var bn = $('#bNew'); bn.innerHTML = '← <span class=bk>Brandloop</span>'; bn.setAttribute('aria-label', 'Volver a Brandloop'); bn.style.width = 'auto'; bn.style.padding = '0 12px';
     if(S.ro){ $('#bEdit').textContent = 'Biblioteca'; $('#tab-revisar').hidden = true; }

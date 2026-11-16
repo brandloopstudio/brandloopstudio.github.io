@@ -1219,6 +1219,7 @@ html.of-open,html.of-open body{overflow:hidden}
     if(server==="host:claude_browser"&&name==="get_page_text"){const r=await tool("web.read",{url:lastUrl,max_chars:input&&input.max_chars});return {payload:r.text}}
     throw {code:"server_not_found",message:"No disponible"}}};
   window.BL_TOOL=tool;
+  window.BL_FN=async(name,body)=>{const {data,error}=await sb.functions.invoke(name,{body});if(error){let code="failed";try{const j=await error.context.json();if(j&&j.error&&j.error.code)code=j.error.code}catch(x){}throw {code}}if(data&&data.error)throw {code:(data.error&&data.error.code)||"failed"};return data};
   window.claude={use:async(name)=>{if(name==="mcp")return mcp;if(name==="db")return db;if(name==="user")return user;if(name==="downloads")return downloads;if(name==="assets")return assets;return null}};
 
   /* sesión con Supabase ligada al usuario de Brandloop */
@@ -1905,8 +1906,24 @@ function ofHost(cid){
     doc:id=>{id=String(id||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,60);const r=raw.doc(`${kp}/${id}`);
       return {id,set:async d=>{if(!id)deny();const x={...d};delete x.id;x.brand=cid;await r.set(x)},update:async p=>{if(!id)deny();await r.update(p)},delete:async()=>{if(!id)deny();await r.delete()}}}};
   const none={where:()=>none,onSnapshot(cb){setTimeout(()=>cb(snap([])),0);return ()=>{}},doc:()=>({set:async()=>deny(),update:async()=>deny(),delete:async()=>deny()})};
-  return {v:1,cid,admin:adm,sample:null,db:{collection:n=>n==="brands"?brands:n==="tasks"?tasks:n==="kb"?kb:none},close:()=>closeOffice()};
+  return {v:1,cid,admin:adm,sample:adm?ofSample(cid):null,context:id=>ofContext(id),roster:adm?(l=>{ofRoster(l)}):null,db:{collection:n=>n==="brands"?brands:n==="tasks"?tasks:n==="kb"?kb:none},close:()=>closeOffice()};
 }
+/* el equipo trabaja al instante: la función bl-office corre en Brandloop y solo acepta a la dirección */
+function ofSample(cid){return (prompt,o)=>{o=o||{};
+  const run=window.BL_FN("bl-office",{mode:"sample",cid,agent:String(o.agent||""),prompt:String(prompt||"")}).then(d=>{if(!d||!d.text)throw {code:"empty"};return {text:String(d.text)}});
+  if(!o.signal)return run;
+  return new Promise((res,rej)=>{const ab=()=>rej({code:"cancelled"});if(o.signal.aborted)return ab();o.signal.addEventListener("abort",ab,{once:true});run.then(res,rej)})}}
+function ofContext(id){
+  const L=[],v=x=>x==null||x===""?"sin dato":x;
+  if(id==="bruno"&&S.ads&&S.ads.length)L.push("Campañas pagadas de la marca (datos reales):\n"+S.ads.filter(a=>a&&a.name).slice(0,20).map(a=>`- ${a.name} · ${a.platform||""} · objetivo: ${a.objective||"sin dato"} · estado: ${a.status||"sin dato"} · ${a.period||""}: gastado ${v(a.spent)} ${a.currency||""}${a.budget?" de un presupuesto de "+a.budget:""}, impresiones ${v(a.impressions)}, alcance ${v(a.reach)}, clics al enlace ${v(a.clicks)}, leads ${v(a.leads)}, conversaciones ${v(a.messages)}`).join("\n"));
+  if(S.trends&&S.trends.length)L.push("Tendencias guardadas (con fuente):\n"+S.trends.slice(0,8).map(t=>`- ${t.title}: ${t.summary||""} (${t.source||"sin fuente"}${t.url?", "+t.url:""})`).join("\n"));
+  const today=new Date().toISOString().slice(0,10),ev=(S.events||[]).filter(e=>e.date&&e.date>=today).sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(0,6);
+  if(ev.length)L.push("Próximos eventos:\n"+ev.map(e=>`- ${e.date} · ${e.name}`).join("\n"));
+  return L.join("\n\n");
+}
+/* el turno de madrugada lee de aquí quién es cada agente y qué reglas tiene */
+async function ofRoster(list){try{if(!ofAdm()||!Array.isArray(list)||!list.length)return;const r=S.rawdb.doc("config/office_agents");const cur=await r.get();if(cur.exists&&JSON.stringify(cur.data().agents)===JSON.stringify(list))return;await r.set({agents:list,ua:Date.now()})}catch(e){}}
+
 window.BLOffice={attach(win){try{if(!OF.frame||win!==OF.frame.contentWindow||!OF.cid||OF.cid!==S.cid||S.gate)return null;const c=client();if(!officeOn(c))return null;return ofHost(OF.cid)}catch(e){return null}}};
 function openOffice(){
   const c=client();if(!c||!officeOn(c)||S.gate)return;closeOffice(true);
