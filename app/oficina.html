@@ -54,6 +54,7 @@ h1,h2,h3,h4,p,ul{margin:0}
 .ag[aria-current="true"]{background:color-mix(in srgb,var(--a1) 12%,#fff)}
 .av{position:relative;flex:none;width:38px;height:38px;border-radius:50%;background:var(--h);box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--a1);overflow:hidden}
 .av:after{content:"";position:absolute;left:50%;top:58%;width:64%;height:64%;border-radius:50%;background:var(--s);transform:translate(-50%,-50%)}
+.av.bot{background:#0076B6}.av.bot:after{top:57%;width:68%;height:48%;border-radius:44%;background:radial-gradient(circle at 33% 46%,#173646 0 12%,transparent 13%),radial-gradient(circle at 67% 46%,#173646 0 12%,transparent 13%),#fff;box-shadow:0 0 0 3px #00A7E1}
 .ag .tx{min-width:0;display:flex;flex-direction:column}
 .ag b{font-size:14.5px;font-weight:700}
 .ag .tx span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -538,7 +539,11 @@ function askChanges(id, text){
 }
 
 /* ---------- interfaz ---------- */
-function avatar(a){ return '<span class="av" style="--h:' + a.hair + ';--s:' + a.skin + ';--c:' + a.color + '" aria-hidden="true"></span>'; }
+var SKIN = {isicare:{loop:{name:'Isilio', role:'Jefe de oficina', robot:true}}};
+function sk(a){ var s = SKIN[S.bid]; return (s && a && s[a.id]) || null; }
+function nm(a){ var k = sk(a); return k ? k.name : a.name; }
+function rl(a){ var k = sk(a); return k ? k.role : a.role; }
+function avatar(a){ var k = sk(a); if(k && k.robot) return '<span class="av bot" style="--c:' + a.color + '" aria-hidden="true"></span>'; return '<span class="av" style="--h:' + a.hair + ';--s:' + a.skin + ';--c:' + a.color + '" aria-hidden="true"></span>'; }
 function chip(st){ return '<span class="chip" style="--k:' + ST[st].k + '"><i></i>' + ST[st].t + '</span>'; }
 function md(t){
   var h = '', ul = false, sec = false;
@@ -575,7 +580,7 @@ function renderTeam(){
   $('#team').innerHTML = active().map(function(a){
     var st = statusOf(a.id), n = tasksOf(a.id).filter(function(t){ return t.st === 'revisar'; }).length;
     return '<li><button class="ag" data-ag="' + a.id + '" aria-current="' + (S.sel === a.id) + '">' + avatar(a) +
-      '<span class="tx"><b>' + esc(a.name) + '</b><span>' + esc(a.role) + '</span></span>' +
+      '<span class="tx"><b>' + esc(nm(a)) + '</b><span>' + esc(rl(a)) + '</span></span>' +
       '<span class="stt" style="--k:' + ST[st].k + '">' + ST[st].t + (st === 'revisar' && n > 1 ? ' · ' + n : '') + '</span></button></li>';
   }).join('');
 }
@@ -588,7 +593,7 @@ function renderSummary(){
 }
 function taskRow(t, who){
   var a = byId[t.agent], busy = !!runners[t.id];
-  return '<li><button class="tk" data-task="' + t.id + '">' + (who ? '<span class="who" style="--c:' + a.color + '">' + avatar(a) + esc(a.name) + '</span>' : '') +
+  return '<li><button class="tk" data-task="' + t.id + '">' + (who ? '<span class="who" style="--c:' + a.color + '">' + avatar(a) + esc(nm(a)) + '</span>' : '') +
     '<p>' + esc(t.brief) + '</p><span class="meta">' + (who ? '' : chip(t.st)) + (busy ? '<span class="dots"><i></i><i></i><i></i></span>' : t.err ? '<span class="err">Se interrumpió</span>' : '') + '<span>' + ago(t.ua) + '</span></span></button></li>';
 }
 function renderPanel(){ keepFocus(function(){
@@ -597,7 +602,7 @@ function renderPanel(){ keepFocus(function(){
   var st = statusOf(a.id), list = tasksOf(a.id), files = pend[a.id] || [], ai = !!S.sample || (EMBED && !S.ro), top = p.scrollTop;
   p.hidden = false;
   p.innerHTML = '<button class="x" data-act="closePanel" aria-label="Cerrar">×</button>' +
-    '<div class="phead">' + avatar(a) + '<div><h2>' + esc(a.name) + '</h2><span>' + esc(a.role) + '</span></div></div>' + chip(st) +
+    '<div class="phead">' + avatar(a) + '<div><h2>' + esc(nm(a)) + '</h2><span>' + esc(rl(a)) + '</span></div></div>' + chip(st) +
     '<div class="give"><label class="lbl" for="brief">Encárgale trabajo</label>' +
       '<textarea id="brief" maxlength="4000" placeholder="Escribe qué necesitas, para qué y qué no debe faltar."' + (ai ? '' : ' disabled') + '>' + esc(draft[a.id] || '') + '</textarea>' +
       (files.length ? '<div class="files">' + files.map(function(f, i){ return '<span><b>' + esc(f.n) + '</b><button data-act="rmFile" data-i="' + i + '" aria-label="Quitar ' + esc(f.n) + '">×</button></span>'; }).join('') + '</div>' : '') +
@@ -616,7 +621,7 @@ function renderQueue(){ keepFocus(function(){
   var b = brand(), l = S.tasks.filter(function(t){ return t.st === 'revisar'; }).sort(function(x, y){ return (x.ua || 0) - (y.ua || 0); });
   $('#queue').innerHTML = !b ? '<div class="empty"><b>Sin marca</b>Agrega una marca para empezar.</div>' : !l.length ? '<div class="empty"><b>Nada por revisar</b>Cuando un agente termine, su entrega aparece aquí para que la apruebes o pidas cambios.</div>' :
     l.map(function(t){ var a = byId[t.agent];
-      return '<article class="qcard"><div class="qhead">' + avatar(a) + '<span><b>' + esc(a.name) + '</b><br><span>' + esc(a.role) + (t.ver > 1 ? ' · versión ' + t.ver : '') + '</span></span><span class="when note">' + ago(t.ua) + '</span></div>' +
+      return '<article class="qcard"><div class="qhead">' + avatar(a) + '<span><b>' + esc(nm(a)) + '</b><br><span>' + esc(rl(a)) + (t.ver > 1 ? ' · versión ' + t.ver : '') + '</span></span><span class="when note">' + ago(t.ua) + '</span></div>' +
         '<h3>' + esc(t.brief.length > 150 ? t.brief.slice(0, 150) + '…' : t.brief) + '</h3><p class="prev">' + esc(String(t.out || '').replace(/^\s*#+\s*/gm, '').slice(0, 420)) + '</p>' +
         (S.fbFor === t.id && !S.open ? fbBox(t.id) : '<div class="acts"><button class="btn ok sm" data-act="approve" data-id="' + t.id + '">Aprobar</button><button class="btn sm" data-act="openFb" data-id="' + t.id + '">Pedir cambios</button><button class="btn txt sm" data-task="' + t.id + '">Ver completa</button></div>') + '</article>'; }).join('');
 }); }
@@ -633,7 +638,7 @@ function renderSched(){
   $('#sched').innerHTML = DAYS.map(function(d, i){
     var l = []; on.forEach(function(a){ (a.plan || []).forEach(function(p){ if(p[0] === i) l.push({a:a, h:p[1], w:p[2]}); }); });
     l.sort(function(x, y){ return parseFloat(String(x.h).replace(/^\D+/, '').replace(':', '.')) - parseFloat(String(y.h).replace(/^\D+/, '').replace(':', '.')); });
-    return '<div class="col"><h3 style="--k:var(--a1)"><i></i>' + d + '<em>' + l.length + '</em></h3>' + (l.length ? l.map(function(x){ return '<div class="slot"><span class="hr">' + esc(x.h) + '</span><b>' + esc(x.a.name) + ' · ' + esc(x.a.role) + '</b><span>' + esc(x.w) + '</span></div>'; }).join('') : '<p class="none">Sin turno.</p>') + '</div>';
+    return '<div class="col"><h3 style="--k:var(--a1)"><i></i>' + d + '<em>' + l.length + '</em></h3>' + (l.length ? l.map(function(x){ return '<div class="slot"><span class="hr">' + esc(x.h) + '</span><b>' + esc(nm(x.a)) + ' · ' + esc(rl(x.a)) + '</b><span>' + esc(x.w) + '</span></div>'; }).join('') : '<p class="none">Sin turno.</p>') + '</div>';
   }).join('');
 }
 function renderModal(){ keepFocus(function(){
@@ -643,11 +648,11 @@ function renderModal(){ keepFocus(function(){
   if(!t){ S.open = null; m.hidden = true; m.innerHTML = ''; return; }
   var a = byId[t.agent], busy = !!runners[t.id], stuck = !busy && (t.st === 'trabajando' || t.st === 'cambios'), sc = m.querySelector('.scroll'), top = sc ? sc.scrollTop : 0;
   m.hidden = false;
-  m.innerHTML = '<div class="sheet" role="dialog" aria-modal="true" aria-label="Entrega de ' + esc(a.name) + '"><button class="x" data-act="closeModal" aria-label="Cerrar">×</button>' +
-    '<header><div class="qhead">' + avatar(a) + '<span><b>' + esc(a.name) + '</b><br><span>' + esc(a.role) + (t.ver > 1 ? ' · versión ' + t.ver : '') + '</span></span></div>' + chip(t.st) + '</header>' +
+  m.innerHTML = '<div class="sheet" role="dialog" aria-modal="true" aria-label="Entrega de ' + esc(nm(a)) + '"><button class="x" data-act="closeModal" aria-label="Cerrar">×</button>' +
+    '<header><div class="qhead">' + avatar(a) + '<span><b>' + esc(nm(a)) + '</b><br><span>' + esc(rl(a)) + (t.ver > 1 ? ' · versión ' + t.ver : '') + '</span></span></div>' + chip(t.st) + '</header>' +
     '<div class="scroll"><div><span class="lbl">Encargo</span><div class="brief">' + esc(t.brief) + '</div>' + ((t.files || []).length ? '<div class="files" style="margin-top:8px">' + t.files.map(function(f){ return '<span><b>' + esc(f.n) + '</b></span>'; }).join('') + '</div>' : '') + '</div>' +
       (t.st === 'cambios' && t.fb ? '<div><span class="lbl">Cambios que pediste</span><div class="brief">' + esc(t.fb) + '</div></div>' : '') +
-      (busy ? '<div><span class="lbl">' + esc(a.name) + ' está escribiendo <span class="dots"><i></i><i></i><i></i></span></span><div class="out" id="live-' + t.id + '" style="white-space:pre-wrap">' + esc(live[t.id] || '') + '</div></div>'
+      (busy ? '<div><span class="lbl">' + esc(nm(a)) + ' está escribiendo <span class="dots"><i></i><i></i><i></i></span></span><div class="out" id="live-' + t.id + '" style="white-space:pre-wrap">' + esc(live[t.id] || '') + '</div></div>'
         : (t.out ? '<div><span class="lbl">Entrega</span><div class="out">' + md(t.out) + '</div></div>' : '')) +
       (t.err ? '<p class="err">' + esc(t.err) + '</p>' : stuck ? (EMBED && !S.sample ? '<p class="note">En cola. El equipo lo trabaja en el turno de madrugada y lo deja aquí antes de las 5:00 a.m.</p>' : '<p class="err">Este trabajo se quedó a medias: la oficina se cerró mientras lo hacía.</p>') : '') + '</div>' +
     '<footer>' + (S.fbFor === t.id ? fbBox(t.id) : '<div class="acts">' +
@@ -668,7 +673,7 @@ function brandFormHTML(){
       (EMBED ? '' : '<div class="grid2"><div><label class="lbl" for="fC1">Color principal (HEX)</label><div class="hexrow"><input type="color" id="fC1p" value="' + esc(f.c1) + '" aria-label="Elegir color principal"><input type="text" id="fC1" maxlength="7" value="' + esc(f.c1) + '"></div></div>' +
         '<div><label class="lbl" for="fC2">Color secundario (HEX)</label><div class="hexrow"><input type="color" id="fC2p" value="' + esc(f.c2) + '" aria-label="Elegir color secundario"><input type="text" id="fC2" maxlength="7" value="' + esc(f.c2) + '"></div></div></div>' +
       '<div><span class="lbl">Logo</span><div class="acts">' + (f.logo ? '<img class="logoprev" src="' + esc(blobUrl(f.logo)) + '" alt="Logo cargado">' : '') + '<button class="btn sm" data-act="pickLogo"' + (S.assets ? '' : ' disabled') + '>' + (f.logo ? 'Cambiar logo' : 'Subir logo') + '</button>' + (f.logo ? '<button class="btn txt sm" data-act="rmLogo">Quitar</button>' : '') + (S.assets ? '' : '<span class="note">Subir logos no está disponible en esta vista.</span>') + '</div></div>') +
-      (S.ro ? '' : '<div><span class="lbl">Agentes de esta marca</span><div class="checks">' + AG.map(function(a){ return '<label><input type="checkbox" data-on="' + a.id + '"' + (f.off.indexOf(a.id) < 0 ? ' checked' : '') + (a.id === 'loop' ? ' disabled' : '') + '>' + esc(a.name) + ' · ' + esc(a.role) + '</label>'; }).join('') + '</div></div>') +
+      (S.ro ? '' : '<div><span class="lbl">Agentes de esta marca</span><div class="checks">' + AG.map(function(a){ return '<label><input type="checkbox" data-on="' + a.id + '"' + (f.off.indexOf(a.id) < 0 ? ' checked' : '') + (a.id === 'loop' ? ' disabled' : '') + '>' + esc(nm(a)) + ' · ' + esc(rl(a)) + '</label>'; }).join('') + '</div></div>') +
       '<div><span class="lbl">Biblioteca de la marca: precios, catálogo, manual</span>' + (isNew ? '<p class="note">Crea la marca y después sube aquí su lista de precios y su catálogo.</p>' :
         (S.kb.length ? '<ul class="kb">' + S.kb.map(function(k){ return '<li><b>' + esc(k.n) + '</b><select data-kbcat="' + esc(k.id) + '" aria-label="Tipo de archivo">' + Object.keys(KCAT).map(function(c){ return '<option value="' + c + '"' + (k.cat === c ? ' selected' : '') + '>' + KCAT[c] + '</option>'; }).join('') + '</select><button data-act="rmKb" data-id="' + esc(k.id) + '" aria-label="Quitar ' + esc(k.n) + '">×</button></li>'; }).join('') + '</ul>' : '') +
         '<div class="acts"><button class="btn sm" data-act="pickKb">Subir archivos</button><span class="note">Excel, Word, PowerPoint o texto. Los agentes los leen antes de cada trabajo y solo usan precios que estén aquí.</span></div>') + '</div>' +
@@ -968,6 +973,21 @@ function makeWorld(){
     add(u.head, new T.CircleGeometry(0.04, 16), ck, -0.165, -0.045, 0.218, false).rotation.y = -0.6; add(u.head, new T.CircleGeometry(0.04, 16), ck, 0.165, -0.045, 0.218, false).rotation.y = 0.6;
     if(a.glasses){ add(u.head, new T.TorusGeometry(0.068, 0.012, 8, 24), eye, -0.095, 0.02, 0.262, false); add(u.head, new T.TorusGeometry(0.068, 0.012, 8, 24), eye, 0.095, 0.02, 0.262, false); box(u.head, 0.06, 0.012, 0.012, '#2A1F1A', 0, 0.03, 0.27); }
     var hit = new T.Mesh(new T.CylinderGeometry(0.55, 0.55, 2.1, 10), new T.MeshBasicMaterial({visible:false})); hit.position.y = 1.0; hit.userData.agent = a.id; g.add(hit); u.hit = hit;
+    if(a.id === 'loop'){
+      var hp = []; g.traverse(function(o){ if(o.isMesh && o !== hit) hp.push(o); });
+      var BL = '#00A7E1', DB = '#0076B6', OR = '#F79031', NV = '#173646', rp = [], R = function(m){ rp.push(m); return m; };
+      [u.legL, u.legR].forEach(function(L, i){ R(box(L, 0.2, 0.5, 0.24, DB, 0, -0.25, 0)); R(box(L, 0.3, 0.11, 0.36, DB, i ? 0.05 : -0.05, -0.5, 0.05)); });
+      R(box(g, 0.42, 0.56, 0.3, BL, 0, HIP + 0.3, 0)); R(box(g, 0.66, 0.2, 0.28, BL, 0, HIP + 0.36, 0)); R(box(g, 0.16, 0.1, 0.16, BL, 0, HIP + 0.61, 0));
+      [u.armL, u.armR].forEach(function(A){ R(sph(A, 0.075, NV, 0, 0, 0)); R(box(A, 0.13, 0.2, 0.14, OR, 0, -0.13, 0)); R(sph(A, 0.058, NV, 0, -0.26, 0)); R(box(A, 0.11, 0.15, 0.12, OR, 0, -0.35, 0)); R(sph(A, 0.075, '#23C2F3', 0, -0.47, 0)); });
+      R(sph(u.head, 0.28, BL, 0, 0, 0));
+      var cap = R(add(u.head, new T.SphereGeometry(0.3, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.52), mat(DB, {roughness:0.6}), 0, 0.01, -0.012)); cap.rotation.x = -0.35;
+      var face = R(sph(u.head, 0.2, '#FFFFFF', 0, -0.01, 0.19, {roughness:0.4})); face.scale.set(1, 0.74, 0.5);
+      var ey = mat(NV, {roughness:0.3});
+      [-0.075, 0.075].forEach(function(x){ var e = R(add(u.head, new T.SphereGeometry(0.03, 12, 10), ey, x, 0.01, 0.285, false)); e.scale.y = 1.5; });
+      var sm = R(add(u.head, new T.TorusGeometry(0.045, 0.011, 8, 16, Math.PI), ey, 0, -0.045, 0.283, false)); sm.rotation.z = Math.PI;
+      rp.forEach(function(m){ m.visible = false; });
+      u.skin = function(on){ hp.forEach(function(m){ m.visible = !on; }); rp.forEach(function(m){ m.visible = on; }); };
+    }
     g.scale.setScalar(SC); g.userData = u; return g;
   }
   function badge(color, glyph){
@@ -984,7 +1004,7 @@ function makeWorld(){
   AG.forEach(function(a, i){
     var p = places[a.id], f = figure(a), u = f.userData;
     f.position.set(p.seat[0], 0.05, p.seat[1]); scene.add(f); hits.push(u.hit);
-    var el = document.createElement('button'); el.className = 'lb'; el.setAttribute('data-id', a.id); el.setAttribute('tabindex', '-1'); el.innerHTML = '<i></i>' + esc(a.name); labels.appendChild(el);
+    var el = document.createElement('button'); el.className = 'lb'; el.setAttribute('data-id', a.id); el.setAttribute('tabindex', '-1'); el.innerHTML = '<i></i>' + esc(nm(a)); labels.appendChild(el);
     actors[a.id] = {a:a, f:f, u:u, p:p, mode:'seat', path:null, pi:0, ph:i * 1.7, bn:badge('#F2620A', '!'), bc:badge('#7D5CE0', '↻'), el:el, at:'seat', st:'libre', on:true};
   });
   var tu = document.createElement('span'); tu.className = 'lb tu'; tu.textContent = window.innerWidth < 600 ? 'Tú' : 'Tú · sala de juntas'; labels.appendChild(tu);
@@ -1010,6 +1030,7 @@ function makeWorld(){
   var logoImg = null, logoId = null, curC = '#F2620A';
   function vivid(h){ var c = new T.Color(h), hs = {h:0, s:0, l:0}; c.getHSL(hs); return hs.s > 0.25 && hs.l > 0.18 && hs.l < 0.82; }
   function setBrand(b){
+    AG.forEach(function(a){ var ac = actors[a.id]; if(!ac) return; var k = (b && SKIN[b.id] && SKIN[b.id][a.id]) || null; ac.el.innerHTML = '<i></i>' + esc(k ? k.name : a.name); if(ac.u.skin) ac.u.skin(!!(k && k.robot)); });
     var c1 = (b && hexOk(b.c1)) || '#F2620A', c2 = (b && hexOk(b.c2)) || c1;
     var P = [c1, c2].concat(((b && b.pal) || []).map(hexOk).filter(Boolean)).filter(function(h, i, l){ return l.indexOf(h) === i; }).slice(0, 5);
     var lit = P.filter(vivid)[0] || c1; curC = lit;
