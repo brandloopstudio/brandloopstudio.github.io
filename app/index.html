@@ -1853,7 +1853,7 @@ const bellIc=()=>`<svg class="i" viewBox="0 0 24 24" fill="none" stroke="current
    (las reglas de la base de datos no dejan leer esa ruta a nadie más). La marca ve a su equipo, en qué va cada
    agente (clients/{marca}/docs/office) y sube su biblioteca de precios y catálogo (clients/{marca}/office_kb). */
 const OF={layer:null,frame:null,cid:null,subs:[],pubT:null};
-const OF_AG=[["loop", "Loop", "#F2620A"], ["maya", "Maya", "#D6457A"], ["dani", "Dani", "#E0523A"], ["nico", "Nico", "#7D5CE0"], ["lia", "Lía", "#C48407"], ["elena", "Elena", "#1B8FB3"], ["iris", "Iris", "#2F9E6F"], ["bruno", "Bruno", "#8F5A2B"], ["tomas", "Tomás", "#4A6FE3"], ["renata", "Renata", "#B0468F"], ["victoria", "Victoria", "#0E7C66"], ["mateo", "Mateo", "#6B7A1F"]];
+const OF_AG=[["loop", "Loop", "#F2620A"], ["maya", "Maya", "#D6457A"], ["dani", "Dani", "#E0523A"], ["nico", "Nico", "#7D5CE0"], ["lia", "Lía", "#C48407"], ["elena", "Elena", "#1B8FB3"], ["iris", "Iris", "#2F9E6F"], ["bruno", "Bruno", "#8F5A2B"], ["tomas", "Armando", "#4A6FE3"], ["renata", "Renata", "#B0468F"], ["victoria", "Betty", "#0E7C66"], ["mateo", "Mateo", "#6B7A1F"]];
 const ofAdm=()=>!!(V.user&&V.user.role==="admin");
 const officeOn=c=>!!c&&!PORTAL&&!!V.user&&!!S.rawdb&&(ofAdm()||(((S.officeCfg||{}).on)||[]).includes(c.id));
 const ofHex=h=>/^#[0-9a-f]{6}$/i.test(h||"")?h:null;

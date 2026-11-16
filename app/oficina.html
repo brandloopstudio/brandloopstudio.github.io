@@ -57,7 +57,7 @@ h1,h2,h3,h4,p,ul{margin:0}
 .av.pic{background:#fff center/cover no-repeat}.av.pic:after{display:none}
 #st2{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;border-radius:inherit;background:#D5CFCD}#st2.drag{cursor:grabbing}
 #st2 .wd{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}#st2 .wd>img{display:block;width:1672px;height:941px;max-width:none;user-select:none;pointer-events:none}
-#st2 .ac{position:absolute;left:0;top:0;width:0;height:0}#st2 .ac .sp{position:absolute;left:0;bottom:0;display:block;transform:translateX(-50%);transform-origin:50% 100%;background-repeat:no-repeat;cursor:pointer}
+#st2 .ac{position:absolute;left:0;top:0;width:0;height:0}#st2 .ac .sp{position:absolute;left:0;bottom:0;display:block;transform:translateX(-50%);transform-origin:50% 100%;cursor:pointer}#st2 .sp>*{position:absolute;left:0;display:block;background-repeat:no-repeat;text-decoration:none}
 #st2 .ac .sh{position:absolute;left:-15px;top:-5px;width:30px;height:11px;border-radius:50%;background:rgba(29,18,12,.22)}#st2 .ac.sel .sh{box-shadow:0 0 0 3px rgba(29,18,12,.8)}
 .av.fc{background:color-mix(in srgb,var(--c) 24%,#fff)}.av.fc:after{display:none}.av.fc svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ag .tx{min-width:0;display:flex;flex-direction:column}
@@ -334,7 +334,7 @@ var AG = [
    no:['No lanza, pausa ni cambia campañas.','No toca presupuestos ni medios de pago: no gasta un centavo.','No inventa métricas: usa solo los datos que le pases.'],
    routine:'Con los datos de campañas que haya en el encargo o en los archivos, prepara la revisión semanal de pauta: qué rindió, qué no, y qué ajustes propones. Si no hay datos, entrega la lista exacta de datos que necesitas.',
    color:'#8F5A2B', skin:'#F0CFAE', hair:'#C9A36B', style:'short', top:'#F4EDE4', bottom:'#8F5A2B'},
-  {id:'tomas', name:'Tomás', role:'Reportes y correo', mode:'Programada y por encargo', sched:'Día 1 de cada mes · 3:00', plan:[[6,'Día 1 · 3:00','Reporte mensual y análisis interno']], tier:'default',
+  {id:'tomas', name:'Armando', role:'Reportes y correo', mode:'Programada y por encargo', sched:'Día 1 de cada mes · 3:00', plan:[[6,'Día 1 · 3:00','Reporte mensual y análisis interno']], tier:'default',
    does:'Prepara el reporte mensual de la marca y redacta borradores de correos, seguimientos y respuestas a clientes.',
    gives:'El reporte del mes para el cliente, un análisis interno aparte, y los borradores de correo que le pidas.',
    no:['No envía correos ni responde a clientes: todo queda como borrador.','No inventa métricas: si falta un número, escribe «sin datos».','No comparte información de una marca con otra.'],
@@ -346,7 +346,7 @@ var AG = [
    no:['No envía propuestas ni cotizaciones.','No pone precios, descuentos ni plazos que no estén en la biblioteca de la marca o en el encargo.','No promete resultados.'],
    routine:'',
    color:'#B0468F', skin:'#A9714F', hair:'#120D0B', style:'bun', top:'#B0468F', bottom:'#262B3B'},
-  {id:'victoria', name:'Victoria', role:'Finanzas', mode:'Programada y por encargo', sched:'Viernes · 3:00 y día 1 de cada mes', plan:[[4,'3:00','Cierre financiero de la semana'],[6,'Día 1 · 3:30','Cierre financiero del mes']], tier:'complex',
+  {id:'victoria', name:'Betty', role:'Finanzas', mode:'Programada y por encargo', sched:'Viernes · 3:00 y día 1 de cada mes', plan:[[4,'3:00','Cierre financiero de la semana'],[6,'Día 1 · 3:30','Cierre financiero del mes']], tier:'complex',
    does:'Lleva los números: flujo de caja, rentabilidad por cliente o por producto, presupuesto de marketing contra resultados, punto de equilibrio, precios y proyecciones con escenarios.',
    gives:'El cierre de la semana o del mes: qué entró, qué salió, márgenes, alertas y qué decisión te toca tomar.',
    no:['No mueve dinero: no paga, no cobra, no factura y no toca cuentas.','No presenta impuestos ni da asesoría fiscal o de inversión: eso lo confirma tu contador.','No inventa cifras: trabaja con tus archivos y marca cada supuesto.'],
@@ -373,7 +373,7 @@ EXTRA.bruno = 'Empieza con tu lectura en dos o tres frases: cómo crees que va l
 byId.elena.does += ' También arma el plan anual de la marca: en qué eventos estar (para networking, para stand y premiaciones), en qué gremiales, qué pautar y qué campañas de correo hacer, por trimestre y sin montos. También investiga en la web lo que haga falta para la marca: la ficha de la marca a partir de su sitio oficial, siempre con fuente.'; byId.elena.gives += ' Y, cuando se lo pides, el plan anual de la marca.'; byId.lia.does += ' También prepara el perfil personal de LinkedIn de los voceros de la marca (titular, «Acerca de» y cargo) y sus publicaciones, siempre con imagen, carrusel o video y solo con datos del sitio oficial o de la directora.'; byId.lia.gives += ' Y, cuando se lo pides, el perfil y las publicaciones de LinkedIn de un vocero.'; var READS = {maya:['elena']}; byId.maya.routine = 'Arma la parrilla de contenido de la semana siguiente: 5 piezas, con al menos 2 reels y 2 carruseles y ningún post de una sola imagen. Parte del radar de tendencias de Elena de esta semana y de los próximos eventos de la marca.'; EXTRA.maya = 'Empieza con la sección «## La semana en una mirada»: objetivo de la semana, mezcla de pilares (educativo, entretenimiento, conexión y venta; como máximo 1 de las 5 piezas es de venta) y las fechas o eventos que se aprovechan. Después, una sección por pieza con un título como «## Lunes 17 · Carrusel · Educativo» (día, formato y pilar) y estas líneas, cada una escrita como «- **Etiqueta:** texto»: Objetivo; Etapa del embudo; De dónde sale (la tendencia del radar con su fuente, o el dato de la biblioteca); Gancho; Desarrollo (en carrusel, el título de cada lámina; en reel, cada escena en una frase); Copy Instagram y Facebook, variante 1; Copy Instagram y Facebook, variante 2 (otro ángulo, no un retoque); Copy LinkedIn; Hashtags (5 o 6: 1 de nicho, 1 o 2 de audiencia, 1 de ubicación y 2 del tema de la pieza; cortos y siempre los mismos para la marca); Llamada a la acción; Dirección visual (vertical 4:5, colores y logo de la marca, foto real o pantalla del producto); Hora sugerida; Qué medir. Reglas de copy: escribe desde lo que necesita quien lee, no desde lo que presume la marca; primero conecta y después informa; promueve sin exagerar; cada dato sale de la biblioteca, de la descripción de la marca o del radar con su fuente, sin escenas hipotéticas, testimonios ni cifras inventadas; termina con un siguiente paso claro, salvo en las piezas educativas.'; EXTRA.elena = 'Trabaja con información fresca: busca en la web y prioriza lo publicado en los últimos 7 días. Las tendencias que Brandloop tiene guardadas de la marca son solo punto de partida: úsalas si siguen vigentes y dilo con su fecha; no armes el radar solo con ellas. Si una búsqueda no trae nada nuevo, dilo. Empieza con la fecha en que investigaste.';
 byId.elena.routine = 'Investiga en la web qué se movió esta semana en el sector de la marca y en redes, en su país y región, y arma el radar: de 3 a 5 tendencias, cada una con fuente, enlace y fecha de publicación, y una idea de contenido para la marca.';
 
-var W2 = {"bg":"m/6cc0d8670dd4.webp","w":1672,"h":941,"ph":66,"ent":[840,475],"you":[1040,612],"ag":{"maya":{"s":"m/2f6c46bf0408.webp","av":"m/2f6c46bf0408a.webp","seat":[765,338],"via":[[800,400]],"spot":[950,486]},"dani":{"s":"m/5ddbf44ac2cb.webp","av":"m/5ddbf44ac2cba.webp","seat":[838,342],"via":[[840,400]],"spot":[996,495]},"nico":{"s":"m/426034488352.webp","av":"m/426034488352a.webp","seat":[930,287],"via":[[900,330],[860,400]],"spot":[1042,504]},"lia":{"s":"m/e24babc77022.webp","av":"m/e24babc77022a.webp","seat":[997,288],"via":[[960,330],[880,400]],"spot":[1088,514]},"elena":{"s":"m/d058b557cdaa.webp","av":"m/d058b557cdaaa.webp","seat":[852,214],"via":[[895,300],[870,400]],"spot":[1134,523]},"iris":{"s":"m/c4942659c87b.webp","av":"m/c4942659c87ba.webp","seat":[469,221],"via":[[620,300],[760,420]],"spot":[905,470]},"bruno":{"s":"m/0f22320714bd.webp","av":"m/0f22320714bda.webp","seat":[652,483],"via":[[790,500]],"spot":[866,530]},"tomas":{"s":"m/2c2e663e2e67.webp","av":"m/2c2e663e2e67a.webp","seat":[632,624],"via":[[760,560]],"spot":[838,502]},"renata":{"s":"m/4a362425680d.webp","av":"m/4a362425680da.webp","seat":[1322,556],"via":[[1250,420],[900,385]],"spot":[1180,532]},"victoria":{"s":"m/4110538f157b.webp","av":"m/4110538f157ba.webp","seat":[1168,262],"via":[[1100,340],[900,385]],"spot":[1218,588]},"mateo":{"s":"m/266022325e22.webp","av":"m/266022325e22a.webp","seat":[575,246],"via":[[650,330],[770,420]],"spot":[820,545]},"loop":{"s":"m/0c97d6194271.webp","av":"m/0c97d6194271a.webp","seat":[400,442],"via":[[600,400],[760,430]],"spot":[795,512]}}};
+var W2 = {"bg":"m/6cc0d8670dd4.webp","w":1672,"h":941,"ph":66,"ent":[868,462],"you":[1040,612],"ag":{"maya":{"s":"m/2f6c46bf0408.webp","av":"m/2f6c46bf0408a.webp","seat":[762,348],"via":[[800,385],[850,432]],"spot":[950,486]},"dani":{"s":"m/5ddbf44ac2cb.webp","av":"m/5ddbf44ac2cba.webp","seat":[834,356],"via":[[830,392],[850,432]],"spot":[996,495]},"nico":{"s":"m/426034488352.webp","av":"m/426034488352a.webp","seat":[925,292],"via":[[905,345],[860,400],[850,432]],"spot":[1042,504]},"lia":{"s":"m/e24babc77022.webp","av":"m/e24babc77022a.webp","seat":[990,297],"via":[[975,345],[880,385],[850,432]],"spot":[1088,514]},"elena":{"s":"m/d058b557cdaa.webp","av":"m/d058b557cdaaa.webp","seat":[731,212],"via":[[715,290],[800,385],[850,432]],"spot":[1134,523]},"iris":{"s":"m/c4942659c87b.webp","av":"m/c4942659c87ba.webp","seat":[488,190],"via":[[590,172],[668,222],[715,290],[800,385],[850,432]],"spot":[812,455]},"mateo":{"s":"m/266022325e22.webp","av":"m/266022325e22a.webp","seat":[572,170],"via":[[600,172],[668,222],[715,290],[800,385],[850,432]],"spot":[822,545]},"bruno":{"s":"m/0f22320714bd.webp","av":"m/0f22320714bda.webp","seat":[600,410],"via":[[690,455],[755,508],[805,540],[840,495]],"spot":[866,530]},"tomas":{"s":"m/2c2e663e2e67.webp","av":"m/2c2e663e2e67a.webp","seat":[1330,566],"via":[[1325,548],[1312,428],[1200,398],[1100,372],[1000,355],[900,372],[850,432]],"spot":[838,502]},"victoria":{"s":"m/4110538f157b.webp","av":"m/4110538f157ba.webp","seat":[1172,250],"via":[[1150,232],[1095,250],[1085,330],[1000,355],[900,372],[850,432]],"spot":[1218,588]},"renata":{"s":"m/4a362425680d.webp","av":"m/4a362425680da.webp","seat":[1048,305],"via":[[1000,355],[900,372],[850,432]],"spot":[1180,532]},"loop":{"s":"m/0c97d6194271.webp","av":"m/0c97d6194271a.webp","seat":[400,442],"via":[[440,425],[545,462],[640,478],[755,508],[805,540],[840,495]],"spot":[790,520]}}};
 /* ---------- estado ---------- */
 var SITE=true;/*site-flag*/var EMBED = SITE && window.parent !== window && /[?&]embed=1/.test(location.search), HOST = null;
 function blobUrl(id){ id = String(id || ''); return /^(https?:|data:|blob:)/.test(id) ? id : '/_blob/' + id; }
@@ -1242,27 +1242,45 @@ function makeWorld2D(){
   var stage = $('#v-oficina'), labels = $('#labels'), cv = $('#cv'); if(cv) cv.style.display = 'none';
   var box = document.createElement('div'); box.id = 'st2'; var wd = document.createElement('div'); wd.className = 'wd'; box.appendChild(wd);
   var bg = new Image(); bg.alt = ''; bg.draggable = false; bg.src = W2.bg; wd.appendChild(bg); stage.insertBefore(box, labels);
-  var CW = 100, CH = 126, K = W2.ph / 120, view = {k:1, x:0, y:0, w:1, h:1, fitK:1, user:false}, actors = {}, cur = {sel:null}, mk = null;
+  var CW = 100, CH = 126, K = W2.ph / 120, HIP = 91, OV = 3, cw = CW * K, ch = CH * K, view = {k:1, x:0, y:0, w:1, h:1, fitK:1, user:false}, actors = {}, cur = {sel:null}, mk = null;
   AG.forEach(function(a, i){
     var c = W2.ag[a.id]; if(!c) return;
-    var el = document.createElement('div'); el.className = 'ac'; el.innerHTML = '<i class="sh"></i><b class="sp"></b>'; wd.appendChild(el);
-    var sp = el.lastChild; sp.addEventListener('click', function(e){ e.stopPropagation(); select(a.id); });
+    var el = document.createElement('div'); el.className = 'ac'; el.innerHTML = '<i class="sh"></i><b class="sp"><u></u><u></u><s></s></b>'; wd.appendChild(el);
+    var sp = el.lastChild, kid = sp.children; sp.addEventListener('click', function(e){ e.stopPropagation(); select(a.id); });
     var lb = document.createElement('button'); lb.className = 'lb'; lb.setAttribute('data-id', a.id); lb.setAttribute('tabindex', '-1'); lb.innerHTML = '<i></i>' + esc(a.name); labels.appendChild(lb);
-    actors[a.id] = {a:a, c:c, el:el, sp:sp, lb:lb, x:c.seat[0], y:c.seat[1], mode:'seat', at:'seat', dest:'seat', path:null, pi:0, ph:i * 1.7, dir:0, st:'libre', on:true, h:W2.ph, img:null};
+    actors[a.id] = {a:a, c:c, el:el, sp:sp, lb:lb, x:c.seat[0], y:c.seat[1], mode:'seat', at:'seat', dest:'seat', path:null, pi:0, ph:i * 1.7, dir:0, st:'libre', on:true, h:W2.ph, img:null, l1:kid[0], l2:kid[1], bd:kid[2]};
     skin(actors[a.id]);
   });
   var tu = document.createElement('span'); tu.className = 'lb tu'; tu.textContent = window.innerWidth < 600 ? 'Tú' : 'Tú · sala de juntas'; labels.appendChild(tu);
   function skin(ac){
-    var m = ac.a.id === 'loop' && mk && mk.img ? mk : null, s = ac.sp.style;
-    if(m){ ac.img = m.img; ac.h = W2.ph * 1.5; s.backgroundImage = 'url(' + m.img + ')'; s.backgroundSize = 'contain'; s.backgroundPosition = '50% 100%'; s.width = Math.round(ac.h * 0.86) + 'px'; s.height = Math.round(ac.h) + 'px'; }
-    else { ac.img = null; ac.h = W2.ph; s.backgroundImage = 'url(' + ac.c.s + ')'; s.backgroundSize = Math.round(CW * 4 * K) + 'px ' + Math.round(CH * K) + 'px'; s.width = Math.round(CW * K) + 'px'; s.height = Math.round(CH * K) + 'px'; face(ac, ac.dir); }
+    var m = ac.a.id === 'loop' && mk && mk.img ? mk : null, s = ac.sp.style, b = ac.bd.style;
+    if(m){ ac.img = m.img; ac.h = W2.ph * 1.5; s.width = Math.round(ac.h * 0.86) + 'px'; s.height = Math.round(ac.h) + 'px'; ac.l1.style.display = ac.l2.style.display = 'none';
+      b.top = '0'; b.width = '100%'; b.height = '100%'; b.backgroundImage = 'url(' + m.img + ')'; b.backgroundSize = 'contain'; b.backgroundPosition = '50% 100%'; }
+    else { ac.img = null; ac.h = W2.ph; s.width = cw + 'px'; s.height = ch + 'px'; var u = 'url(' + ac.c.s + ')', z = (cw * 4) + 'px ' + ch + 'px';
+      b.top = '0'; b.width = cw + 'px'; b.height = (HIP * K) + 'px'; b.backgroundImage = u; b.backgroundSize = z;
+      [ac.l1, ac.l2].forEach(function(l){ var t = l.style; t.display = 'block'; t.top = ((HIP - OV) * K) + 'px'; t.height = ((CH - HIP + OV) * K) + 'px'; t.backgroundImage = u; t.backgroundSize = z; });
+      face(ac, ac.dir, true); }
   }
-  function face(ac, d){ ac.dir = d; if(!ac.img) ac.sp.style.backgroundPosition = (-d * Math.round(CW * K)) + 'px 100%'; }
+  /* vista: 0 frente, 1 hacia la derecha, 2 hacia la izquierda, 3 de espaldas. De frente y de espaldas cada pierna es una mitad; de lado, las dos se cruzan */
+  function face(ac, d, force){
+    if(ac.img || (ac.dir === d && !force)) return; ac.dir = d;
+    var x = -d * cw, y = -((HIP - OV) * K), side = d === 1 || d === 2, a = ac.l1.style, b = ac.l2.style;
+    ac.bd.style.backgroundPosition = x + 'px 0';
+    a.left = '0'; a.width = (side ? cw : cw / 2) + 'px'; a.backgroundPosition = x + 'px ' + y + 'px';
+    b.left = (side ? 0 : cw / 2) + 'px'; b.width = (side ? cw : cw / 2) + 'px'; b.backgroundPosition = (side ? x : x - cw / 2) + 'px ' + y + 'px';
+    a.transformOrigin = b.transformOrigin = '50% 12%'; a.transform = b.transform = '';
+  }
+  function legs(ac, s){
+    if(ac.img) return; var a = ac.l1.style, b = ac.l2.style;
+    if(s === null){ a.transform = b.transform = ''; return; }
+    if(ac.dir === 1 || ac.dir === 2){ a.transform = 'rotate(' + (s * 24).toFixed(1) + 'deg)'; b.transform = 'rotate(' + (-s * 24).toFixed(1) + 'deg)'; }
+    else { a.transform = 'translateY(' + (-Math.max(0, s) * 4.5).toFixed(1) + 'px)'; b.transform = 'translateY(' + (-Math.max(0, -s) * 4.5).toFixed(1) + 'px)'; }
+  }
   function near(ac, pts){ var b = 0, bd = 1e12; pts.forEach(function(p, i){ var d = (p[0] - ac.x) * (p[0] - ac.x) + (p[1] - ac.y) * (p[1] - ac.y); if(d < bd){ bd = d; b = i; } }); return pts.slice(b); }
   function go(ac, dest){
     var c = ac.c, out = [c.seat].concat(c.via || [], [W2.ent, c.spot]), pts = dest === 'meet' ? out : out.slice().reverse(), end = pts[pts.length - 1];
     if(ac.at === dest && ac.mode === dest) return; if(ac.mode === 'walk' && ac.dest === dest) return;
-    if(REDUCE){ ac.x = end[0]; ac.y = end[1]; ac.mode = ac.at = dest; ac.path = null; face(ac, 0); return; }
+    if(REDUCE){ ac.x = end[0]; ac.y = end[1]; ac.mode = ac.at = dest; ac.path = null; face(ac, 0); legs(ac, null); return; }
     ac.path = near(ac, pts); ac.pi = 0; ac.mode = 'walk'; ac.dest = dest;
   }
   function sync(st, on, sel){
@@ -1304,9 +1322,9 @@ function makeWorld2D(){
     wd.style.transform = 'translate(' + view.x.toFixed(1) + 'px,' + view.y.toFixed(1) + 'px) scale(' + view.k.toFixed(4) + ')';
     AG.forEach(function(a){ var ac = actors[a.id]; if(!ac || !ac.on) return; var bob = 0, tilt = 0, hov = ac.img && mk && mk.walk && mk.walk.mode === 'hover';
       if(ac.mode === 'walk' && ac.path){ var g = ac.path[ac.pi], dx = g[0] - ac.x, dy = g[1] - ac.y, d = Math.hypot(dx, dy), st = SPEED * dt;
-        if(d <= st){ ac.x = g[0]; ac.y = g[1]; ac.pi++; if(ac.pi >= ac.path.length){ ac.path = null; ac.mode = ac.at = ac.dest; face(ac, 0); } }
+        if(d <= st){ ac.x = g[0]; ac.y = g[1]; ac.pi++; if(ac.pi >= ac.path.length){ ac.path = null; ac.mode = ac.at = ac.dest; face(ac, 0); legs(ac, null); } }
         else { ac.x += dx / d * st; ac.y += dy / d * st; face(ac, Math.abs(dx) > Math.abs(dy) * 0.7 ? (dx > 0 ? 1 : 2) : (dy > 0 ? 0 : 3)); }
-        ac.ph += dt * 11; bob = Math.abs(Math.sin(ac.ph)) * 3.2; tilt = Math.sin(ac.ph) * 3.5; }
+        ac.ph += dt * 10; var sw = Math.sin(ac.ph); if(ac.mode === 'walk') legs(ac, sw); bob = ac.img ? Math.abs(sw) * 3.2 : Math.abs(Math.cos(ac.ph)) * 1.2; tilt = ac.img ? sw * 3.5 : sw * 1.2; }
       else if(!REDUCE){ bob = (ac.st === 'trabajando' || ac.st === 'cambios') ? Math.abs(Math.sin(t * 6 + ac.ph)) * 1.6 : Math.sin(t * 1.8 + ac.ph) * 0.5 + 0.5; }
       if(hov) bob += 7 + Math.sin(t * 2.2) * 2.5;
       ac.el.style.transform = 'translate(' + ac.x.toFixed(1) + 'px,' + ac.y.toFixed(1) + 'px)'; ac.el.style.zIndex = Math.round(ac.y);
