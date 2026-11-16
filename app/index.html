@@ -1933,7 +1933,7 @@ function homeCardHTML(k,c,K,pct){
 function viewHomeClient(c){
   const K=postCounts(),pct=planPct(),rev=(S.ofTasks||[]).filter(t=>t.st==="revisar").sort((a,b)=>(a.ua||0)-(b.ua||0));
   const nm=id=>((OF_AG.find(a=>a[0]===id)||[])[1])||id;
-  const brief=t=>String(t.brief||"").replace(/^Rutina( de madrugada)?:\s*/i,"");
+  const brief=t=>{const o=String(t.out||"");const h=(o.match(/^\s*#{1,4}\s+(.+)$/m)||[])[1]||(o.split(/\n/).find(l=>l.trim())||"");return (h||String(t.brief||"").replace(/^Rutina( de madrugada)?:\s*/i,"")).replace(/\*\*/g,"").trim()};
   const ask=rev.length||K.pending,sel=homeSel();
   return `<section class="dash-head"><div><h1>Cómo vamos</h1><p class="sub">${esc(c.name)} de un vistazo: primero el plan, luego las campañas, el contenido y los resultados.</p></div>
    <div class="row">${rangeSeg()}<button class="btn" data-act="homeEdit" aria-expanded="${!!S.homeEdit}">${ic("plus")} Elegir qué ver</button></div></section>
@@ -1951,7 +1951,7 @@ function ofSheet(c){
   const t=S.ofView&&(S.ofTasks||[]).find(x=>x.id===S.ofView);if(!t)return "";
   const nm=((OF_AG.find(a=>a[0]===t.agent)||[])[1])||t.agent;
   return `<div class="ofsheet" role="dialog" aria-modal="true" aria-label="Entrega de ${esc(nm)}"><div class="ofs-in"><button class="icbtn sm ofs-x" data-act="ofClose" aria-label="Cerrar">×</button>
-   <span class="s">${esc(nm)}${t.ver>1?" · versión "+t.ver:""}</span><h2>${esc(String(t.brief||"").replace(/^Rutina( de madrugada)?:\s*/i,"").slice(0,160))}</h2>
+   <span class="s">${esc(nm)}${t.ver>1?" · versión "+t.ver:""}</span><h2>${esc(((String(t.out||"").match(/^\s*#{1,4}\s+(.+)$/m)||[])[1]||String(t.brief||"").replace(/^Rutina( de madrugada)?:\s*/i,"")).replace(/\*\*/g,"").slice(0,160))}</h2>
    <div class="ofs-body">${ofMd(String(t.out||"").split(/\n\s*#{1,4}\s*Para tu revisi[oó]n/i)[0])}</div>
    ${t.st==="revisar"?`<div class="ofs-fb"><label class="s" for="offb">¿Qué debe cambiar? (solo si pides cambios)</label><textarea id="offb" data-draft="offb" rows="3" maxlength="2000" placeholder="Hazlo más corto, cambia el enfoque, usa otro dato…"></textarea>
    <div class="row"><button class="btn ok" data-act="ofApprove" data-id="${esc(t.id)}">Aprobar</button><button class="btn" data-act="ofChanges" data-id="${esc(t.id)}">Pedir cambios</button></div></div>`:`<p class="s">Estado: ${esc(t.st)}</p>`}
