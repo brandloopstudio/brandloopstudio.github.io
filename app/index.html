@@ -1118,6 +1118,31 @@ fieldset.field{border:0;padding:0;margin:0}
 html.of-open,html.of-open body{overflow:hidden}
 @media (max-width:760px){.ofc{padding:18px}.ofc-av{display:none}.ofc-info{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.ofc{transition:none}.ofc:hover{transform:none}}
+/* inicio del dueño de la marca */
+.hask .hitem{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.hask .hitem>span:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.hask .hitem b{font-weight:600}
+.hpick .hchecks{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 16px;margin-top:10px}
+.hpick label{display:flex;align-items:center;gap:8px;cursor:pointer}
+.iac{display:flex;flex-direction:column;gap:12px;text-align:left}
+.iarow{display:flex;flex-wrap:wrap;gap:18px}
+.iarow>span{display:flex;flex-direction:column}
+.iarow b{font-size:28px;line-height:1.1;font-weight:700}
+.iab ul{margin:8px 0 0;padding-left:18px;display:grid;gap:10px}
+.iab h3{margin:16px 0 4px;font-size:15px}
+.ofsheet{position:fixed;inset:0;z-index:60;background:rgba(20,14,10,.45);display:grid;place-items:center;padding:20px}
+.ofs-in{position:relative;background:var(--card,#fff);color:inherit;border-radius:20px;max-width:760px;width:100%;max-height:88vh;overflow:auto;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.ofs-x{position:absolute;top:14px;right:14px}
+.ofs-in h2{margin:6px 0 14px;font-size:20px;line-height:1.3}
+.ofs-body{display:grid;gap:12px}
+.ofs-body .card{grid-column:auto}
+.ofs-fb{display:grid;gap:8px;margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+.ofs-fb textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;background:transparent;color:inherit}
+/* íconos de redes en lugar del nombre */
+.chico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;vertical-align:-4px;border-radius:5px}
+.chico svg{width:18px;height:18px;display:block}
+.chico+.chico{margin-left:4px}
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -1291,13 +1316,15 @@ const ic=(n,cls="i")=>`<svg class="${cls}" viewBox="0 0 24 24" fill="none" strok
 const CHANNELS=["Web","Instagram","Facebook","LinkedIn","TikTok","Email"];
 const CHK={Web:"web",Instagram:"ig",Facebook:"fb",LinkedIn:"li",TikTok:"tt",Email:"mail"};
 const chLabel=c=>c==="Web"?"Página web":(c||"");
+const SOC_ICO={Instagram:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="6" fill="#E1306C"/><rect x="6.2" y="6.2" width="11.6" height="11.6" rx="3.6" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="2.8" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.3" cy="7.7" r="1" fill="#fff"/></svg>',Facebook:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="6" fill="#1877F2"/><path d="M13.2 20v-6.2h2.1l.3-2.5h-2.4V9.8c0-.7.2-1.2 1.2-1.2h1.3V6.4c-.2 0-1-.1-1.9-.1-1.9 0-3.2 1.2-3.2 3.3v1.8H8.5v2.5h2.1V20z" fill="#fff"/></svg>',LinkedIn:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="#0A66C2"/><rect x="6.3" y="9.6" width="2.4" height="7.6" fill="#fff"/><circle cx="7.5" cy="7.2" r="1.4" fill="#fff"/><path d="M10.6 9.6h2.3v1.1c.4-.7 1.2-1.3 2.5-1.3 2.4 0 2.8 1.6 2.8 3.6v4.2h-2.4v-3.7c0-.9 0-2-1.2-2s-1.4.9-1.4 1.9v3.8h-2.4z" fill="#fff"/></svg>',TikTok:'<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="6" fill="#111"/><path d="M14.6 5.5c.3 1.6 1.4 2.7 3 2.9v2.3c-1.1 0-2.1-.3-3-.9v4.6c0 2.4-1.9 4.1-4.2 4.1s-4-1.8-4-4 1.9-4.1 4.3-3.9v2.4c-1-.2-1.9.5-1.9 1.5 0 .9.7 1.6 1.6 1.6 1 0 1.7-.7 1.7-1.9V5.5z" fill="#fff"/></svg>'};
+const chIco=c=>SOC_ICO[c]?`<span class="chico" title="${esc(c)}" role="img" aria-label="${esc(c)}">${SOC_ICO[c]}</span>`:`${chIco(c)}`;
 const chVar=c=>`--chc:var(--ch-${CHK[c]||"web"})`;
 const FORMATS=["Post","Carrusel","Reel / video","Historia","Artículo de blog","Sección web / landing","Newsletter"];
 const STATUS={draft:"Borrador",pending:"Por aprobar",approved:"Aprobado",changes:"Con cambios",published:"Publicado"};
 const VIEWS=[["home","Inicio","home"],["posts","Posts","posts"],["trends","Tendencias","trends"],["comp","Competencia","comp"],["geo","IA Search","geo"],["pipe","Pipeline","pipe"],["track","Trackers","track"],["plan","Plan","plan"],["export","Exportar","export"],["brand","Marca","brand"]];
-const GROUPS=[
+const GROUPS_ALL=[
   ["home","Inicio","home",[["home","Resumen"]]],
-  ["social","Social Media","posts",[["posts","Parrilla diaria"],["mc","Masterclass"],["cal","Calendario"],["organic","Métricas orgánicas"],["trends:social","Tendencias en redes"]]],
+  ["social","Social Media","posts",[["cal","Calendario del mes"],["posts","Parrilla diaria"],["mc","Masterclass"],["organic","Métricas orgánicas"],["trends:social","Tendencias en redes"]]],
   ["people","Perfiles","people",[["people","Perfiles profesionales"]]],
   ["ads","Campañas y pauta","ads",[["campaigns","Campañas y eventos"],["email","Email marketing"],["ads","Pauta"]]],
   ["mkt","Branding & Marketing","plan",[["plan","Plan 2027"],["strategy","Estrategia"],["audience","Audiencia"],["prodstory","Historias por producto"],["funnel","Embudo de ventas"],["compass","Brújula de marca"],["trends:sector","Tendencias del mercado"],["comp","Competencia"],["pauta","Estrategia de pauta"],["track","Trackers"],["web","Página web"],["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"]]],
@@ -1305,6 +1332,17 @@ const GROUPS=[
   ["ai","AI Solutions","spark",[["office","Oficina de agentes"],["agents","Agentes"],["loop","Loop"],["reply","Responder clientes"],["geo","IA Search"]]],
   ["sales","Ventas","pipe",[["pipe","Pipeline"],["events","Eventos y asociaciones"],["export","Documentos"]]]
 ];
+/* vista del dueño de la marca: de lo macro (el plan) a lo micro (cada pieza), sin herramientas internas */
+const CLIENT_GROUPS=[
+  ["home","Cómo vamos","home",[["home","Resumen"]]],
+  ["mkt","Plan","plan",[["plan","Plan 2027"],["strategy","Estrategia"]]],
+  ["ads","Campañas","ads",[["campaigns","Campañas y eventos"],["ads","Pauta"],["email","Email marketing"]]],
+  ["social","Contenido","posts",[["cal","Calendario del mes"],["posts","Parrilla diaria"],["mc","Masterclass"]]],
+  ["res","Resultados","geo",[["organic","Redes sociales"],["geo","Visibilidad en IA"]]]
+];
+const isClient=()=>!!(V.user&&V.user.role!=="admin");
+const navG=()=>isClient()?CLIENT_GROUPS:GROUPS_ALL;
+const CLIENT_VIEWS=new Set(["home","plan","strategy","campaigns","ads","email","cal","posts","mc","organic","geo","brand"]);
 
 function moveDeal(id,stage,msg){const d=S.deals.find(x=>x.id===id);if(!d||d.stage===stage)return;write(()=>col("deals").doc(id).update({stage,updatedAt:Date.now()}),msg||"Etapa actualizada")}
 (function(){let dragId=null;
@@ -1315,7 +1353,7 @@ document.addEventListener("dragstart",e=>{const c=e.target.closest&&e.target.clo
  document.addEventListener("drop",e=>{const k=e.target.closest&&e.target.closest(".kcol[data-stage]");if(!k||!dragId)return;e.preventDefault();const st=k.dataset.stage;const l=(STAGES.find(x=>x[0]===st)||[])[1]||st;moveDeal(dragId,st,"Movido a "+l)});
  document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[data-autoc]");if(!a||!S.canWrite)return;const d=S.deals.find(x=>x.id===a.dataset.autoc);if(d&&d.stage==="lead")moveDeal(d.id,"contact","Movido a Contactado")},true);
 })();
-const groupOf=v=>{if(v==="trends"){const full="trends:"+(S.trendTab||"sector");for(const g of GROUPS){if(g[3].some(([k])=>k===full))return g}}for(const g of GROUPS){if(g[3].some(([k])=>k.split(":")[0]===v))return g}return GROUPS[0]};
+const groupOf=v=>{if(v==="trends"){const full="trends:"+(S.trendTab||"sector");for(const g of navG()){if(g[3].some(([k])=>k===full))return g}}for(const g of navG()){if(g[3].some(([k])=>k.split(":")[0]===v))return g}return navG()[0]};
 const STAGES=[["lead","Lead"],["contact","Contactado"],["meeting","Reunión / demo"],["proposal","Propuesta"],["won","Ganado"],["lost","Perdido"]];
 const STAGE_C={lead:"var(--faint)",contact:"var(--info)",meeting:"var(--ch-tt)",proposal:"var(--warn)",won:"var(--ok)",lost:"var(--bad)"};
 const SOURCES=[...CHANNELS,"Referido","Evento","Otro"];
@@ -1368,6 +1406,7 @@ if(S.theme) document.documentElement.dataset.theme=S.theme;
 
 /* ---------- render ---------- */
 function render(){
+  if(V.user)blSessTouch();
   if(S.gate){closeOffice(true);const fid=document.activeElement&&document.activeElement.id;root.innerHTML=gateScreen();root.querySelectorAll("[data-draft]").forEach(el=>{const k=el.dataset.draft;if(k in S.drafts)el.value=S.drafts[k]});const f=(fid&&document.getElementById(fid))||root.querySelector(".wl-form input:not([value]),.wl-form input");if(f&&!S.gateBusy)f.focus({preventScroll:true});return}
   const LIM=PORTAL||(V.enabled&&V.user&&V.user.role!=="admin");if(S.cwBase==null)S.cwBase=S.canWrite;S.canWrite=!!S.cwBase&&(!LIM||!["newclient","access"].includes(S.view));if(LIM&&(S.view==="newclient"||S.view==="access"))S.view="home";if(PORTAL)S.menu=false;
   try{const sel=window.getSelection&&window.getSelection();if(sel&&!sel.isCollapsed&&sel.rangeCount&&root.contains(sel.anchorNode)&&!/^(INPUT|TEXTAREA)$/.test((document.activeElement||{}).tagName||"")){S._selWait=(S._selWait||0)+1;if(S._selWait<40){clearTimeout(S._selT);S._selT=setTimeout(render,700);return}}}catch(e){}S._selWait=0;
@@ -1399,7 +1438,7 @@ function rail(){
   ${c?`<div class="switch ws"><button class="ws-btn" ${PORTAL?"disabled":`data-act="menu" aria-expanded="${S.menu}"`} id="sw-btn">${lf?`<span class="swlogo"><img src="${esc(lf.url)}" alt="" style="${lf.f?"filter:"+lf.f:""}"></span>`:`${monoHTML(c,"")}`}<span class="who"><b>${esc(c.name)}</b><span>${esc(c.industry||"Cliente")}</span></span>${PORTAL?"":`<span class="updown" aria-hidden="true">${ic("chev")}</span>`}</button>
    ${S.menu?`<div class="menu" role="menu">${S.clients.filter(k=>!S.meet||k.id===S.meet).map(k=>`<button role="menuitem" data-act="client" data-id="${esc(k.id)}" aria-current="${k.id===S.cid}">${monoHTML(k,"")}<span>${esc(k.name)}<br><span class="hint">${esc(k.industry||"")}</span></span></button>`).join("")}
      ${S.clients.length>1?`<button data-act="meet">${S.meet?"Salir del modo reunión":"Modo reunión: mostrar solo esta marca"}</button>`:""}${S.meet?"":S.canWrite&&V.user?.role!=="admin"&&V.enabled?"":S.canWrite?`<button data-act="view" data-v="newclient">${ic("plus")} Agregar cliente</button>`:""}</div>`:""}</div>`:`<a class="logo" href="${SITE_URL}" target="_blank" rel="noopener" title="Ir a la página de Brandloop">${loopSvg()}</a>`}
-  <nav class="nav" aria-label="Áreas"><span class="sec">Principal</span><ul>${GROUPS.slice(0,4).map(item).join("")}</ul><span class="sec">Crecimiento</span><ul>${GROUPS.slice(4).map(item).join("")}</ul></nav>
+  <nav class="nav" aria-label="Áreas">${isClient()?`<ul>${navG().map(item).join("")}</ul>`:`<span class="sec">Principal</span><ul>${navG().slice(0,4).map(item).join("")}</ul><span class="sec">Crecimiento</span><ul>${navG().slice(4).map(item).join("")}</ul>`}</nav>
   <div class="side-foot"><div class="themes" role="group" aria-label="Tema"><button class="ic2" data-act="theme" data-t="light" aria-pressed="${th==="light"}" aria-label="Tema claro" title="Tema claro">${ic("sun")}</button><button class="ic2" data-act="theme" data-t="dark" aria-pressed="${th==="dark"}" aria-label="Tema oscuro" title="Tema oscuro">${ic("moon")}</button></div>
    ${V.user?.role==="admin"?`<button class="nv" data-act="view" data-v="access" ${S.view==="access"?'aria-current="page"':""}><span class="ic">${ic("brand")}</span><span class="nl">Usuarios y accesos</span></button>`:""}
    <div class="me">${(()=>{const bl=V.user&&V.user.role!=="admin"&&c?logoFor(c,false):null;return bl?`<span class="mono hilogo"><img src="${esc(bl.url)}" alt="${esc(c.name)}" style="${bl.f?"filter:"+bl.f:""}"></span>`:`<span class="mono" style="--c:#f2620a;--c-on:#fff">${esc((V.user?.name||S.me?.name||"BL").slice(0,2).toUpperCase())}</span>`})()}<span class="who"><b>${esc(V.user?.name||S.me?.name||"Tu equipo")}</b><span class="brandrow">${V.user?esc("@"+V.user.uname):`${loopSvg(3)} Brandloop`}</span></span></div>${V.user?`<button class="logoutbtn" data-act="logout">${ic("logout")} Cerrar sesión</button>`:""}</div>${siteLink("sitelink")}</aside>`;
@@ -1411,7 +1450,7 @@ function subnav(){
 
 function topbar(){
   const c=client();const pend=S.posts.filter(p=>p.status==="pending").length;
-  const opts=GROUPS.flatMap(g=>g[3].map(([k,l])=>l));const first=(V.user?.name||S.me?.name||"").split(" ")[0];
+  const opts=navG().flatMap(g=>g[3].map(([k,l])=>l));const first=(V.user?.name||S.me?.name||"").split(" ")[0];
   return `<div class="top"><div class="hi">${V.user?(()=>{const bl=V.user.role!=="admin"&&c?logoFor(c,false):null;return bl?`<span class="hiav hilogo"><img src="${esc(bl.url)}" alt="${esc(c.name)}" style="${bl.f?"filter:"+bl.f:""}"></span>`:`<span class="mono hiav" style="--c:#f2620a;--c-on:#fff">${esc((V.user.name||V.user.uname).slice(0,2).toUpperCase())}</span>`})():S.me?`<img class="avatar" src="${esc(S.me.avatarUrl)}" alt="">`:""}<span><b>${greetWord()}${first?", "+esc(first):""} 👋</b><span>Qué bueno verte de nuevo en Brandloop</span></span></div>
    <span class="spacer"></span>
    <form class="search" data-form="search" role="search"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input type="text" id="q" data-draft="q" list="q-opts" placeholder="Buscar sección…" aria-label="Buscar sección" autocomplete="off"><datalist id="q-opts">${opts.map(o=>`<option value="${esc(o)}">`).join("")}</datalist></form>
@@ -1428,13 +1467,14 @@ function body(){
   if(PORTAL&&!S.clients.length) return emptyBox("Tu portal se está preparando","Tu equipo de Brandloop está cargando la información de tu marca. Vuelve a abrir esta página en unos minutos.");
   if(S.view==="newclient"||!S.clients.length) return viewNewClient();
   const c=client(); if(!c) return "";
+  if(isClient()&&!CLIENT_VIEWS.has(S.view))S.view="home";
   switch(S.view){
     case "posts": return viewPosts(c);
     case "mc": return viewMC(c);
     case "people": return viewPeople(c);
     case "trends": return viewTrends(c);
     case "comp": return viewComp(c);
-    case "geo": return viewGeo(c);
+    case "geo": return iaBlock(c)+viewGeo(c);
     case "office": return viewOffice(c);
     case "agents": return viewAgents(c);
     case "loop": return viewLoop(c);
@@ -1464,7 +1504,7 @@ function body(){
     case "plan": return viewPlan27(c);
     case "export": return viewExport(c);
     case "brand": return viewBrand(c);
-    default: return viewHome(c);
+    default: return isClient()?viewHomeClient(c):viewHome(c);
   }
 }
 const emptyBox=(t,s,extra="")=>`<div class="empty"><b>${esc(t)}</b><span>${esc(s)}</span>${extra}</div>`;
@@ -1487,7 +1527,7 @@ function prodCard(){
   const nets=["Instagram","LinkedIn","Facebook","TikTok","Web"].map(n=>[n,...byNet(n)]).filter(x=>x[1]||x[2]).sort((a,b)=>b[1]-a[1]).slice(0,3);
   return `<article class="card d4 an1"><div class="ph"><div class="t"><span class="s">Piezas creadas</span><div class="kv"><b>${cur.length}</b>${dPill(cur.length,prev.length)}</div></div><button class="btn sm" data-act="view" data-v="posts">Ver</button></div>
    <svg class="spark2" viewBox="0 0 300 90" preserveAspectRatio="none" role="img" aria-label="Piezas creadas en el periodo"><g class="gridl">${[0,1,2].map(i=>`<line x1="${i*150}" x2="${i*150}" y1="0" y2="90"/>`).join("")}<line x1="0" x2="300" y1="45" y2="45"/></g><path d="${sparkPath(vals,300,90)}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
-   <ul class="nrows">${nets.length?nets.map(([n,a,b])=>`<li style="${chVar(n)}"><span class="nn"><i class="dot"></i>${esc(chLabel(n))}</span><b>${a}</b>${arrow(a-b)}<span class="dd ${a-b>=0?"up":"dn"}">${a-b>=0?"+":""}${a-b}</span></li>`).join(""):`<li class="s">Sin piezas en este periodo.</li>`}</ul></article>`;
+   <ul class="nrows">${nets.length?nets.map(([n,a,b])=>`<li style="${chVar(n)}"><span class="nn">${chIco(n)}</span><b>${a}</b>${arrow(a-b)}<span class="dd ${a-b>=0?"up":"dn"}">${a-b>=0?"+":""}${a-b}</span></li>`).join(""):`<li class="s">Sin piezas en este periodo.</li>`}</ul></article>`;
 }
 function mixCard(){
   const days=rangeDays();const base=S.posts.filter(p=>inLast(p.createdAt||0,days,0));const prv=S.posts.filter(p=>inLast(p.createdAt||0,days,1));const src=base.length?base:S.posts;
@@ -1517,7 +1557,7 @@ function channelsCard(){
   const list=nets.map(n=>[n,tot[n]||0]).filter(x=>x[1]).sort((a,b)=>b[1]-a[1]);const top=list[0];
   return `<article class="card d4 an4"><div class="ph"><div class="t"><span class="s">Canal principal</span><div class="kv"><b>${top?Math.round(top[1]/all*100)+"%":"—"}</b>${top?`<span class="dp eq">${esc(chLabel(top[0]))}</span>`:""}</div></div><button class="btn sm" data-act="view" data-v="track">Trackers</button></div>
    ${list.length?`<div class="sbar">${list.map(([n,v])=>`<i style="${chVar(n)};flex:${v}" title="${esc(chLabel(n))} ${Math.round(v/all*100)}%"></i>`).join("")}</div>
-   <div class="slg">${list.slice(0,4).map(([n])=>`<span style="${chVar(n)}"><i class="dot"></i>${esc(chLabel(n))}</span>`).join("")}</div>
+   <div class="slg">${list.slice(0,4).map(([n])=>`<span style="${chVar(n)}">${chIco(n)}</span>`).join("")}</div>
    <table class="ctable"><thead><tr><th>Canal</th><th>Porcentaje</th><th>Piezas</th></tr></thead><tbody>${list.slice(0,4).map(([n,v])=>`<tr style="${chVar(n)}"><td><span class="cn"><span class="cic">${esc(chLabel(n).slice(0,1))}</span>${esc(chLabel(n))}</span></td><td>${Math.round(v/all*100)}%</td><td>${v}</td></tr>`).join("")}</tbody></table>`
    :`<p class="s">Aún no hay piezas por canal.</p>`}
    <button class="btn" style="margin-top:auto" data-act="view" data-v="cal">Ver calendario</button></article>`;
@@ -1624,17 +1664,29 @@ function wrapDB(raw){
 /* vault operations */
 async function blSyncVerifiers(me){const vs=await S.rawdb.collection("vault_users").get();for(const d of vs.docs){const r=d.data();if(!r||r.uname===me||r.disabled)continue;let raw;if(r.role==="admin"){if(!MRAW_SESSION)continue;raw=MRAW_SESSION}else{const cid=(r.brands||[])[0]||Object.keys(r.wk||{})[0];if(!cid)continue;raw=await exportBrandKey(cid)}await BL_SET_VERIFIER(r.uname,raw,r.role,r.role==="admin"?[]:(r.brands||[]),r.name||r.uname)}}
 async function vaultLoadMeta(){try{const m=await S.rawdb.doc("vault/meta").get();V.meta=m.exists?m.data():null;V.enabled=!!V.meta}catch(e){V.meta=null;V.enabled=false}}
+/* la sesión se mantiene en esta pestaña: recargar no saca; se cierra al cerrar la pestaña o tras 2 h sin uso */
+const BL_SS="bl-sess",BL_SS_IDLE=2*3600e3;
+function blSessSave(raws){try{const k={...raws};delete k.__M;sessionStorage.setItem(BL_SS,JSON.stringify({user:V.user,keys:k,m:raws.__M||null,t:Date.now()}))}catch(e){}}
+function blSessTouch(){try{const o=JSON.parse(sessionStorage.getItem(BL_SS)||"null");if(o&&Date.now()-o.t>60e3){o.t=Date.now();sessionStorage.setItem(BL_SS,JSON.stringify(o))}}catch(e){}}
+function blSessClear(){try{sessionStorage.removeItem(BL_SS)}catch(e){}}
+async function blSessRestore(){
+  try{const o=JSON.parse(sessionStorage.getItem(BL_SS)||"null");if(!o||!o.user||Date.now()-o.t>BL_SS_IDLE){blSessClear();return false}
+    const rs=await S.rawdb.doc("vault_users/"+o.user.uname).get();if(!rs.exists||rs.data().disabled){blSessClear();return false}
+    const keys={};for(const [cid,r] of Object.entries(o.keys||{}))keys[cid]=await importK(ub64(r));
+    if(o.m){MRAW_SESSION=ub64(o.m);V.M=await importK(MRAW_SESSION)}
+    V.keys=keys;V.user=o.user;o.t=Date.now();sessionStorage.setItem(BL_SS,JSON.stringify(o));return true}catch(e){blSessClear();return false}}
 async function vaultLogin(uname,pass){
   const u=unameOf(uname);if(!u||!pass)throw {code:"bad"};
   await BL_AUTH(u,pass,async(rec,p)=>{const k=await kdf(p,rec.salt,rec.iters);if(rec.role==="admin")return aesDec(k,rec.wm,"master:"+u);const cid=(rec.brands||[])[0]||Object.keys(rec.wk||{})[0];return aesDec(k,rec.wk[cid],`userkey:${u}:${cid}`)});
   const rs=await S.rawdb.doc("vault_users/"+u).get();if(!rs.exists)throw {code:"bad"};
   const rec=rs.data();if(rec.disabled)throw {code:"bad"};
-  const kek=await kdf(pass,rec.salt,rec.iters);const keys={};
+  const kek=await kdf(pass,rec.salt,rec.iters);const keys={},raws={};
   try{
-    if(rec.role==="admin"){const Mraw=await aesDec(kek,rec.wm,"master:"+u);MRAW_SESSION=Mraw;const M=await importK(Mraw);V.M=M;const kd=await S.rawdb.doc("vault/keys").get();for(const [cid,w] of Object.entries(kd.exists?kd.data():{}))keys[cid]=await importK(await aesDec(M,w,"brandkey:"+cid))}
-    else for(const [cid,w] of Object.entries(rec.wk||{}))keys[cid]=await importK(await aesDec(kek,w,`userkey:${u}:${cid}`));
+    if(rec.role==="admin"){const Mraw=await aesDec(kek,rec.wm,"master:"+u);MRAW_SESSION=Mraw;raws.__M=b64(Mraw);const M=await importK(Mraw);V.M=M;const kd=await S.rawdb.doc("vault/keys").get();for(const [cid,w] of Object.entries(kd.exists?kd.data():{})){const r=await aesDec(M,w,"brandkey:"+cid);raws[cid]=b64(r);keys[cid]=await importK(r)}}
+    else for(const [cid,w] of Object.entries(rec.wk||{})){const r=await aesDec(kek,w,`userkey:${u}:${cid}`);raws[cid]=b64(r);keys[cid]=await importK(r)}
   }catch(e){throw {code:"bad"}}
   V.keys=keys;V.user={uname:u,name:rec.name||u,role:rec.role,brands:rec.role==="admin"?Object.keys(keys):(rec.brands||Object.keys(keys))};
+  blSessSave(raws);
   if(rec.role==="admin")blSyncVerifiers(u).catch(()=>{});
 }
 async function vaultSetup(name,uname,pass){
@@ -1827,6 +1879,69 @@ function viewHome(c){
    ${marketBand(c)}
   </section>`;
 }
+/* ---------- «Cómo vamos»: el inicio del dueño de la marca ---------- */
+const HOME_CARDS=[
+  ["plan","Avance del plan del mes"],["plan27","Plan 2027"],["funnel","Embudo de ventas"],["channels","Canales"],["ia","Visibilidad en IA"],
+  ["approved","Piezas aprobadas"],["agenda","Próximas publicaciones"],["prod","Producción de contenido"],["mix","Mezcla de contenido"],
+  ["heat","Mapa de publicaciones"],["tracker","Indicadores"],["history","Historial"]];
+const HOME_DEF=["plan","plan27","funnel","ia","approved","agenda"];
+const homeSel=()=>{const l=(S.homePref&&Array.isArray(S.homePref.cards))?S.homePref.cards:HOME_DEF;return HOME_CARDS.map(x=>x[0]).filter(k=>l.includes(k))};
+function iaCard(c){
+  const d=S.iaS;const on=d&&d.engines?Object.values(d.engines).filter(e=>!e.off):[];
+  return `<button class="card d6 iac" data-act="view" data-v="geo"><span class="mlabel">Visibilidad en IA</span>${on.length?`<div class="iarow">${on.map(e=>`<span><b>${e.hits} de ${e.asked}</b><span>${esc(e.name)}</span></span>`).join("")}</div><span class="msub">Respuestas que mencionan a ${esc(c.name)} · medido el ${esc(d.day||"")}</span>`:`<span class="msub">La primera medición sale en el próximo turno de madrugada.</span>`}</button>`;
+}
+function iaBlock(c){
+  const d=S.iaS;if(!d||!d.engines)return "";
+  const on=Object.values(d.engines).filter(e=>!e.off),hits=(d.rows||[]).filter(r=>Object.values(r.r||{}).some(v=>v&&v.m));
+  return `<section class="dash" style="${cvars(c)};--c2:var(--c);margin-bottom:18px"><article class="card d12 iab"><h2 class="t">¿Las IA recomiendan a ${esc(c.name)}?</h2>
+   <p class="s">Le hicimos ${(d.rows||[]).length} preguntas reales de posibles clientes a cada IA (${esc(d.day||"")}).</p>
+   <div class="iarow">${on.map(e=>`<span><b>${e.hits} de ${e.asked}</b><span>${esc(e.name)}</span></span>`).join("")}</div>
+   ${hits.length?`<h3>Dónde sí aparece</h3><ul>${hits.slice(0,6).map(r=>`<li><b>${esc(r.q)}</b><br><span class="s">${Object.entries(r.r).filter(([,v])=>v&&v.m).map(([k,v])=>esc((d.engines[k]||{}).name||k)+": «"+esc(String(v.snip||"").slice(0,220))+"…»").join("<br>")}</span></li>`).join("")}</ul>`:`<p>Todavía no aparece en ninguna respuesta. El equipo ya está trabajando en qué publicar para entrar.</p>`}
+  </article></section>`;
+}
+function homeCardHTML(k,c,K,pct){
+  const done=K.approved+K.published;
+  if(k==="plan"){const pi=planInfo();const ml=monthLabel(S.month);return meshCard("warm","Avance del plan del mes",pct==null?"—":pi.fut?"—":pct+"%",pct==null?"Aún sin plan para "+ml:pi.fut?ml+" aún no empieza":!pi.k?"Ningún objetivo de "+ml+" tiene dato todavía":`${ml} · ${pi.k} de ${pi.n} objetivos con dato`,"plan","plan")}
+  if(k==="plan27"){const ok=!!(S.plan27&&S.plan27.out);return `<button class="card d3 mesh cool" data-act="view" data-v="plan"><span class="mlabel">Plan 2027</span><span class="mico">${ic("plan")}</span><span><span class="big">${ok?"Listo":"En camino"}</span><span class="msub">${ok?"Dónde estar y qué mover el próximo año":"El equipo lo está preparando"}</span></span></button>`}
+  if(k==="approved")return meshCard("brand","Piezas aprobadas",(K.total?Math.round(done/K.total*100):0)+"%",`${done} de ${K.total} piezas listas`,"posts","posts");
+  if(k==="agenda")return upcomingCard(c);
+  if(k==="funnel")return funnelCard();
+  if(k==="channels")return channelsCard();
+  if(k==="ia")return iaCard(c);
+  if(k==="prod")return prodCard();
+  if(k==="mix")return mixCard();
+  if(k==="heat")return heatCard(c);
+  if(k==="tracker")return trackerCard();
+  if(k==="history")return historyCard(c);
+  return "";
+}
+function viewHomeClient(c){
+  const K=postCounts(),pct=planPct(),rev=(S.ofTasks||[]).filter(t=>t.st==="revisar").sort((a,b)=>(a.ua||0)-(b.ua||0));
+  const nm=id=>((OF_AG.find(a=>a[0]===id)||[])[1])||id;
+  const brief=t=>String(t.brief||"").replace(/^Rutina( de madrugada)?:\s*/i,"");
+  const ask=rev.length||K.pending,sel=homeSel();
+  return `<section class="dash-head"><div><h1>Cómo vamos</h1><p class="sub">${esc(c.name)} de un vistazo: primero el plan, luego las campañas, el contenido y los resultados.</p></div>
+   <div class="row">${rangeSeg()}<button class="btn" data-act="homeEdit" aria-expanded="${!!S.homeEdit}">${ic("plus")} Elegir qué ver</button></div></section>
+  <section class="dash" style="${cvars(c)};--c2:var(--c)">
+   ${S.homeEdit?`<article class="card d12 hpick"><h2 class="t">¿Qué quieres ver en tu inicio?</h2><p class="s">Marca las métricas que te interesan. Se guardan para tu marca.</p><div class="hchecks">${HOME_CARDS.map(([k,l])=>`<label><input type="checkbox" data-act="homeCard" data-k="${k}" ${sel.includes(k)?"checked":""}> ${esc(l)}</label>`).join("")}</div><div class="row" style="margin-top:12px"><button class="btn ink sm" data-act="homeEdit">Listo</button></div></article>`:""}
+   <article class="card d12 hask"><h2 class="t">${ask?"Necesitamos tu aprobación":"Todo al día"}</h2>
+    <p class="s">${ask?"Nada se publica sin tu visto bueno. Revisa y aprueba, o pide cambios.":"No hay nada esperando tu aprobación."}</p>
+    ${K.pending?`<div class="hitem"><span><b>${K.pending} ${K.pending===1?"pieza de contenido":"piezas de contenido"}</b><span class="s">Posts de la parrilla por aprobar</span></span><button class="btn sm" data-act="pendingPosts">Revisar ${ic("arrow")}</button></div>`:""}
+    ${rev.map(t=>`<div class="hitem"><span><b>${esc(brief(t).slice(0,90))}${brief(t).length>90?"…":""}</b><span class="s">${esc(nm(t.agent))} · lista para revisar${t.ver>1?" · versión "+t.ver:""}</span></span><span class="row"><button class="btn sm" data-act="ofOpen" data-id="${esc(t.id)}">Ver</button><button class="btn ok sm" data-act="ofApprove" data-id="${esc(t.id)}">Aprobar</button></span></div>`).join("")}
+   </article>
+   ${sel.map(k=>homeCardHTML(k,c,K,pct)).join("")}
+  </section>${ofSheet(c)}`;
+}
+function ofSheet(c){
+  const t=S.ofView&&(S.ofTasks||[]).find(x=>x.id===S.ofView);if(!t)return "";
+  const nm=((OF_AG.find(a=>a[0]===t.agent)||[])[1])||t.agent;
+  return `<div class="ofsheet" role="dialog" aria-modal="true" aria-label="Entrega de ${esc(nm)}"><div class="ofs-in"><button class="icbtn sm ofs-x" data-act="ofClose" aria-label="Cerrar">×</button>
+   <span class="s">${esc(nm)}${t.ver>1?" · versión "+t.ver:""}</span><h2>${esc(String(t.brief||"").replace(/^Rutina( de madrugada)?:\s*/i,"").slice(0,160))}</h2>
+   <div class="ofs-body">${ofMd(String(t.out||"").split(/\n\s*#{1,4}\s*Para tu revisi[oó]n/i)[0])}</div>
+   ${t.st==="revisar"?`<div class="ofs-fb"><label class="s" for="offb">¿Qué debe cambiar? (solo si pides cambios)</label><textarea id="offb" data-draft="offb" rows="3" maxlength="2000" placeholder="Hazlo más corto, cambia el enfoque, usa otro dato…"></textarea>
+   <div class="row"><button class="btn ok" data-act="ofApprove" data-id="${esc(t.id)}">Aprobar</button><button class="btn" data-act="ofChanges" data-id="${esc(t.id)}">Pedir cambios</button></div></div>`:`<p class="s">Estado: ${esc(t.st)}</p>`}
+  </div></div>`;
+}
 function profileCard(c,pct,k){
   const lf=logoFor(c,false);const p=pct==null?0:pct;
   return `<article class="card prof d3 r2"><div class="ph" style="width:100%"><h2 class="t" style="text-align:left">Marca</h2><button class="icbtn sm" data-act="view" data-v="brand" aria-label="Editar perfil de marca">${ic("arrow")}</button></div>
@@ -1840,7 +1955,7 @@ function meshCard(kind,label,big,sub,v,icon){
 function upcomingCard(c){
   const t=todayStr();const ps=S.posts.filter(p=>p.date&&p.date>=t).sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||""))).slice(0,4);
   const evs=S.events.filter(e=>e.date&&e.date>=t&&e.status!=="descartar").sort((a,b)=>a.date.localeCompare(b.date)).slice(0,Math.max(1,4-ps.length));
-  const rows=[...ps.map(p=>`<li><div class="what"><span class="up-when">${esc(dShort(p.date))}${p.time?" · "+esc(p.time):""}</span><b title="${esc(p.title)}">${esc(p.title)}</b><span style="${chVar(p.channel)}"><i class="dot"></i>${esc(chLabel(p.channel))}${p.format?" · "+esc(p.format):""}</span></div><button class="icbtn sm ghost" data-act="goPost" data-id="${esc(p.id)}" aria-label="Abrir ${esc(p.title)}">${ic("arrow")}</button></li>`),
+  const rows=[...ps.map(p=>`<li><div class="what"><span class="up-when">${esc(dShort(p.date))}${p.time?" · "+esc(p.time):""}</span><b title="${esc(p.title)}">${esc(p.title)}</b><span style="${chVar(p.channel)}">${chIco(p.channel)}${p.format?" · "+esc(p.format):""}</span></div><button class="icbtn sm ghost" data-act="goPost" data-id="${esc(p.id)}" aria-label="Abrir ${esc(p.title)}">${ic("arrow")}</button></li>`),
     ...evs.map(e=>`<li><div class="what"><span class="up-when">${esc(dShort(e.date))} · ${daysTo(e.date)===0?"Hoy":"en "+daysTo(e.date)+" días"}</span><b title="${esc(e.name)}">${esc(e.name)}</b><span><i class="dot" style="background:var(--warn)"></i>Evento${e.country?" · "+esc(e.country):""}</span></div><button class="icbtn sm ghost" data-act="view" data-v="events" aria-label="Ver evento ${esc(e.name)}">${ic("arrow")}</button></li>`)];
   return `<article class="card d3 r2 upcoming"><div class="ph"><h2 class="t">Próximo en agenda</h2><button class="icbtn sm" data-act="view" data-v="cal" aria-label="Abrir calendario">${calIc()}</button></div>
    ${rows.length?`<ul>${rows.join("")}</ul>`:`<p class="s">Nada programado todavía. Dale fecha a tus posts y aparecerán aquí.</p>`}
@@ -1876,6 +1991,8 @@ function officeSubs(id){
   if(PORTAL||!V.user||!S.rawdb)return;
   const hot=()=>{if(S.view==="home"||S.view==="office"||S.view==="plan")render()};
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/plan2027`).onSnapshot(d=>{if(S.cid!==id)return;S.plan27=d.exists?d.data():null;S.plan27L=true;hot()},()=>{}));
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/home`).onSnapshot(d=>{if(S.cid!==id)return;S.homePref=d.exists?d.data():null;hot()},()=>{}));
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/iasearch`).onSnapshot(d=>{if(S.cid!==id)return;S.iaS=d.exists?d.data():null;if(S.view==="geo")render();else hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/office`).onSnapshot(d=>{if(S.cid!==id)return;S.ofPub=d.exists?d.data():null;hot()},()=>{}));
   unsubs.push(S.rawdb.collection(`office/${id}/tasks`).onSnapshot(s=>{if(S.cid!==id)return;S.ofTasks=s.docs.map(d=>({...d.data(),id:d.id}));if(ofAdm()){clearTimeout(OF.pubT);OF.pubT=setTimeout(()=>ofPublish(id),1200)}hot()},()=>{}));
 }
@@ -2051,7 +2168,7 @@ function areasCard(){
 function historyCard(c){
   const ps=[...S.posts].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,8);
   return `<article class="card d8 history" style="align-self:start"><div class="ph"><div class="t"><h2>Últimas piezas</h2><span class="s">Contenido creado para la web y redes</span></div><button class="btn sm" data-act="view" data-v="posts">Ver todas ${ic("right")}</button></div>
-   ${ps.length?`<div style="overflow-x:auto"><table class="htable"><thead><tr><th>Pieza</th><th>Red</th><th>Fecha</th><th>Estado</th><th><span class="sr">Abrir</span></th></tr></thead><tbody>${ps.map(p=>`<tr><td><div class="hp"><span class="hth" style="${chVar(p.channel)}">${esc((p.format||"P").slice(0,1))}</span><span><b>${esc(p.title)}</b><span class="s">${esc(p.format||"")}</span></span></div></td><td><span class="chan" style="${chVar(p.channel)}"><i class="dot"></i>${esc(chLabel(p.channel))}</span></td><td class="nowrap">${p.date?esc(dShort(p.date)):"<span class='s'>Sin fecha</span>"}${p.time?`<span class="s" style="display:block">${esc(p.time)}</span>`:""}</td><td><span class="pill st-${esc(p.status)}">${esc(STATUS[p.status]||"")}</span></td><td><button class="icbtn sm ghost" data-act="goPost" data-id="${esc(p.id)}" aria-label="Abrir ${esc(p.title)}">${ic("arrow")}</button></td></tr>`).join("")}</tbody></table></div>`:`<p class="s">Aún no hay piezas. Crea la primera con IA.</p>`}</article>`;
+   ${ps.length?`<div style="overflow-x:auto"><table class="htable"><thead><tr><th>Pieza</th><th>Red</th><th>Fecha</th><th>Estado</th><th><span class="sr">Abrir</span></th></tr></thead><tbody>${ps.map(p=>`<tr><td><div class="hp"><span class="hth" style="${chVar(p.channel)}">${esc((p.format||"P").slice(0,1))}</span><span><b>${esc(p.title)}</b><span class="s">${esc(p.format||"")}</span></span></div></td><td><span class="chan" style="${chVar(p.channel)}">${chIco(p.channel)}</span></td><td class="nowrap">${p.date?esc(dShort(p.date)):"<span class='s'>Sin fecha</span>"}${p.time?`<span class="s" style="display:block">${esc(p.time)}</span>`:""}</td><td><span class="pill st-${esc(p.status)}">${esc(STATUS[p.status]||"")}</span></td><td><button class="icbtn sm ghost" data-act="goPost" data-id="${esc(p.id)}" aria-label="Abrir ${esc(p.title)}">${ic("arrow")}</button></td></tr>`).join("")}</tbody></table></div>`:`<p class="s">Aún no hay piezas. Crea la primera con IA.</p>`}</article>`;
 }
 function promoCard(c){
   return `<button class="card promo d4" data-act="view" data-v="loop"><span class="pchip">Loop · IA ${loopSvg(3)}</span><span class="ptitle">Pídele a Loop tu próxima campaña</span><span class="psub">Posts, respuestas a clientes, plan y pauta, con el contexto de ${esc(c.name)}.</span><span class="parrow">${ic("arrow")}</span>
@@ -2103,7 +2220,7 @@ function calendarPanel(c){
    <button class="btn round" data-act="week" data-n="-7" aria-label="Semana anterior">${ic("left")}</button><button class="btn round" data-act="week" data-n="7" aria-label="Semana siguiente">${ic("right")}</button></div>
    <div class="inner cal-wrap"><div class="cal">${days.map(d=>{const ps=S.posts.filter(p=>p.date===d);const dd=parseD(d);
      return `<div class="day ${d===t?"today":""}"><div class="dh">${dd.toLocaleDateString("es",{weekday:"short"})} ${dd.getDate()}</div>
-     ${ps.map(p=>`<button class="evt" style="${chVar(p.channel)}" data-act="goPost" data-id="${esc(p.id)}"><b>${esc(p.title)}</b><span><i class="dot" style="display:inline-block;margin-right:4px"></i>${esc(chLabel(p.channel))} · ${esc(STATUS[p.status]||"")}</span></button>`).join("")}</div>`}).join("")}</div></div>
+     ${ps.map(p=>`<button class="evt" style="${chVar(p.channel)}" data-act="goPost" data-id="${esc(p.id)}"><b>${esc(p.title)}</b><span>${chIco(p.channel)} · ${esc(STATUS[p.status]||"")}</span></button>`).join("")}</div>`}).join("")}</div></div>
    ${undated?`<p class="hint">${undated} post${undated>1?"s":""} sin fecha. Asígnales fecha en Posts para verlos aquí.</p>`:""}</article>`;
 }
 
@@ -2139,7 +2256,7 @@ function postToolbar(c,counts){
     <span class="spacer"></span>${art}
     <details class="ptb-more"><summary class="btn sm" aria-label="Importar o descargar">CSV ${ic("chev")}</summary><div class="ptb-menu">${S.canWrite?`<label for="csv-in" style="cursor:pointer">Importar parrilla (.csv)</label><input type="file" id="csv-in" accept=".csv,text/csv" hidden>`:""}<button data-act="exportCSV" ${S.dl&&S.posts.length?"":"disabled"}>Descargar parrilla (.csv)</button></div></details></div>
    <div class="ptb-row"><span class="ptb-l">Mes</span><div class="chips" role="group" aria-label="Mes">${mk.keys.map(k=>`<button data-act="mf" data-v="${k}" aria-pressed="${mfv===k}">${esc(monthLabel(k))} <em>${mk.n[k]}</em></button>`).join("")}${mk.nod?`<button data-act="mf" data-v="none" aria-pressed="${mfv==="none"}">Sin fecha <em>${mk.nod}</em></button>`:""}<button data-act="mf" data-v="all" aria-pressed="${mfv==="all"}">Todos <em>${mk.all}</em></button></div></div>
-   <div class="ptb-row"><span class="ptb-l">Canal</span><div class="chips" role="group" aria-label="Canal"><button data-act="pf" data-v="all" aria-pressed="${S.pf==="all"}">Todos <em>${counts.all}</em></button>${chs.map(ch=>`<button data-act="pf" data-v="${ch}" aria-pressed="${S.pf===ch}" style="${chVar(ch)}"><i class="dot"></i>${esc(chLabel(ch))} <em>${counts[ch]}</em></button>`).join("")}</div></div>
+   <div class="ptb-row"><span class="ptb-l">Canal</span><div class="chips" role="group" aria-label="Canal"><button data-act="pf" data-v="all" aria-pressed="${S.pf==="all"}">Todos <em>${counts.all}</em></button>${chs.map(ch=>`<button data-act="pf" data-v="${ch}" aria-pressed="${S.pf===ch}" style="${chVar(ch)}">${chIco(ch)} <em>${counts[ch]}</em></button>`).join("")}</div></div>
    <div class="ptb-row"><span class="ptb-l">Estado</span><div class="chips" role="group" aria-label="Estado"><button data-act="sf" data-v="all" aria-pressed="${S.sf==="all"}">Todos <em>${sc.all}</em></button>${Object.entries(STATUS).map(([k,v])=>`<button data-act="sf" data-v="${k}" aria-pressed="${S.sf===k}" class="sfc st-${k}" ${sc[k]||S.sf===k?"":"disabled"}><i class="sd"></i>${v} <em>${sc[k]}</em></button>`).join("")}</div></div>
   </section>`;
 }
@@ -2242,10 +2359,10 @@ function postCard(p,c){
   const dlx=Array.isArray(p.downloads)?p.downloads.filter(d=>d&&d.url&&String(d.url).startsWith(window.BL_SB_URL+"/storage/v1/object/public/assets/")):[];
   const media=(!dlx.length&&vidOk&&!dz)?`<div class="row" style="gap:6px"><a class="btn sm" href="${esc(p.video)}?download=${encodeURIComponent((p.title||"video").replace(/[^\w\s-]/g,"").trim().slice(0,60)+".mp4")}" target="_blank" rel="noopener">Descargar video</a></div>`:dlx.length?`<div class="row" style="gap:6px;flex-wrap:wrap">${dlx.map((d,j)=>`<a class="btn sm" href="${esc(d.url)}?download=${encodeURIComponent(d.name||"")}" target="_blank" rel="noopener">${/\.pdf$/i.test(d.name||d.url)?"Descargar PDF (LinkedIn)":"Descargar videos (.zip)"}</a>`).join("")}</div>`:dz?(S.dl?`<div class="row" style="gap:6px"><button class="btn sm" data-act="dlDesign" data-id="${esc(p.id)}" ${S.busyX==="dz-"+p.id?"disabled":""}>${S.busyX==="dz-"+p.id?"Preparando…":D.slides.length>1?"Descargar imágenes (.zip)":"Descargar imagen"}</button><button class="btn sm" data-act="dlDesignPdf" data-id="${esc(p.id)}" ${S.busyX==="pdf-"+p.id?"disabled":""}>${S.busyX==="pdf-"+p.id?"Preparando PDF…":"Descargar PDF (LinkedIn)"}</button></div>`:""):S.dl?`<div class="row" style="gap:6px">${k==="motion"||k==="video"?`<button class="btn sm" data-act="dlVideo" data-id="${esc(p.id)}" ${S.busyX==="vid-"+p.id?"disabled":""}>${S.busyX==="vid-"+p.id?"Grabando video…":"Descargar video"}</button>`:""}${k==="carousel"&&scenes.length>1?`<button class="btn sm" data-act="dlZip" data-id="${esc(p.id)}">Descargar todas (.zip)</button><button class="btn sm" data-act="dlCarVid" data-id="${esc(p.id)}" ${S.busyX==="vid-"+p.id?"disabled":""}>${S.busyX==="vid-"+p.id?"Grabando…":"Carrusel en video"}</button>`:`<button class="btn sm" data-act="dlImg" data-id="${esc(p.id)}">Descargar imagen</button>`}</div>`:"";
   return `<article class="post ${(dz?D.slides.length>1:k==="carousel"&&scenes.length>1)?"wide":""}" id="post-${esc(p.id)}" style="${cvars(c)}">
-   <div class="post-h">${monoHTML(c,"")}<div class="n"><b>${esc(c.name)}</b><span>${esc(p.format||"Post")} · ${vars.length?vars.map(v=>esc(chLabel(v.network))).join(" · "):esc(chLabel(p.channel))}${p.date?" · "+esc(fmtD(p.date)):""}</span></div><span class="pill st-${esc(p.status)}">${esc(STATUS[p.status]||p.status)}</span></div>
+   <div class="post-h">${monoHTML(c,"")}<div class="n"><b>${esc(c.name)}</b><span>${esc(p.format||"Post")} · ${vars.length?vars.map(v=>chIco(v.network)).join(""):chIco(p.channel)}${p.date?" · "+esc(fmtD(p.date)):""}</span></div><span class="pill st-${esc(p.status)}">${esc(STATUS[p.status]||p.status)}</span></div>
    ${visualOut}
    <div class="post-b"><h3>${esc(p.title)}</h3>
-    ${vars.length>1?`<div class="vtabs" role="tablist">${vars.map(v=>`<button role="tab" data-act="varTab" data-id="${esc(p.id)}" data-v="${esc(v.network)}" aria-selected="${v===vt}" style="${chVar(v.network)}"><i class="dot"></i>${esc(chLabel(v.network))}</button>`).join("")}</div>`:""}
+    ${vars.length>1?`<div class="vtabs" role="tablist">${vars.map(v=>`<button role="tab" data-act="varTab" data-id="${esc(p.id)}" data-v="${esc(v.network)}" aria-selected="${v===vt}" style="${chVar(v.network)}">${chIco(v.network)}</button>`).join("")}</div>`:""}
     <div class="cap ${isOpen?"open":""}">${esc(copy)}</div>${copy.length>260?`<button class="btn ghost sm" style="align-self:flex-start;padding:0" data-act="cap" data-id="${esc(p.id)}">${isOpen?"Ver menos":"Ver todo el texto"}</button>`:""}
     ${tags.length?`<div class="tags">${tags.map(esc).join(" ")}</div>`:""}
     ${vt?`<button class="btn ghost sm" style="align-self:flex-start;padding:0" data-act="copyVar" data-id="${esc(p.id)}">${ic("copy")} Copiar copy de ${esc(chLabel(vt.network))}</button>`:""}
@@ -2274,7 +2391,7 @@ function genPanel(c){
   else if(g.piece&&g.cid===c.id){const p=g.piece;out=`<div class="inner" style="display:flex;flex-direction:column;gap:12px"><div class="ph"><div class="t"><span class="eyebrow">${esc(p.format)} · ${esc(LANGS[p.lang]||p.lang)}</span><h3 style="font-size:18px">${esc(p.title)}</h3></div>${p.saved?`<span class="pill st-approved">Guardado en la parrilla</span>`:`<button type="button" class="btn ink sm" data-act="savePiece">Guardar en la parrilla</button>`}</div>
     ${kindOf(p.format)==="carousel"&&p.scenes?.length>1?carouselStrip(p,"__gen"):`<div class="vis canvas" style="max-width:340px;border-radius:18px"><canvas class="pv" data-pid="__gen" role="img" aria-label="Vista previa de la pieza"></canvas></div>`}
     ${p.onscreen?.headline?`<div class="note"><b>Texto en pantalla:</b> ${esc(p.onscreen.headline)}${p.onscreen.sub?" · "+esc(p.onscreen.sub):""}${p.onscreen.cta?" · "+esc(p.onscreen.cta):""}</div>`:""}
-    <div class="grid2">${p.variants.map(v=>`<div class="inner" style="border:1px solid var(--line);display:flex;flex-direction:column;gap:8px"><span class="chip" style="align-self:flex-start;${chVar(v.network)}"><i class="dot"></i>${esc(chLabel(v.network))}</span><div class="cap open">${esc(v.copy)}</div>${v.hashtags?.length?`<div class="tags">${v.hashtags.map(esc).join(" ")}</div>`:""}</div>`).join("")}</div>
+    <div class="grid2">${p.variants.map(v=>`<div class="inner" style="border:1px solid var(--line);display:flex;flex-direction:column;gap:8px"><span class="chip" style="align-self:flex-start;${chVar(v.network)}">${chIco(v.network)}</span><div class="cap open">${esc(v.copy)}</div>${v.hashtags?.length?`<div class="tags">${v.hashtags.map(esc).join(" ")}</div>`:""}</div>`).join("")}</div>
     ${p.scenes?.length?`<div class="note"><b>${kindOf(p.format)==="carousel"?"Diapositivas":"Escenas"}:</b><ol style="margin:6px 0 0;padding-left:18px">${p.scenes.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`:""}
     ${p.skipped?`<p class="hint">${esc(p.skipped)}</p>`:""}</div>`}
   return `<form class="panel" data-form="gen"><div class="ph"><div class="t"><h2>Agente de parrilla</h2><span class="s">Una pieza con copy adaptado a cada red, en la voz de ${esc(c.name)}</span></div><button type="button" class="x" data-act="toggleGen" aria-label="Cerrar">${ic("x")}</button></div>
@@ -2282,7 +2399,7 @@ function genPanel(c){
    <div class="grid3"><div class="field"><label for="gen-fmt">Formato</label><select id="gen-fmt" data-draft="gen-fmt">${MFORMATS.map(f=>`<option>${esc(f)}</option>`).join("")}</select></div>
    <div class="field"><label for="gen-lang">Idioma</label><select id="gen-lang" data-draft="gen-lang"><option value="es" ${lang==="es"?"selected":""}>Español</option><option value="en" ${lang==="en"?"selected":""}>English</option></select></div>
    <div class="field"><label for="gen-date">Fecha en la parrilla</label><input type="date" id="gen-date" data-draft="gen-date"></div></div>
-   <div class="field"><span class="lbl2">Redes</span><div class="filters">${NETS.map(n=>`<button type="button" data-act="genNet" data-v="${n}" aria-pressed="${nets.includes(n)}" style="${chVar(n)}"><i class="dot"></i>${esc(chLabel(n))}</button>`).join("")}</div>${nets.includes("TikTok")?`<span class="hint">TikTok se incluye solo si la pieza funciona ahí (sobre todo video).</span>`:""}</div>
+   <div class="field"><span class="lbl2">Redes</span><div class="filters">${NETS.map(n=>`<button type="button" data-act="genNet" data-v="${n}" aria-pressed="${nets.includes(n)}" style="${chVar(n)}">${chIco(n)}</button>`).join("")}</div>${nets.includes("TikTok")?`<span class="hint">TikTok se incluye solo si la pieza funciona ahí (sobre todo video).</span>`:""}</div>
    <div class="field"><label for="gen-extra">Indicaciones extra (opcional)</label><input type="text" id="gen-extra" data-draft="gen-extra" placeholder="Ej. tono más cercano, CTA a demo"></div>
    <div class="row"><button class="btn accent" ${g.running?"disabled":""}>${ic("spark")} ${g.piece?"Generar otra versión":"Generar pieza"}</button></div>${out}</form>`;
 }
@@ -3306,7 +3423,7 @@ function metricCard(m){
   const inverse=/costo/i.test(m.name);
   const good=dlt==null?null:inverse?dlt<=0:dlt>=0;
   const tgt=Number(m.target);const tp=last&&tgt?Math.min(100,Math.round(Number(last.v)/tgt*100)):null;
-  return `<article class="panel"><div class="ph"><div class="t"><h2>${esc(m.name)}</h2><span class="s" style="display:inline-flex;gap:6px;align-items:center;${chVar(m.channel)}"><i class="dot"></i>${esc(chLabel(m.channel||""))}${last?" · "+esc(mLabel(last.m)):""}</span></div>${S.canWrite?(S.confirm===m.id?`<button class="btn sm" style="color:var(--bad)" data-act="delMetric" data-id="${esc(m.id)}">Eliminar</button><button class="btn ghost sm" data-act="cancelDel">No</button>`:`<button class="x" data-act="askDel" data-id="${esc(m.id)}" aria-label="Eliminar tracker">${ic("x")}</button>`):""}</div>
+  return `<article class="panel"><div class="ph"><div class="t"><h2>${esc(m.name)}</h2><span class="s" style="display:inline-flex;gap:6px;align-items:center;${chVar(m.channel)}">${chIco(m.channel||"")}${last?" · "+esc(mLabel(last.m)):""}</span></div>${S.canWrite?(S.confirm===m.id?`<button class="btn sm" style="color:var(--bad)" data-act="delMetric" data-id="${esc(m.id)}">Eliminar</button><button class="btn ghost sm" data-act="cancelDel">No</button>`:`<button class="x" data-act="askDel" data-id="${esc(m.id)}" aria-label="Eliminar tracker">${ic("x")}</button>`):""}</div>
    <div class="inner" style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;align-items:baseline;gap:10px"><span style="font:500 34px var(--display);font-variant-numeric:tabular-nums">${last?esc(fmtNum(last.v,m.unit)):"—"}</span>${dlt!=null?`<span class="pill" style="--pc:${good?"var(--ok)":"var(--bad)"}">${dlt>0?"+":""}${dlt}% vs mes anterior</span>`:""}</div>
    ${sparkline(pts.map(x=>({m:mLabel(x.m),v:x.v})),m.unit)}
    ${m.note?`<p class="hint" style="margin:0">${esc(m.note)}</p>`:""}
@@ -3353,7 +3470,7 @@ function viewCal(c){
     cells.push(`<div class="mc ${ds===t?"today":""} ${rec?"rec":""}"><div class="mc-h"><span>${d}</span>${rec?`<span class="rec-tag" title="Día recomendado para ${esc(net)}">top</span>`:""}</div>${pubGroups.filter(g=>g.d===ds).map(g=>`<a class="mc-e mc-pub" href="${esc(g.url||"#")}" target="_blank" rel="noopener" title="Publicado en ${esc(g.nets.join(", "))}: ${esc(g.text)}" style="${chVar(g.nets[0])}"><span class="dots">${g.nets.map(n=>`<i class="dot" style="${chVar(n)}"></i>`).join("")}</span><span class="mc-t"><b>✓</b> ${esc(String(g.text||"Publicación").replace(/\s+/g," ").slice(0,70))}</span></a>`).join("")}${list.map(p=>{const nets=(p.variants||[]).length?p.variants.map(v=>v.network):[p.channel];return `<button class="mc-e" data-act="goPost" data-id="${esc(p.id)}" style="${chVar(nets[0])}"><span class="dots">${nets.map(n=>`<i class="dot" style="${chVar(n)}"></i>`).join("")}</span><span class="mc-t">${p.time?`<b>${esc(p.time)}</b> `:""}${esc(p.title)}</span></button>`}).join("")}</div>`)}
   return `<section class="greet"><div class="hello"><h1>Calendario de publicación</h1><p class="sub">${esc(c.name)} · ${esc(monthLabel(S.month))}${net!=="all"?" · "+esc(chLabel(net)):""} · ${pubGroups.length+ps.filter(p=>p.status==="published").length} publicadas · ${ps.filter(p=>p.status!=="published").length} programadas</p></div>
    <div class="row"><button class="btn round" data-act="month" data-n="-1" aria-label="Mes anterior">${ic("left")}</button><button class="btn round" data-act="month" data-n="1" aria-label="Mes siguiente">${ic("right")}</button></div></section>
-   <div class="filters" role="group" aria-label="Red"><button data-act="calNet" data-v="all" aria-pressed="${net==="all"}">Todas las redes</button>${["Instagram","Facebook","TikTok","LinkedIn","Web","Email"].map(n=>`<button data-act="calNet" data-v="${n}" aria-pressed="${net===n}" style="${chVar(n)}"><i class="dot"></i>${esc(chLabel(n))}</button>`).join("")}</div>
+   <div class="filters" role="group" aria-label="Red"><button data-act="calNet" data-v="all" aria-pressed="${net==="all"}">Todas las redes</button>${["Instagram","Facebook","TikTok","LinkedIn","Web","Email"].map(n=>`<button data-act="calNet" data-v="${n}" aria-pressed="${net===n}" style="${chVar(n)}">${chIco(n)}</button>`).join("")}</div>
    ${S.canWrite?(()=>{const st=S.drafts["dist-start"]||"2026-11-04";const dw=S.distDows||[1,2,3,4];const pl=planDistribute(st,dw);const DL=[[1,"Lun"],[2,"Mar"],[3,"Mié"],[4,"Jue"],[5,"Vie"],[6,"Sáb"],[0,"Dom"]];
      return `<details class="dist" ${S.distOpen?"open":""}><summary>${calIc()} <b>Repartir la parrilla</b><span class="hint">${pl.length?pl.length+" piezas sin fecha o con fecha pasada":"Todo tiene fecha a partir del inicio"}</span></summary>
      <div class="dist-b"><div class="field"><label for="dist-start">Empezar a publicar el</label><input type="date" id="dist-start" data-draft="dist-start" data-act-change="distStart" value="${esc(st)}"></div>
@@ -3885,7 +4002,7 @@ function campDetail(c,k){
    <article class="panel" style="background:var(--loop);color:var(--on-loop);border-color:transparent"><span class="eyebrow" style="color:var(--on-loop);opacity:.8">Concepto</span><h2 style="font-size:clamp(22px,2.6vw,30px);line-height:1.2">${esc(pl.tagline||k.name)}</h2><p style="font-size:15px;opacity:.92">${esc(pl.concept||"")}</p>${pl.hashtag?`<span style="font-weight:700">${esc(pl.hashtag)}</span>`:""}
     ${(k.logos||[]).length?`<div class="row" style="gap:10px;margin-top:6px">${k.logos.map(l=>`<img src="${esc(l.url)}" alt="${esc(l.name)}" style="height:40px;width:auto;background:#fff;border-radius:10px;padding:4px">`).join("")}</div>`:""}</article>
    <div class="phases">${phases.map((ph,i)=>`<article class="panel"><div class="ph"><span class="mono" style="--c:var(--accent);--c-on:var(--on-accent)">${i+1}</span><div class="t"><h2>${esc(ph.name)}</h2><span class="s">${ph.start?esc(fmtD(ph.start)):""}${ph.end&&ph.end!==ph.start?" – "+esc(fmtD(ph.end)):""}${ph.objective?" · "+esc(ph.objective):""}</span></div></div>
-    <div style="display:flex;flex-direction:column;gap:10px">${(ph.pieces||[]).map(p=>`<div class="inner" style="border:1px solid var(--line);display:flex;flex-direction:column;gap:6px"><div class="row" style="gap:6px;align-items:center"><span class="chip" style="${chVar(p.network)}"><i class="dot"></i>${esc(chLabel(p.network))}</span><span class="chip">${esc(p.format||"")}</span>${p.date?`<span class="hint">${esc(fmtD(p.date))}</span>`:""}</div><b>${esc(p.headline||p.title)}</b><div class="cap">${esc(p.copy||"")}</div></div>`).join("")}</div></article>`).join("")}</div>
+    <div style="display:flex;flex-direction:column;gap:10px">${(ph.pieces||[]).map(p=>`<div class="inner" style="border:1px solid var(--line);display:flex;flex-direction:column;gap:6px"><div class="row" style="gap:6px;align-items:center"><span class="chip" style="${chVar(p.network)}">${chIco(p.network)}</span><span class="chip">${esc(p.format||"")}</span>${p.date?`<span class="hint">${esc(fmtD(p.date))}</span>`:""}</div><b>${esc(p.headline||p.title)}</b><div class="cap">${esc(p.copy||"")}</div></div>`).join("")}</div></article>`).join("")}</div>
    ${pl.ads?campAds(pl.ads):""}`;
 }
 function campAds(a){
@@ -5030,7 +5147,7 @@ function viewPlan(c){
     ${S.canWrite?`<form class="row" data-form="obj" style="border-top:1px solid var(--line);padding-top:14px"><div class="field" style="flex:2 1 220px"><label for="ob-text">Objetivo</label><input type="text" id="ob-text" data-draft="ob-text" placeholder="Ej. Generar demos desde LinkedIn"></div><div class="field"><label for="ob-kpi">KPI</label><input type="text" id="ob-kpi" data-draft="ob-kpi" placeholder="Ej. Demos agendadas"></div><div class="field"><label for="ob-target">Meta</label><input type="text" id="ob-target" data-draft="ob-target" placeholder="Ej. 10"></div><button class="btn ink">Agregar</button></form>`:""}</div></article>
    <div class="stack"><article class="panel"><div class="ph"><div class="t"><h2>Enfoque del mes</h2></div></div>
     ${S.canWrite?`<form data-form="focus" style="display:flex;flex-direction:column;gap:10px"><textarea id="pl-focus" data-draft="pl-focus-${esc(S.month)}" placeholder="La idea central del mes">${esc(S.plan?.focus||"")}</textarea><button class="btn ink" style="align-self:flex-start">Guardar enfoque</button></form>`:`<div class="inner"><p>${esc(S.plan?.focus||"Sin enfoque definido.")}</p></div>`}</article>
-    <article class="panel"><div class="ph"><div class="t"><h2>Mezcla de canales</h2><span class="s">Publicado y programado este mes, por canal</span></div></div><div class="inner" style="display:flex;flex-direction:column;gap:10px">${(()=>{const pb=pubOf(S.month);const rows=CHANNELS.map(ch=>{const pub=pb.ch[ch]||0;const prog=monthPosts.filter(p=>p.channel===ch&&p.status!=="published").length;return [ch,pub,prog]}).filter(r=>r[1]+r[2]).sort((a,b)=>(b[1]+b[2])-(a[1]+a[2]));const mx=Math.max(1,...rows.map(r=>r[1]+r[2]));return rows.length?rows.map(([ch,pub,prog])=>`<div class="obj"><div class="top2"><b style="display:flex;gap:8px;align-items:center;${chVar(ch)}"><i class="dot"></i>${esc(chLabel(ch))}</b><span class="pct">${pub+prog}</span></div><div class="bar mixbar"><i style="width:${Math.round(pub/mx*100)}%"></i><i class="prog" style="width:${Math.round(prog/mx*100)}%"></i></div><span class="hint" style="font-size:11.5px">${pub} publicado${pub===1?"":"s"}${prog?" · "+prog+" programado"+(prog===1?"":"s"):""}</span></div>`).join(""):`<p class="hint">Todavía no hay publicaciones este mes.</p>`})()}</div></article></div>
+    <article class="panel"><div class="ph"><div class="t"><h2>Mezcla de canales</h2><span class="s">Publicado y programado este mes, por canal</span></div></div><div class="inner" style="display:flex;flex-direction:column;gap:10px">${(()=>{const pb=pubOf(S.month);const rows=CHANNELS.map(ch=>{const pub=pb.ch[ch]||0;const prog=monthPosts.filter(p=>p.channel===ch&&p.status!=="published").length;return [ch,pub,prog]}).filter(r=>r[1]+r[2]).sort((a,b)=>(b[1]+b[2])-(a[1]+a[2]));const mx=Math.max(1,...rows.map(r=>r[1]+r[2]));return rows.length?rows.map(([ch,pub,prog])=>`<div class="obj"><div class="top2"><b style="display:flex;gap:8px;align-items:center;${chVar(ch)}">${chIco(ch)}</b><span class="pct">${pub+prog}</span></div><div class="bar mixbar"><i style="width:${Math.round(pub/mx*100)}%"></i><i class="prog" style="width:${Math.round(prog/mx*100)}%"></i></div><span class="hint" style="font-size:11.5px">${pub} publicado${pub===1?"":"s"}${prog?" · "+prog+" programado"+(prog===1?"":"s"):""}</span></div>`).join(""):`<p class="hint">Todavía no hay publicaciones este mes.</p>`})()}</div></article></div>
    </section>
    ${planExtras()}`;
 }
@@ -5228,7 +5345,7 @@ async function autopilot(id){
 }
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
-  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.plan27=null; S.plan27L=false; officeSubs(id);
+  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.plan27=null; S.plan27L=false; officeSubs(id);
   S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.funnel=null;S.compass=null;S.compSum=null;["finance","adcalc","pautastrat","funnel","compass","prodstories","investPlan","webaudit","site"].forEach(k=>{S[k+"Seen"]=false;S[k+"Cid"]=null});Object.keys(S).forEach(k=>{if(k.startsWith("_raw_")&&!k.startsWith("_raw_"+id+"_"))delete S[k]});S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
   [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["funnel","funnel"],["compass","compass"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{const nv=x.exists?x.data():null;const js=JSON.stringify(nv);if(S.cid!==id)return;const rk="_raw_"+id+"_"+k;if(S[rk]===js&&S[k+"Seen"]&&S[k+"Cid"]===id)return;S[rk]=js;S[k+"Cid"]=id;S[k]=k==="finance"&&nv&&S.finDraft?{...nv,...S.finDraft}:k==="adcalc"&&S.calDirty&&S.adcalc?S.adcalc:nv;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
@@ -5434,18 +5551,18 @@ function updateQuoteTotals(){const q=S.quote;if(!q)return;const sub=q.items.redu
 /* ---------- toast ---------- */
 let tt;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,3200)}
 
-/* ---------- events ---------- */
+/* ---------- events ---------- */window.addEventListener("popstate",e=>{if(!V.user||S.gate)return;const hv=(e.state&&e.state.bl)||"home";const [v,t]=hv.split(":");S.view=v;if(t)S.trendTab=t;S.menu=false;S.ofView=null;render();window.scrollTo({top:0})});
 const A={
   officeOpen:()=>openOffice(),
   officeToggle:()=>officeToggle(),
   saveCalc:()=>saveCalc(),
-  view:b=>{const [v,t]=b.dataset.v.split(":");S.view=v;if(t)S.trendTab=t;S.menu=false;S.changeFor=null;S.confirm=null;render();window.scrollTo({top:0})},
+  view:b=>{const [v,t]=b.dataset.v.split(":");if(v!==S.view||t){try{history.pushState({bl:b.dataset.v},"","#"+b.dataset.v)}catch(e){}}S.view=v;if(t)S.trendTab=t;S.menu=false;S.changeFor=null;S.confirm=null;S.ofView=null;render();window.scrollTo({top:0})},
   gate:b=>{S.gate=b.dataset.v;S.gateErr=null;render()},
   pwToggle:b=>{const i=b.parentElement.querySelector("input");i.type=i.type==="password"?"text":"password";b.setAttribute("aria-label",i.type==="password"?"Mostrar contraseña":"Ocultar contraseña")},
   dlRecovery:()=>saveFile("brandloop-codigo-de-recuperacion.txt",new Blob([`Brandloop · código de recuperación de administradora\n\n${S.recoveryCode}\n\nGuárdalo en un lugar seguro. Sirve para recuperar el acceso a los datos si olvidas tu contraseña.`],{type:"text/plain"})),
   copyRecovery:async()=>{try{await blCopy(S.recoveryCode);toast("Código copiado")}catch(e){toast("No se pudo copiar; descárgalo")}},
   recoveryDone:()=>{S.recoveryCode=null;S.gate=null;S.view="access";S.vusers=null;startData();render()},
-  logout:async()=>{V.keys={};V.M=null;V.user=null;V.cache={};MRAW_SESSION=null;await BL_SIGNOUT();try{location.reload()}catch(e){S.gate="login";render()}},
+  logout:async()=>{blSessClear();V.keys={};V.M=null;V.user=null;V.cache={};MRAW_SESSION=null;await BL_SIGNOUT();try{location.reload()}catch(e){S.gate="login";render()}},
   bulkUsers:async()=>{const us=S.vusers||[];const has=cid=>us.some(u=>u.role!=="admin"&&(u.brands||[]).includes(cid));const miss=S.clients.filter(k=>!has(k.id));if(!miss.length)return;
     S.accBusy=true;render();const out=[];
     for(const k of miss){let base=unameOf(String(k.name||"").split(/\s+/)[0])||unameOf(k.id);let un=base;let n=2;while(us.some(u=>u.uname===un)||out.some(o=>o.uname===un)){un=base+n;n++}
@@ -5459,6 +5576,12 @@ const A={
   resetUser:async b=>{const u=(S.vusers||[]).find(x=>x.uname===b.dataset.id);if(!u)return;const pass=genPass();try{await vaultCreateUser({name:u.name,uname:u.uname,pass,role:u.role,brands:u.brands||[]});S.newCred={name:u.name,uname:u.uname,pass};await loadVaultUsers()}catch(e){toast(e.message||"No se pudo cambiar la contraseña")}},
   askDelUser:b=>{S.confirm="u:"+b.dataset.id;render()},
   delUser:async b=>{S.confirm=null;try{await S.rawdb.doc("vault_users/"+b.dataset.id).delete();toast("Acceso quitado");await loadVaultUsers()}catch(e){toast("No se pudo quitar el acceso")}},
+  homeEdit:()=>{S.homeEdit=!S.homeEdit;render()},
+  homeCard:b=>{const k=b.dataset.k,cur=homeSel(),next=cur.includes(k)?cur.filter(x=>x!==k):[...cur,k];S.homePref={cards:next};render();S.rawdb.doc(`clients/${S.cid}/docs/home`).set({cards:next,ua:Date.now()}).catch(()=>toast("No se pudo guardar"))},
+  ofOpen:b=>{S.ofView=b.dataset.id;S.drafts.offb="";render()},
+  ofClose:()=>{S.ofView=null;render()},
+  ofApprove:async b=>{const id=b.dataset.id;try{await S.rawdb.doc(`office/${S.cid}/tasks/${id}`).update({st:"aprobado",err:null,ua:Date.now(),by:V.user.uname});S.ofView=null;toast("Aprobado");render()}catch(e){toast("No se pudo aprobar")}},
+  ofChanges:async b=>{const id=b.dataset.id,fb=String(S.drafts.offb||"").trim();if(fb.length<3){toast("Escribe qué debe cambiar");document.getElementById("offb")?.focus();return}try{await S.rawdb.doc(`office/${S.cid}/tasks/${id}`).update({st:"cambios",fb:fb.slice(0,2000),err:null,ua:Date.now(),by:V.user.uname});S.ofView=null;S.drafts.offb="";toast("Listo: el equipo lo rehace esta madrugada");render()}catch(e){toast("No se pudo enviar")}},
   menu:()=>{S.menu=!S.menu;render()},
   range:b=>{S.range=b.dataset.v;render()},
   enter:()=>{S.welcome=false;try{sessionStorage.setItem("bl-in","1")}catch(e){}render();window.scrollTo({top:0})},
@@ -5687,7 +5810,7 @@ F.newUser=async()=>{const d=S.drafts;const name=(d["nu-name"]||"").trim(),un=una
   S.accErr=!name||!un?"Escribe nombre y usuario.":pass.length<10?"La contraseña necesita al menos 10 caracteres.":role==="member"&&!brands.length?"Elige al menos una marca.":(S.vusers||[]).some(x=>x.uname===un)?"Ese usuario ya existe.":null;if(S.accErr)return render();
   S.accBusy=true;render();try{await vaultCreateUser({name,uname:un,pass,role,brands});S.newCred={name,uname:un,pass};["nu-name","nu-user"].forEach(k=>delete d[k]);d["nu-pass"]=genPass();S.nuBrands=[];await loadVaultUsers()}catch(e){S.accErr=e.message||"No se pudo crear el usuario."}S.accBusy=false;render()};
 document.addEventListener("change",e=>{const el=e.target;if(el.dataset&&el.dataset.nb!=null){const set=new Set(S.nuBrands||[]);el.checked?set.add(el.dataset.nb):set.delete(el.dataset.nb);S.nuBrands=[...set]}});
-F.search=()=>{const q=norm(S.drafts["q"]||"");if(!q)return;let hit=null;for(const g of GROUPS){for(const [k,l] of g[3]){if(norm(l).includes(q)||q.includes(norm(l))){hit=k;break}}if(hit)break;if(norm(g[1]).includes(q))hit=g[3][0][0]}
+F.search=()=>{const q=norm(S.drafts["q"]||"");if(!q)return;let hit=null;for(const g of navG()){for(const [k,l] of g[3]){if(norm(l).includes(q)||q.includes(norm(l))){hit=k;break}}if(hit)break;if(norm(g[1]).includes(q))hit=g[3][0][0]}
   if(!hit){toast("No encontré esa sección. Prueba con plan, eventos, pauta o competencia.");return}const [v,t]=hit.split(":");S.view=v;if(t)S.trendTab=t;S.drafts["q"]="";S.menu=false;render();window.scrollTo({top:0})};
 document.addEventListener("submit",e=>{const f=e.target.closest("form[data-form]");if(!f)return;e.preventDefault();F[f.dataset.form]?.(f)});
 
@@ -5701,7 +5824,8 @@ render();
   if(!db){S.offline=true;S.gate="signin";render();return}
   if(user){try{S.me=await user.me();const cw=await user.can("data.write");S.canWrite=cw!==false;S.cwBase=S.canWrite;S.isAdmin=await user.canEdit()}catch(e){}}
   try{await Promise.race([vaultLoadMeta(),new Promise((_,rj)=>setTimeout(()=>rj(new Error("timeout")),15000))])}catch(e){console.error("meta",e);try{await window.BL_SIGNOUT()}catch(x){}try{await vaultLoadMeta()}catch(x){S.gate="neterr";render();return}}
-  S.gate=V.enabled?"login":(S.isAdmin?"setup":"pending");render();
+  if(V.enabled&&await blSessRestore()){S.gate=null;startData();const hv=(location.hash||"").slice(1);if(hv){const [v,t]=hv.split(":");S.view=v;if(t)S.trendTab=t}try{history.replaceState({bl:hv||"home"},"")}catch(e){}render()}
+  else{S.gate=V.enabled?"login":(S.isAdmin?"setup":"pending");render()}
   db.doc("config/office").onSnapshot(d=>{S.officeCfg=d.exists?d.data():{};render()},()=>{});
   db.doc("config/besttimes").onSnapshot(d=>{S.bestTimes=d.exists?d.data():{};render()},()=>{});
   C.use("downloads").then(d=>{S.dl=d;render()});
