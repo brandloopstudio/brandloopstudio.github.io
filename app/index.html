@@ -1159,6 +1159,19 @@ html.of-open,html.of-open body{overflow:hidden}
   .top .btn.accent.tb{padding:0 14px}
 }
 
+.modt td,.modt th{vertical-align:top;padding:10px 8px}.modt tr.dim{opacity:.55}.modt .chip[aria-pressed="true"]{background:var(--ok);color:#fff}
+
+.tour{position:fixed;inset:0;z-index:400;background:rgba(12,10,9,.55);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;overflow:auto}
+.tour-in{background:var(--panel,#fff);color:inherit;border-radius:24px;max-width:820px;width:100%;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.35);display:grid;gap:14px;max-height:92vh;overflow:auto}
+.tour-in h1{margin:0;font-size:28px;line-height:1.15}
+.tour-mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.tour-m{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:14px;cursor:pointer}
+.tour-m.on{border-color:var(--accent);background:var(--accent-soft)}
+.tour-m input{margin-top:3px}
+.tour-sum{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.tour-s{display:grid;gap:4px;padding:12px;border-radius:14px;background:var(--accent-soft)}
+.tour-s span{font-size:13px;opacity:.85}
+.nv.modsall{opacity:.7}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -1357,7 +1370,25 @@ const CLIENT_GROUPS=[
   ["res","Visibilidad en IA","geo",[["geo","¿Las IA nos recomiendan?"]]]
 ];
 const isClient=()=>!!(V.user&&V.user.role!=="admin");
-const navG=()=>GROUPS_ALL;
+/* Módulos de Brandloop. Lo que el usuario no elige sigue existiendo: se oculta del menú y se puede volver a encender cuando quiera. */
+const MODULES=[
+  ["plan","Plan 2027","Plan anual de crecimiento: eventos, gremiales, pauta y campañas de correo por trimestre.","El equipo arma el plan con datos de la marca y del mercado; tú lo apruebas o pides cambios. Se revisa cada trimestre.",["plan"],true],
+  ["strategy","Estrategia","Objetivos del trimestre y cómo se van cumpliendo.","El sistema calcula el avance con los datos reales de cada módulo y te avisa cuando una meta va atrasada.",["strategy","funnel","audience","compass"],true],
+  ["market","Mercado","Tendencias del sector, competencia y oportunidades de negocio.","Cada semana se investiga en la web qué se movió en tu sector y qué hace la competencia; solo te mostramos lo que tiene impacto en tu estrategia.",["trends:sector","comp","innovation"],true],
+  ["geo","Visibilidad en IA","Si ChatGPT, Gemini y Claude te recomiendan cuando un cliente pregunta.","Dos veces al mes se hacen 10 preguntas reales a cada IA y se mide en cuántas respuestas apareces; luego se propone qué publicar para entrar.",["geo"],true],
+  ["social","Social Media","Calendario del mes, parrilla diaria, carruseles y videos.","El equipo propone la parrilla cada semana a partir del plan y las tendencias; nada se publica sin tu aprobación.",["cal","posts","mc","organic","trends:social"],true],
+  ["pauta","Pauta","Campañas pagadas en Meta: cuánto se invierte y qué rinde.","Se lee el gasto y los resultados reales de Meta; puedes pausar o activar campañas desde aquí y el equipo propone ajustes.",["pauta","ads"],true],
+  ["campaigns","Campañas y email","Campañas por evento o lanzamiento y correos a tu base.","Se proponen campañas ligadas al plan; los correos se redactan y tú decides si salen.",["campaigns","email","events"],true],
+  ["brand","Marca","Perfil, identidad visual, historias por producto, página web y perfiles de LinkedIn.","La identidad de la marca es la base de todo lo demás: el equipo la usa para que cada pieza suene a ti.",["brand","identity","mockups","prodstory","web","people"],false],
+  ["sales","Ventas","Pipeline de prospectos, indicadores y documentos.","Se registran los prospectos y su etapa; los indicadores se cruzan con el resto para medir resultados.",["pipe","track","export"],false],
+  ["office","Equipo de IA","La oficina de agentes: quién hace qué y las entregas por aprobar.","Los agentes trabajan de madrugada y dejan todo listo para tu revisión.",["office","agents","loop","reply"],true]
+];
+const MOD_VIEWS=Object.fromEntries(MODULES.flatMap(m=>m[4].map(v=>[v.split(":")[0]+(v.includes(":")?":"+v.split(":")[1]:""),m[0]])));
+const modOf=v=>MOD_VIEWS[v]||MOD_VIEWS[String(v).split(":")[0]]||null;
+const modOn=k=>{const m=(S.modCfg&&S.modCfg.m)||{};return !(m[k]&&m[k].on===false)};
+const viewOn=v=>{if(S.showAll)return true;const k=modOf(v);return !k||modOn(k)};
+
+const navG=()=>GROUPS_ALL.map(g=>[g[0],g[1],g[2],g[3].filter(([k])=>viewOn(k))]).filter(g=>g[3].length);
 const CLIENT_VIEWS=new Set(["home","plan","strategy","campaigns","ads","email","cal","posts","mc","organic","geo","brand"]);
 
 function moveDeal(id,stage,msg){const d=S.deals.find(x=>x.id===id);if(!d||d.stage===stage)return;write(()=>col("deals").doc(id).update({stage,updatedAt:Date.now()}),msg||"Etapa actualizada")}
@@ -1431,7 +1462,7 @@ function render(){
   try{ss=a.selectionStart;se=a.selectionEnd}catch(e){}
   const logScroll=document.getElementById("chat-log");
   const atBottom=!logScroll||logScroll.scrollHeight-logScroll.scrollTop-logScroll.clientHeight<40;
-  const _g=S.clients.length?groupOf(S.view)[0]:"";const _c=client();root.innerHTML=rail()+`<main class="main g-${_g} v-${S.view}" style="--bc:${_c?brandPal(_c)[0].hex:"var(--accent)"};--bc2:${_c?(brandPal(_c)[1]||brandPal(_c)[0]).hex:"var(--accent-hi)"}">${topbar()}${S.clients.length&&S.view!=="newclient"?subnav():""}${body()}</main>`;
+  const _g=S.clients.length?groupOf(S.view)[0]:"";const _c=client();if(_c&&S.modLoaded&&!(S.modCfg&&S.modCfg.done)&&!S.tour&&!S.tourSeen){S.tour=1;S.tourSeen=true;S.tourSel=MODULES.filter(m=>m[5]).map(m=>m[0])}root.innerHTML=(S.tour&&_c?tourHTML(_c):"")+rail()+`<main class="main g-${_g} v-${S.view}" style="--bc:${_c?brandPal(_c)[0].hex:"var(--accent)"};--bc2:${_c?(brandPal(_c)[1]||brandPal(_c)[0]).hex:"var(--accent-hi)"}">${topbar()}${S.clients.length&&S.view!=="newclient"?subnav():""}${body()}</main>`;
   root.querySelectorAll("[data-draft]").forEach(el=>{const k=el.dataset.draft;if(k in S.drafts)el.value=S.drafts[k]});
   if(fid){const el=document.getElementById(fid);if(el){el.focus({preventScroll:true});try{if(ss!=null)el.setSelectionRange(ss,se)}catch(e){}}}
   if(atBottom) scrollChat();
@@ -1454,7 +1485,7 @@ function rail(){
   ${c?`<div class="switch ws"><button class="ws-btn" ${PORTAL?"disabled":`data-act="menu" aria-expanded="${S.menu}"`} id="sw-btn">${lf?`<span class="swlogo"><img src="${esc(lf.url)}" alt="" style="${lf.f?"filter:"+lf.f:""}"></span>`:`${monoHTML(c,"")}`}<span class="who"><b>${esc(c.name)}</b><span>${esc(c.industry||"Cliente")}</span></span>${PORTAL?"":`<span class="updown" aria-hidden="true">${ic("chev")}</span>`}</button>
    ${S.menu?`<div class="menu" role="menu">${S.clients.filter(k=>!S.meet||k.id===S.meet).map(k=>`<button role="menuitem" data-act="client" data-id="${esc(k.id)}" aria-current="${k.id===S.cid}">${monoHTML(k,"")}<span>${esc(k.name)}<br><span class="hint">${esc(k.industry||"")}</span></span></button>`).join("")}
      ${S.clients.length>1?`<button data-act="meet">${S.meet?"Salir del modo reunión":"Modo reunión: mostrar solo esta marca"}</button>`:""}${S.meet?"":S.canWrite&&V.user?.role!=="admin"&&V.enabled?"":S.canWrite?`<button data-act="view" data-v="newclient">${ic("plus")} Agregar cliente</button>`:""}</div>`:""}</div>`:`<a class="logo" href="${SITE_URL}" target="_blank" rel="noopener" title="Ir a la página de Brandloop">${loopSvg()}</a>`}
-  <nav class="nav" aria-label="Áreas">${false?``:`<span class="sec">Estrategia y contenido</span><ul>${navG().slice(0,5).map(item).join("")}</ul><span class="sec">Marca, ventas y equipo</span><ul>${navG().slice(5).map(item).join("")}</ul>`}</nav>
+  <nav class="nav" aria-label="Áreas">${(()=>{const G=navG(),a=G.filter(g=>["home","mkt","market","social","ads"].includes(g[0])),b=G.filter(g=>!["home","mkt","market","social","ads"].includes(g[0]));return `<span class="sec">Estrategia y contenido</span><ul>${a.map(item).join("")}</ul>${b.length?`<span class="sec">Marca, ventas y equipo</span><ul>${b.map(item).join("")}</ul>`:""}`})()}${MODULES.some(m=>!modOn(m[0]))?`<button class="nv modsall" data-act="showAll" aria-pressed="${!!S.showAll}" title="Módulos apagados"><span class="ic">${ic("plus")}</span><span class="nl">${S.showAll?"Ocultar módulos apagados":"Ver módulos apagados"}</span></button>`:""}</nav>
   <div class="side-foot"><div class="themes" role="group" aria-label="Tema"><button class="ic2" data-act="theme" data-t="light" aria-pressed="${th==="light"}" aria-label="Tema claro" title="Tema claro">${ic("sun")}</button><button class="ic2" data-act="theme" data-t="dark" aria-pressed="${th==="dark"}" aria-label="Tema oscuro" title="Tema oscuro">${ic("moon")}</button></div>
    ${V.user?.role==="admin"?`<button class="nv" data-act="view" data-v="access" ${S.view==="access"?'aria-current="page"':""}><span class="ic">${ic("brand")}</span><span class="nl">Usuarios y accesos</span></button>`:""}
    <div class="me">${(()=>{const bl=V.user&&V.user.role!=="admin"&&c?logoFor(c,false):null;return bl?`<span class="mono hilogo"><img src="${esc(bl.url)}" alt="${esc(c.name)}" style="${bl.f?"filter:"+bl.f:""}"></span>`:`<span class="mono" style="--c:#f2620a;--c-on:#fff">${esc((V.user?.name||S.me?.name||"BL").slice(0,2).toUpperCase())}</span>`})()}<span class="who"><b>${esc(V.user?.name||S.me?.name||"Tu equipo")}</b><span class="brandrow">${V.user?esc("@"+V.user.uname):`${loopSvg(3)} Brandloop`}</span></span></div>${V.user?`<button class="logoutbtn" data-act="logout">${ic("logout")} Cerrar sesión</button>`:""}</div>${siteLink("sitelink")}</aside>`;
@@ -1464,13 +1495,14 @@ function subnav(){
   return `<nav class="subnav" aria-label="${esc(g[1])}">${g[3].filter(([k])=>(k!=="mc"||hasMC())&&(k!=="office"||officeOn(client()))).map(([k,l])=>{const [v,t]=k.split(":");const on=S.view===v&&(!t||S.trendTab===t);return `<button data-act="view" data-v="${k}" ${on?'aria-current="page"':""}>${esc(l)}</button>`}).join("")}</nav>`;
 }
 
+function actBell(){if(!ofAdm())return "";const seen=Number(lsGet("bl-act-seen-"+(V.user.uname||""))||0);let n=0;for(const v of Object.values(S.actAll||{}))for(const x of (v||[]))if(x.role!=="admin"&&x.at>seen)n++;return `<button class="icbtn actbell" data-act="actGo" aria-label="${n} novedades de las marcas" title="Novedades de las marcas">${bellIc()}${n?`<span class="ping"></span>`:""}</button>`}
 function topbar(){
   const c=client();const pend=S.posts.filter(p=>p.status==="pending").length;
   const opts=navG().flatMap(g=>g[3].map(([k,l])=>l));const first=(V.user?.name||S.me?.name||"").split(" ")[0];
   return `<div class="top"><div class="hi">${V.user?(()=>{const bl=V.user.role!=="admin"&&c?logoFor(c,false):null;return bl?`<span class="hiav hilogo"><img src="${esc(bl.url)}" alt="${esc(c.name)}" style="${bl.f?"filter:"+bl.f:""}"></span>`:`<span class="mono hiav" style="--c:#f2620a;--c-on:#fff">${esc((V.user.name||V.user.uname).slice(0,2).toUpperCase())}</span>`})():S.me?`<img class="avatar" src="${esc(S.me.avatarUrl)}" alt="">`:""}<span><b>${greetWord()}${first?", "+esc(first):""} 👋</b><span>Qué bueno verte de nuevo en Brandloop</span></span></div>
    <span class="spacer"></span>
    <form class="search" data-form="search" role="search"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input type="text" id="q" data-draft="q" list="q-opts" placeholder="Buscar sección…" aria-label="Buscar sección" autocomplete="off"><datalist id="q-opts">${opts.map(o=>`<option value="${esc(o)}">`).join("")}</datalist></form>
-   ${c?`<button class="icbtn" data-act="pendingPosts" aria-label="${pend} posts por aprobar" title="Por aprobar">${bellIc()}${pend?`<span class="ping"></span>`:""}</button>
+   ${actBell()}${c?`<button class="icbtn" data-act="pendingPosts" aria-label="${pend} posts por aprobar" title="Por aprobar">${bellIc()}${pend?`<span class="ping"></span>`:""}</button>
    <button class="btn tb" data-act="view" data-v="cal" aria-label="Calendario">${calIc()}<span class="tbl"> Calendario</span></button>
    <button class="btn accent tb" data-act="newpost" ${ro()}>${ic("plus")} Nuevo post</button>`:""}
    ${V.user?`<button class="icbtn" data-act="logout" aria-label="Cerrar sesión" title="Cerrar sesión">${ic("logout")}</button>`:""}
@@ -1873,6 +1905,8 @@ function viewHome(c){
   ${!PORTAL&&c.portalUrl?`<div class="portalbar"><span>${ic("brand")}<span><b>${esc(c.name)} ya tiene su portal.</b> Su equipo entra con su cuenta de Claude y ahí viven sus datos al día.</span></span><a class="btn ink sm" href="${esc(c.portalUrl)}" target="_blank" rel="noopener">Abrir portal ${ic("arrow")}</a></div>`:""}
   <section class="dash" style="${cvars(c)};--c2:var(--c)">
    ${askCard(c,k)}
+   ${activityCard(c)}
+   ${modulesCard(c)}
    ${officeCard(c)}
    ${profileCard(c,pct,k)}
    ${(()=>{const pi=planInfo();const ml=monthLabel(S.month);return meshCard("warm","Avance del plan",pct==null?"—":pi.fut?"—":pct+"%",pct==null?"Aún sin plan para "+ml:pi.fut?ml+" aún no empieza":!pi.k?"Ningún objetivo de "+ml+" tiene dato todavía":pi.k<pi.n?`${ml} · ${pi.k} de ${pi.n} objetivos con dato`:`${ml} · promedio de ${pi.n} objetivos`,"plan","plan")})()}
@@ -1948,6 +1982,67 @@ function viewHomeClient(c){
    ${sel.map(k=>homeCardHTML(k,c,K,pct)).join("")}
   </section>${ofSheet(c)}`;
 }
+/* tabla de módulos: qué tiene configurado la marca, con qué datos y desde cuándo */
+function modulesCard(c){
+  const t=todayStr(),last=l=>Math.max(0,...(l||[]).map(x=>x.updatedAt||x.ua||x.createdAt||0));
+  const D={
+    plan:[!!(S.plan27&&S.plan27.out)||!!(S.ofTasks||[]).find(x=>x.id==="plan2027"&&x.out),(S.plan27&&S.plan27.at)||Math.max(0,...(S.ofTasks||[]).filter(x=>x.id==="plan2027").map(x=>x.ua||0)),"Plan anual de crecimiento"],
+    strategy:[!!S.strategy,(S.strategy&&S.strategy.updatedAt)||0,"Objetivos del trimestre"],
+    market:[S.trends.length>0||S.comps.length>0,Math.max(last(S.trends),last(S.comps)),`${S.trends.length} tendencias · ${S.comps.length} competidores`],
+    geo:[!!(S.iaS&&S.iaS.engines),(S.iaS&&S.iaS.at)||0,S.iaS&&S.iaS.engines?Object.values(S.iaS.engines).filter(e=>!e.off).map(e=>`${e.name} ${e.hits}/${e.asked}`).join(" · "):"Sin medición"],
+    social:[S.posts.length>0,last(S.posts),`${S.posts.length} piezas · ${S.posts.filter(p=>p.status==="pending").length} por aprobar`],
+    pauta:[S.ads.length>0,last(S.ads),S.ads.length?`${S.ads.length} campañas · ${S.ads.filter(a=>a.status==="active").length} activas`:"Sin campañas cargadas"],
+    campaigns:[S.emailcamps.length>0||S.events.length>0,Math.max(last(S.emailcamps),last(S.events)),`${S.emailcamps.length} correos · ${S.events.filter(e=>e.date&&e.date>=t&&e.status!=="descartar").length} eventos próximos`],
+    brand:[!!(c.logoUrl||c.tagline||(c.palette||[]).length),c.updatedAt||0,c.industry||""],
+    sales:[S.deals.length>0||S.metrics.length>0,Math.max(last(S.deals),last(S.metrics)),`${S.deals.length} prospectos · ${S.metrics.length} indicadores`],
+    office:[officeOn(c),Math.max(0,...(S.ofTasks||[]).map(x=>x.ua||0)),officeOn(c)?`${(S.ofTasks||[]).filter(x=>x.st==="revisar").length} entregas por revisar`:"No activada"]
+  };
+  const M=MODULES.map(([k,l,,,views])=>[k,l,views[0],...(D[k]||[false,0,""])]);
+  const cfg=(S.modCfg&&S.modCfg.m)||{},adm=true;
+  return `<article class="card d12 mods"><div class="ph"><div><h2 class="t">Módulos de ${esc(c.name)}</h2><span class="s">Elige qué ver. Lo apagado no se borra: se oculta del menú y se enciende cuando quieras${S.modCfg&&S.modCfg.ua?" · ajustado el "+esc(fmtTs(S.modCfg.ua))+(S.modCfg.by?" por @"+esc(S.modCfg.by):""):""}</span></div><button class="btn sm" data-act="tourOpen">${ic("spark")} Volver a configurar</button></div>
+  <div style="overflow-x:auto"><table class="htable modt"><thead><tr><th>Módulo</th><th>Estado</th><th>Datos</th><th>Última actualización</th><th>Nota</th><th><span class="sr">Abrir</span></th></tr></thead><tbody>
+  ${M.map(([k,l,v,has,up,info])=>{const on=(cfg[k]||{}).on!==false,note=(cfg[k]||{}).note||"";return `<tr class="${on?"":"dim"}"><td><b>${esc(l)}</b></td>
+   <td>${adm?`<button class="chip" data-act="modOn" data-k="${k}" aria-pressed="${on}" title="${on?"Activo: clic para apagar":"Apagado: clic para encender"}">${on?"Activo":"Apagado"}</button>`:`<span class="chip">${on?"Activo":"Apagado"}</span>`}</td>
+   <td><span class="pill" style="--pc:${has?"var(--ok)":"var(--faint)"}">${has?"Con datos":"Sin datos"}</span><span class="s" style="display:block">${esc(info)}</span></td>
+   <td>${up?esc(fmtTs(up)):"—"}</td>
+   <td>${S.modEdit===k?`<span class="row" style="gap:6px"><input type="text" data-draft="mn-${k}" maxlength="160" placeholder="Qué se configuró…" style="flex:1 1 160px"><button class="btn sm" data-act="modNote" data-k="${k}">Guardar</button></span>`:`<span class="s">${esc(note)||"—"}</span>${adm?` <button class="btn txt sm" data-act="modEdit" data-k="${k}">Editar</button>`:""}`}</td>
+   <td><button class="icbtn sm" data-act="view" data-v="${v}" aria-label="Abrir ${esc(l)}">${ic("arrow")}</button></td></tr>`}).join("")}
+  </tbody></table></div></article>`;
+}
+/* Recorrido inicial: el usuario elige sus módulos y ve un resumen de lo que el sistema hará por cada decisión */
+function tourHTML(c){
+  const step=S.tour||1,sel=S.tourSel||MODULES.filter(m=>m[5]).map(m=>m[0]);
+  const box=`<div class="tour" role="dialog" aria-modal="true" aria-label="Configura Brandloop"><div class="tour-in" style="${cvars(c)}">`;
+  if(step===1)return box+`<span class="eyebrow">Paso 1 de 3</span><h1>Bienvenido a Brandloop, ${esc(c.name)}</h1>
+   <p>Brandloop ordena tu marketing de lo macro a lo micro: primero el plan, luego las campañas y el contenido, y al final los resultados. Un equipo de IA hace el trabajo pesado; tú apruebas.</p>
+   <p>En el siguiente paso eliges qué módulos quieres ver. Lo que no elijas sigue existiendo y lo puedes encender después desde tu inicio.</p>
+   <div class="row" style="justify-content:flex-end;gap:8px"><button class="btn" data-act="tourSkip">Ver todo, sin configurar</button><button class="btn ink" data-act="tourNext">Elegir módulos ${ic("arrow")}</button></div></div></div>`;
+  if(step===2)return box+`<span class="eyebrow">Paso 2 de 3</span><h1>¿Qué quieres ver en Brandloop?</h1><p>Marca los módulos que te interesan. Puedes cambiarlo cuando quieras.</p>
+   <div class="tour-mods">${MODULES.map(([k,l,what])=>`<label class="tour-m ${sel.includes(k)?"on":""}"><input type="checkbox" data-act="tourPick" data-k="${k}" ${sel.includes(k)?"checked":""}><span><b>${esc(l)}</b><span class="s">${esc(what)}</span></span></label>`).join("")}</div>
+   <div class="row" style="justify-content:space-between;gap:8px"><button class="btn" data-act="tourBack">Atrás</button><button class="btn ink" data-act="tourNext" ${sel.length?"":"disabled"}>Ver qué hará el sistema ${ic("arrow")}</button></div></div></div>`;
+  const on=MODULES.filter(m=>sel.includes(m[0])),off=MODULES.filter(m=>!sel.includes(m[0]));
+  return box+`<span class="eyebrow">Paso 3 de 3</span><h1>Esto es lo que hará Brandloop por ${esc(c.name)}</h1><p>Un resumen de cada decisión, para que sepas qué esperar.</p>
+   <div class="tour-sum">${on.map(([k,l,,does])=>`<div class="tour-s"><b>${esc(l)}</b><span>${esc(does)}</span></div>`).join("")}</div>
+   ${off.length?`<p class="s" style="margin-top:12px"><b>Apagados por ahora:</b> ${off.map(m=>esc(m[1])).join(", ")}. Siguen trabajando en segundo plano y los puedes encender desde tu inicio.</p>`:""}
+   <div class="row" style="justify-content:space-between;gap:8px"><button class="btn" data-act="tourBack">Atrás</button><button class="btn ink" data-act="tourDone">Empezar ${ic("arrow")}</button></div></div></div>`;
+}
+/* bitácora: cada aprobación, cambio pedido o cambio de pauta queda con fecha y quién lo hizo; la directora lo ve en su inicio */
+async function logAct(type,text,extra){
+  try{const cid=S.cid;if(!cid||!S.rawdb)return;const ref=S.rawdb.doc(`clients/${cid}/docs/activity`);const d=await ref.get();const cur=(d.exists&&Array.isArray(d.data().items))?d.data().items:[];
+    const items=[{at:Date.now(),by:(V.user&&V.user.uname)||"",role:(V.user&&V.user.role)||"",type,text:String(text||"").slice(0,200),...(extra||{})},...cur].slice(0,200);
+    await ref.set({items,ua:Date.now()});}catch(e){}
+}
+const ACT_LBL={aprobado:"Aprobó",cambios:"Pidió cambios",pauta:"Cambió la pauta",post:"Aprobó un post",postcambios:"Pidió cambios en un post",publicado:"Marcó publicado",modulos:"Configuró módulos"};
+function actRow(x,withBrand){const who=x.role==="admin"?"Directora":"@"+esc(x.by||"");return `<div class="hitem act"><span><b>${withBrand?esc(x.brand||"")+" · ":""}${esc(ACT_LBL[x.type]||x.type)}: ${esc(x.text)}</b><span class="s">${who} · ${esc(new Date(x.at).toLocaleString("es",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}))}</span></span></div>`}
+function activityCard(c){
+  const adm=ofAdm();
+  if(adm){const all=[];for(const [cid,v] of Object.entries(S.actAll||{})){const nm=(S.clients.find(k=>k.id===cid)||{}).name||cid;for(const x of (v||[]))if(x.role!=="admin")all.push({...x,brand:nm})}
+    all.sort((a,b)=>b.at-a.at);const seen=Number(lsGet("bl-act-seen-"+(V.user.uname||""))||0),nw=all.filter(x=>x.at>seen).length;
+    if(!all.length)return "";
+    return `<article class="card d12 hask"><div class="ph"><h2 class="t">Novedades de las marcas${nw?` <span class="badge">${nw}</span>`:""}</h2>${nw?`<button class="btn sm" data-act="actSeen">Marcar como vistas</button>`:""}</div><p class="s">Lo que cada cliente aprobó, pidió cambiar o cambió en su pauta.</p>${all.slice(0,S.actAllOpen?60:8).map(x=>actRow(x,true)).join("")}${all.length>8?`<div class="hitem"><button class="btn txt sm" data-act="actAllOpen">${S.actAllOpen?"Ver menos":"Ver todo"}</button></div>`:""}</article>`;}
+  const l=(S.act&&S.act.items)||[];if(!l.length)return "";
+  return `<article class="card d12 hask"><h2 class="t">Últimos cambios de ${esc(c.name)}</h2><p class="s">Queda registro de cada aprobación y cambio, con fecha y quién lo hizo.</p>${l.slice(0,6).map(x=>actRow(x,false)).join("")}</article>`;
+}
 function askCard(c,K){
   const rev=(S.ofTasks||[]).filter(t=>t.st==="revisar").sort((a,b)=>(a.ua||0)-(b.ua||0));if(!rev.length&&!K.pending)return "";
   const nm=id=>((OF_AG.find(a=>a[0]===id)||[])[1])||id;
@@ -2017,6 +2112,8 @@ function officeSubs(id){
   if(PORTAL||!V.user||!S.rawdb)return;
   const hot=()=>{if(S.view==="home"||S.view==="office"||S.view==="plan")render()};
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/plan2027`).onSnapshot(d=>{if(S.cid!==id)return;S.plan27=d.exists?d.data():null;S.plan27L=true;hot()},()=>{}));
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/activity`).onSnapshot(d=>{if(S.cid!==id)return;S.act=d.exists?d.data():null;hot()},()=>{}));
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/modules`).onSnapshot(d=>{if(S.cid!==id)return;S.modCfg=d.exists?d.data():null;S.modLoaded=true;hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/home`).onSnapshot(d=>{if(S.cid!==id)return;S.homePref=d.exists?d.data():null;hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/iasearch`).onSnapshot(d=>{if(S.cid!==id)return;S.iaS=d.exists?d.data():null;if(S.view==="geo")render();else hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/office`).onSnapshot(d=>{if(S.cid!==id)return;S.ofPub=d.exists?d.data():null;hot()},()=>{}));
@@ -2137,13 +2234,14 @@ function ofMd(t){
   return h+(ul?"</ul>":"")+(sec?"</article>":"");
 }
 function viewPlan27(c){
-  const adm=ofAdm(),t=adm?(S.ofTasks||[]).find(x=>x.id==="plan2027"):null;
-  let txt=adm?((t&&t.out)||""):((S.plan27&&S.plan27.out)||"");
+  const t=(S.ofTasks||[]).find(x=>x.id==="plan2027")||null;
+  let txt=(t&&t.out)||(S.plan27&&S.plan27.out)||"";
+  const adm=ofAdm();
   if(!adm)txt=txt.split(/\n\s*#{1,4}\s*Para tu revisi[oó]n/i)[0].replace(/\n\s*Cambios aplicados:[^\n]*$/i,"");
-  const st=t?t.st:"",lab={trabajando:"En preparación",cambios:"Con cambios pedidos",revisar:"Listo para que lo revises",aprobado:"Aprobado"}[st]||"";
-  const head=`<section class="dash-head"><div><h1>Plan 2027</h1><p class="sub">Dónde debe estar ${esc(c.name)} y qué debe mover durante el año: eventos, premiaciones, gremiales, pauta y email marketing.</p></div>${adm&&t&&officeOn(c)?`<div class="row" style="align-items:center;gap:12px"><span class="s">${esc(lab)}</span><button class="btn" data-act="officeOpen">${st==="revisar"?"Revisarlo en la oficina":"Abrir la oficina"}</button></div>`:""}</section>`;
-  if(!txt)return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)"><div class="card d12 p27"><p>${adm?(t?"El equipo está armando el plan. Aparece aquí en cuanto esté listo.":"Todavía no hay Plan 2027 para esta marca."):"El Plan 2027 está en preparación."}</p></div></section>`;
-  return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)">${adm&&st&&st!=="aprobado"?`<div class="card d12 p27"><p><b>Borrador.</b> Solo tú lo ves. ${esc(c.name)} lo verá aquí cuando lo apruebes en la oficina.</p></div>`:""}${ofMd(txt)}</section>`;
+  const st=t?t.st:(S.plan27&&S.plan27.out?"aprobado":""),lab={trabajando:"En preparación",cambios:"Con cambios pedidos",revisar:"Listo para que lo revises",aprobado:"Aprobado"}[st]||"";
+  const head=`<section class="dash-head"><div><h1>Plan 2027</h1><p class="sub">Dónde debe estar ${esc(c.name)} y qué debe mover durante el año: eventos, premiaciones, gremiales, pauta y email marketing.</p></div>${t?`<div class="row" style="align-items:center;gap:12px"><span class="pill" style="--pc:${st==="aprobado"?"var(--ok)":st==="revisar"?"var(--warn)":"var(--faint)"}">${esc(lab)}</span>${st==="revisar"?`<button class="btn ok" data-act="ofApprove" data-id="plan2027">Aprobar</button><button class="btn" data-act="ofOpen" data-id="plan2027">Pedir cambios</button>`:""}</div>`:""}</section>`;
+  if(!txt)return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)"><div class="card d12 p27"><p>${t?"El equipo está armando el plan. Aparece aquí en cuanto esté listo.":"Todavía no hay Plan 2027 para esta marca."}</p></div></section>`;
+  return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)">${st==="revisar"?`<div class="card d12 p27"><p><b>Borrador para tu revisión.</b> Léelo y apruébalo, o pide cambios y el equipo lo rehace esta madrugada.</p></div>`:""}${ofMd(txt)}</section>${ofSheet(c)}`;
 }
 
 function agentsStrip(c){
@@ -4459,7 +4557,8 @@ const EV_ST={ir:"Vamos",evaluar:"Evaluar",descartar:"Descartar",pasado:"Ya pasó
 const EV_STC={ir:"var(--ok)",evaluar:"var(--warn)",descartar:"var(--muted)",pasado:"var(--faint)"};
 function viewEvents(c){
   const home=norm(c.country||"Guatemala");const scope=S.evScope||"all";const t=todayStr();
-  let evs=[...S.events].filter(e=>scope==="all"||(scope==="home"?norm(e.country).includes(home):!norm(e.country).includes(home)));
+  const isPast=e=>!!(e.date&&(e.end||e.date)<t);const nPast=S.events.filter(isPast).length;
+  let evs=[...S.events].filter(e=>(S.evPast||!isPast(e))&&(scope==="all"||(scope==="home"?norm(e.country).includes(home):!norm(e.country).includes(home))));
   evs.sort((a,b)=>String(a.date||"9").localeCompare(String(b.date||"9")));
   const soon=S.events.filter(e=>e.date&&e.date>=t&&e.date<=addDays(t,60)&&e.status!=="descartar").length;
   const evCard=e=>{const past=e.date&&(e.end||e.date)<t;const st=e.status||(past?"pasado":"evaluar");return `<article class="panel trend ${st==="descartar"?"dim":""}"><div class="ph"><div class="datebox"><b>${e.date?parseD(e.date).getDate():"?"}</b><span>${e.date?parseD(e.date).toLocaleDateString("es",{month:"short",year:"2-digit"}):"s/f"}</span></div><div class="t"><span class="eyebrow">${esc(e.type||"Evento")} · ${esc(e.city?e.city+", ":"")}${esc(e.country||"")}</span><h3>${esc(e.name)}</h3>${e.date_confirmed===false?`<span class="s">Fecha por confirmar (última edición)</span>`:""}</div><span class="pill" style="--pc:${EV_STC[st]}">${esc(EV_ST[st]||st)}</span></div>
@@ -4473,7 +4572,7 @@ function viewEvents(c){
   return `<section class="greet"><div class="hello"><h1>Eventos y asociaciones</h1><p class="sub">Dónde debe estar ${esc(c.name)} para conseguir clientes: primero en ${esc(c.country||"su país")}, y las buenas oportunidades afuera.${up?" Actualizado el "+esc(fmtTs(up))+".":""}</p></div>
    <div class="kpi"><span class="lbl">En los próximos 60 días</span><span class="num">${soon}</span></div>${S.canWrite?`<button class="btn ink lg" data-act="toggleEv">${ic("plus")} Agregar evento</button>`:""}</section>
    ${S.showNewEv?evForm():""}
-   <div class="filters" role="group" aria-label="Alcance"><button data-act="evScope" data-v="all" aria-pressed="${scope==="all"}">Todos</button><button data-act="evScope" data-v="home" aria-pressed="${scope==="home"}">En ${esc(c.country||"su país")}</button><button data-act="evScope" data-v="abroad" aria-pressed="${scope==="abroad"}">Otros países</button></div>
+   <div class="filters" role="group" aria-label="Alcance"><button data-act="evScope" data-v="all" aria-pressed="${scope==="all"}">Todos</button><button data-act="evScope" data-v="home" aria-pressed="${scope==="home"}">En ${esc(c.country||"su país")}</button><button data-act="evScope" data-v="abroad" aria-pressed="${scope==="abroad"}">Otros países</button>${nPast?`<button data-act="evPast" aria-pressed="${!!S.evPast}" style="margin-left:auto">${S.evPast?"Ocultar los que ya pasaron":"Ver los que ya pasaron ("+nPast+")"}</button>`:""}</div>
    ${evs.length?`<div class="tlist">${evs.map(evCard).join("")}</div>`:emptyBox("Aún no hay eventos mapeados","La investigación de lunes y jueves los agrega aquí. También puedes sumar uno a mano.")}
    <h2 style="font-size:24px;margin-top:8px">Asociaciones, gremios y cámaras</h2>
    ${S.assocs.length?`<div class="tlist">${S.assocs.map(asCard).join("")}</div>`:emptyBox("Aún no hay asociaciones","La investigación las agrega aquí.")}`;
@@ -4932,11 +5031,12 @@ function adCard(a,mx){
   const k0=n=>n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e4?Math.round(n/1e3)+"k":n>=1e3?(n/1e3).toFixed(1)+"k":String(Math.round(n||0));
   const m=(l,v,hi)=>`<div class="ad-m${hi?" hi":""}"><span>${l}</span><b>${v}</b></div>`;
   return `<article class="ad-card" style="--sc:${col}">
-   <div class="ad-ch"><div style="min-width:0"><h3>${esc(adName(a))}</h3><span class="ad-sub">${esc(a.objective||a.platform||"")}${a.start?` · ${esc(fmtDY(a.start))}${a.end?" – "+esc(fmtDY(a.end)):""}`:""}</span></div><span class="pill" style="--pc:${col}">${esc(AD_ST[a.status]||a.status)}</span></div>
+   <div class="ad-ch"><div style="min-width:0"><h3>${esc(adName(a))}</h3><span class="ad-sub">${esc(a.objective||a.platform||"")}${a.start?` · ${esc(fmtDY(a.start))}${a.end?" – "+esc(fmtDY(a.end)):""}`:""}</span></div><span class="pill" style="--pc:${col}" title="${a.statusAt?esc((a.status==="paused"?"Pausada":"Activada")+" el "+new Date(a.statusAt).toLocaleString("es",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+(a.statusBy?" por @"+a.statusBy:"")):""}">${esc(AD_ST[a.status]||a.status)}</span></div>${a.statusAt?`<span class="s">${a.status==="paused"?"Pausada":"Activada"} el ${esc(new Date(a.statusAt).toLocaleString("es",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}))}${a.statusBy?" por @"+esc(a.statusBy):""}</span>`:""}
    <div class="ad-sp"><b>${esc(money(sp,cur))}</b><span>${bud?`de ${esc(money(bud,cur))} · ${pct}%`:"invertido"}</span></div>
    <div class="ec-tr" style="height:6px"><i style="width:${bud?pct:Math.max(2,(mx?sp/mx*100:0)).toFixed(1)}%;background:var(--sc)"></i></div>
    <div class="ad-ms">${m("Alcance",Number(a.reach)?k0(Number(a.reach)):"—")}${m("Clics",Number(a.clicks)?k0(Number(a.clicks)):"—")}${m("CTR",ctr==null?"—":ctr.toFixed(2)+"%")}</div><div class="ad-ms ad-ms2">${m("Leads",String(ld),ld>0)}${m("Costo por lead",cpl==null?"—":esc(money(cpl,cur)),ld>0)}</div>
    ${meta&&(Number(a.leadsExtra)||Number(a.messages))?`<span class="hint">${Number(a.leadsExtra)?`${Number(a.leadsExtra)} lead${Number(a.leadsExtra)===1?"":"s"} registrado${Number(a.leadsExtra)===1?"":"s"} fuera de Meta`:""}${Number(a.leadsExtra)&&Number(a.messages)?" · ":""}${Number(a.messages)?`${Number(a.messages)} conversaciones iniciadas`:""}</span>`:""}
+   ${meta&&a.metaId&&META_ACC[S.cid]&&(a.status==="active"||a.status==="paused")?(S.confirm==="ad:"+a.id?`<div class="row" style="gap:6px;align-items:center;flex-wrap:wrap"><span class="s">${a.status==="active"?"¿Pausar esta campaña? Deja de gastar hasta que la vuelvas a activar.":"¿Activar esta campaña? Vuelve a gastar según su presupuesto."}</span><button class="btn ink sm" data-act="adToggleGo" data-id="${id}" ${S.adBusy?"disabled":""}>${a.status==="active"?"Sí, pausar":"Sí, activar"}</button><button class="btn sm" data-act="adToggleNo">No</button></div>`:`<button class="btn sm" data-act="adToggle" data-id="${id}" ${S.adBusy?"disabled":""}>${a.status==="active"?"Pausar campaña":"Activar campaña"}</button>`):""}
    ${S.sample&&!S.sampleOff?`<button class="btn sm ad-an" data-act="adAnOne" data-id="${id}" ${S.adAn?.running?"disabled":""}>${ic("spark")} Analizar esta campaña</button>`:""}
    ${S.canWrite&&!meta?`<details><summary class="hint" style="cursor:pointer">Actualizar resultados</summary><form data-form="adStats" data-id="${id}" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"><div class="grid2"><div class="field"><label for="as-sp-${id}">Invertido (Q)</label><input type="number" min="0" step="any" id="as-sp-${id}" data-draft="as-sp-${id}" value="${esc(a.spent||"")}"></div><div class="field"><label for="as-im-${id}">Impresiones</label><input type="number" min="0" id="as-im-${id}" data-draft="as-im-${id}" value="${esc(a.impressions||"")}"></div><div class="field"><label for="as-cl-${id}">Clics</label><input type="number" min="0" id="as-cl-${id}" data-draft="as-cl-${id}" value="${esc(a.clicks||"")}"></div><div class="field"><label for="as-ld-${id}">Leads</label><input type="number" min="0" id="as-ld-${id}" data-draft="as-ld-${id}" value="${esc(a.leads||"")}"></div></div>
     <div class="row"><div class="field" style="flex:1 1 140px"><label for="as-st-${id}">Estado</label><select id="as-st-${id}" data-draft="as-st-${id}">${Object.entries(AD_ST).map(([k,v])=>`<option value="${k}" ${k===a.status?"selected":""}>${v}</option>`).join("")}</select></div><button class="btn ink sm">Guardar</button>${S.confirm===a.id?`<button type="button" class="btn sm" style="color:var(--bad)" data-act="delAd" data-id="${id}">Eliminar</button>`:`<button type="button" class="x" data-act="askDel" data-id="${id}" aria-label="Eliminar campaña">${ic("x")}</button>`}</div></form></details>`:""}
@@ -5371,7 +5471,7 @@ async function autopilot(id){
 }
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
-  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.plan27=null; S.plan27L=false; officeSubs(id);
+  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.modCfg=null; S.modEdit=null; S.modLoaded=false; S.tour=null; S.tourSeen=false; S.showAll=false; S.act=null; S.plan27=null; S.plan27L=false; officeSubs(id);
   S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.funnel=null;S.compass=null;S.compSum=null;["finance","adcalc","pautastrat","funnel","compass","prodstories","investPlan","webaudit","site"].forEach(k=>{S[k+"Seen"]=false;S[k+"Cid"]=null});Object.keys(S).forEach(k=>{if(k.startsWith("_raw_")&&!k.startsWith("_raw_"+id+"_"))delete S[k]});S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
   [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["funnel","funnel"],["compass","compass"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{const nv=x.exists?x.data():null;const js=JSON.stringify(nv);if(S.cid!==id)return;const rk="_raw_"+id+"_"+k;if(S[rk]===js&&S[k+"Seen"]&&S[k+"Cid"]===id)return;S[rk]=js;S[k+"Cid"]=id;S[k]=k==="finance"&&nv&&S.finDraft?{...nv,...S.finDraft}:k==="adcalc"&&S.calDirty&&S.adcalc?S.adcalc:nv;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
@@ -5603,13 +5703,33 @@ const A={
   askDelUser:b=>{S.confirm="u:"+b.dataset.id;render()},
   delUser:async b=>{S.confirm=null;try{await S.rawdb.doc("vault_users/"+b.dataset.id).delete();toast("Acceso quitado");await loadVaultUsers()}catch(e){toast("No se pudo quitar el acceso")}},
   askAll:()=>{S.askAll=!S.askAll;render()},
+  showAll:()=>{S.showAll=!S.showAll;render()},
+  actSeen:()=>{lsSet("bl-act-seen-"+(V.user.uname||""),String(Date.now()));render()},
+  actAllOpen:()=>{S.actAllOpen=!S.actAllOpen;render()},
+  actGo:()=>{S.view="home";S.actAllOpen=true;render();setTimeout(()=>{const el=document.querySelector(".act");if(el)el.scrollIntoView({behavior:"smooth",block:"center"})},50)},
+  adToggle:b=>{S.confirm="ad:"+b.dataset.id;render()},
+  adToggleNo:()=>{S.confirm=null;render()},
+  adToggleGo:async b=>{const a=S.ads.find(x=>x.id===b.dataset.id);if(!a||S.adBusy)return;const action=a.status==="active"?"pause_campaign":"enable_campaign";S.adBusy=true;S.confirm=null;render();
+    try{const r=await BL_TOOL("ads.action",{cid:S.cid,account_id:META_ACC[S.cid],campaign_id:a.metaId,action});const st=r&&r.status==="paused"?"paused":"active";await write(()=>col("ads").doc(a.id).update({status:st,updatedAt:Date.now(),statusAt:Date.now(),statusBy:(V.user&&V.user.uname)||""}));toast(st==="paused"?"Campaña pausada en Meta":"Campaña activada en Meta");logAct("pauta",(st==="paused"?"Pausó ":"Activó ")+adName(a),{ad:a.id,status:st})}
+    catch(e){toast("No se pudo: "+(e&&e.message||"Meta no respondió"))}
+    S.adBusy=false;render()},
+  tourOpen:()=>{S.tour=1;S.tourSel=MODULES.map(m=>m[0]).filter(k=>modOn(k));render()},
+  tourNext:()=>{S.tour=Math.min(3,(S.tour||1)+1);render()},
+  tourBack:()=>{S.tour=Math.max(1,(S.tour||1)-1);render()},
+  tourPick:b=>{const k=b.dataset.k,cur=S.tourSel||MODULES.filter(m=>m[5]).map(m=>m[0]);S.tourSel=cur.includes(k)?cur.filter(x=>x!==k):[...cur,k];render()},
+  tourSkip:async()=>{S.tour=null;const m={};MODULES.forEach(x=>m[x[0]]={on:true});S.modCfg={...(S.modCfg||{}),m,done:true};render();try{await S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,done:true,ua:Date.now(),by:V.user.uname})}catch(e){toast("No se pudo guardar")}},
+  tourDone:async()=>{const sel=S.tourSel||[];const cur=(S.modCfg&&S.modCfg.m)||{};const m={};MODULES.forEach(x=>m[x[0]]={...(cur[x[0]]||{}),on:sel.includes(x[0])});S.tour=null;S.modCfg={...(S.modCfg||{}),m,done:true};render();try{await S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,done:true,ua:Date.now(),by:V.user.uname});toast("Listo: Brandloop quedó a tu medida");logAct("modulos",MODULES.filter(x=>sel.includes(x[0])).map(x=>x[1]).join(", "))}catch(e){toast("No se pudo guardar")}},
+  evPast:()=>{S.evPast=!S.evPast;render()},
+  modOn:b=>{const k=b.dataset.k,cur=(S.modCfg&&S.modCfg.m)||{},x={...(cur[k]||{})};x.on=!(x.on!==false);const m={...cur,[k]:x};S.modCfg={...(S.modCfg||{}),m};render();S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,ua:Date.now(),by:V.user.uname}).catch(()=>toast("No se pudo guardar"))},
+  modNote:b=>{const k=b.dataset.k,cur=(S.modCfg&&S.modCfg.m)||{},v=String(S.drafts["mn-"+k]||"").slice(0,160),m={...cur,[k]:{...(cur[k]||{}),note:v}};S.modCfg={...(S.modCfg||{}),m};S.modEdit=null;render();S.rawdb.doc(`clients/${S.cid}/docs/modules`).set({m,ua:Date.now(),by:V.user.uname}).catch(()=>toast("No se pudo guardar"))},
+  modEdit:b=>{S.modEdit=S.modEdit===b.dataset.k?null:b.dataset.k;const cur=((S.modCfg&&S.modCfg.m)||{})[b.dataset.k]||{};S.drafts["mn-"+b.dataset.k]=cur.note||"";render()},
   innAll:()=>{S.innAll=!S.innAll;render()},
   homeEdit:()=>{S.homeEdit=!S.homeEdit;render()},
   homeCard:b=>{const k=b.dataset.k,cur=homeSel(),next=cur.includes(k)?cur.filter(x=>x!==k):[...cur,k];S.homePref={cards:next};render();S.rawdb.doc(`clients/${S.cid}/docs/home`).set({cards:next,ua:Date.now()}).catch(()=>toast("No se pudo guardar"))},
   ofOpen:b=>{S.ofView=b.dataset.id;S.drafts.offb="";render()},
   ofClose:()=>{S.ofView=null;render()},
-  ofApprove:async b=>{const id=b.dataset.id;try{await S.rawdb.doc(`office/${S.cid}/tasks/${id}`).update({st:"aprobado",err:null,ua:Date.now(),by:V.user.uname});S.ofView=null;toast("Aprobado");render()}catch(e){toast("No se pudo aprobar")}},
-  ofChanges:async b=>{const id=b.dataset.id,fb=String(S.drafts.offb||"").trim();if(fb.length<3){toast("Escribe qué debe cambiar");document.getElementById("offb")?.focus();return}try{await S.rawdb.doc(`office/${S.cid}/tasks/${id}`).update({st:"cambios",fb:fb.slice(0,2000),err:null,ua:Date.now(),by:V.user.uname});S.ofView=null;S.drafts.offb="";toast("Listo: el equipo lo rehace esta madrugada");render()}catch(e){toast("No se pudo enviar")}},
+  ofApprove:async b=>{const id=b.dataset.id;try{await S.rawdb.doc(`office/${S.cid}/tasks/${id}`).update({st:"aprobado",err:null,ua:Date.now(),by:V.user.uname});S.ofView=null;toast("Aprobado");render();const _t=(S.ofTasks||[]).find(x=>x.id===id);logAct("aprobado",_t?(((String(_t.out||"").match(/^\s*#{1,4}\s+(.+)$/m)||[])[1])||_t.brief||id).replace(/\*\*/g,""):id,{task:id,agent:_t&&_t.agent})}catch(e){toast("No se pudo aprobar")}},
+  ofChanges:async b=>{const id=b.dataset.id,fb=String(S.drafts.offb||"").trim();if(fb.length<3){toast("Escribe qué debe cambiar");document.getElementById("offb")?.focus();return}try{await S.rawdb.doc(`office/${S.cid}/tasks/${id}`).update({st:"cambios",fb:fb.slice(0,2000),err:null,ua:Date.now(),by:V.user.uname});S.ofView=null;S.drafts.offb="";toast("Listo: el equipo lo rehace esta madrugada");render();const _t=(S.ofTasks||[]).find(x=>x.id===id);logAct("cambios",(_t?(((String(_t.out||"").match(/^\s*#{1,4}\s+(.+)$/m)||[])[1])||_t.brief||id).replace(/\*\*/g,""):id)+" — "+fb.slice(0,80),{task:id,agent:_t&&_t.agent})}catch(e){toast("No se pudo enviar")}},
   menu:()=>{S.menu=!S.menu;render()},
   range:b=>{S.range=b.dataset.v;render()},
   enter:()=>{S.welcome=false;try{sessionStorage.setItem("bl-in","1")}catch(e){}render();window.scrollTo({top:0})},
@@ -5634,7 +5754,7 @@ const A={
   pf:b=>{S.pf=b.dataset.v;render()}, sf:b=>{S.sf=b.dataset.v;render()}, mf:b=>{S.mf=b.dataset.v;render()},
   cap:b=>{const id=b.dataset.id;S.openCap[id]=!S.openCap[id];const el=b.previousElementSibling&&b.previousElementSibling.classList.contains("cap")?b.previousElementSibling:(b.closest(".post-b")||document).querySelector(".cap");if(el){el.classList.toggle("open",!!S.openCap[id]);b.textContent=S.openCap[id]?"Ver menos":"Ver todo el texto"}else render()},
   goPost:b=>{S.view="posts";S.pf="all";S.sf="all";S.mf="all";render();document.getElementById("post-"+b.dataset.id)?.scrollIntoView({block:"center"})},
-  status:b=>{const s=b.dataset.s;write(()=>col("posts").doc(b.dataset.id).update({status:s,decidedAt:Date.now(),decidedBy:myId()}),s==="approved"?"Post aprobado":"Marcado como publicado")},
+  status:b=>{const s=b.dataset.s;const _p=S.posts.find(x=>x.id===b.dataset.id)||{};write(()=>col("posts").doc(b.dataset.id).update({status:s,decidedAt:Date.now(),decidedBy:myId()}),s==="approved"?"Post aprobado":"Marcado como publicado");logAct(s==="approved"?"post":"publicado",_p.title||b.dataset.id,{post:b.dataset.id})},
   askChg:b=>{S.changeFor=b.dataset.id;render();document.getElementById("chg-"+b.dataset.id)?.focus()},
   cancelChg:()=>{S.changeFor=null;render()},
   newPerson:()=>{S.showNewPerson=!S.showNewPerson;render()}, pSel:b=>{S.pSel=b.dataset.id;S.showNewPerson=false;render()}, pTab:b=>{S.pTab=b.dataset.v;render()},
@@ -5906,6 +6026,7 @@ function startData(){
   if(S.clientsUnsub){try{S.clientsUnsub()}catch(e){}}
   S.clientsUnsub=S.db.collection("clients").orderBy("order").onSnapshot(s=>{
     S.clients=s.docs.map(d=>({id:d.id,...d.data()})).filter(c=>!V.enabled||V.keys[c.id]);S.clientsLoaded=true;if(V.user&&!S.inboxDone&&!S.inboxRun)setTimeout(()=>importDesignInbox().catch(()=>{S.inboxRun=false}),800);if(!S.inboxTick){const tick=()=>{if(V.user&&!S.inboxRun&&document.visibilityState==="visible")importDesignInbox().catch(()=>{S.inboxRun=false})};S.inboxTick=setInterval(tick,45000);document.addEventListener("visibilitychange",tick);window.addEventListener("focus",tick)}
+    if(ofAdm()&&!S.actSubs){S.actSubs={};S.actAll={}}if(ofAdm())for(const c of S.clients){if(S.actSubs[c.id])continue;S.actSubs[c.id]=S.rawdb.doc(`clients/${c.id}/docs/activity`).onSnapshot(d=>{S.actAll[c.id]=d.exists?(d.data().items||[]):[];if(S.view==="home")render();else{const b=document.querySelector(".actbell");if(b)b.outerHTML=actBell()}},()=>{})}
     if(!S.cid||!S.clients.some(c=>c.id===S.cid)){const saved=lsGet("bl-client");const pick=S.clients.find(c=>c.id===saved)||S.clients[0];if(pick)selectClient(pick.id)}
     render();
   },e=>{dbErr(e);S.clientsLoaded=true;render()});
