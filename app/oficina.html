@@ -385,7 +385,7 @@ function brand(){ for(var i = 0; i < S.brands.length; i++) if(S.brands[i].id ===
 function active(){ var b = brand(), off = (b && b.off) || []; return AG.filter(function(a){ return off.indexOf(a.id) < 0; }); }
 function tasksOf(aid){ return S.tasks.filter(function(t){ return t.agent === aid; }); }
 function statusOf(aid){
-  if(S.ro){ var bb = brand(), lv = bb && bb.live && bb.live[aid]; return lv && ST[lv] && lv !== 'aprobado' ? lv : 'libre'; }
+  if(S.ro && !S.rev){ var bb = brand(), lv = bb && bb.live && bb.live[aid]; return lv && ST[lv] && lv !== 'aprobado' ? lv : 'libre'; }
   var l = tasksOf(aid);
   if(l.some(function(t){ return t.st === 'cambios'; })) return 'cambios';
   if(l.some(function(t){ return t.st === 'trabajando'; })) return 'trabajando';
@@ -688,7 +688,7 @@ function renderModal(){ keepFocus(function(){
       (busy ? '<button class="btn" data-act="stop" data-id="' + t.id + '">Detener</button>' : '') +
       (stuck && S.sample ? '<button class="btn pri" data-act="retry" data-id="' + t.id + '"' + (S.sample ? '' : ' disabled') + '>Retomar el trabajo</button>' : '') +
       (t.out && !busy ? '<button class="btn" data-act="copy" data-id="' + t.id + '">Copiar</button>' : '') +
-      (S.delAsk === t.id ? '<span class="note">¿Eliminar esta tarea?</span><button class="btn sm danger" data-act="del" data-id="' + t.id + '">Sí, eliminar</button><button class="btn txt sm" data-act="delNo">No</button>' : (busy ? '' : '<button class="btn txt danger" data-act="delAsk" data-id="' + t.id + '" style="margin-left:auto">Eliminar</button>')) + '</div>') +
+      (S.delAsk === t.id ? '<span class="note">¿Eliminar esta tarea?</span><button class="btn sm danger" data-act="del" data-id="' + t.id + '">Sí, eliminar</button><button class="btn txt sm" data-act="delNo">No</button>' : (busy || S.ro ? '' : '<button class="btn txt danger" data-act="delAsk" data-id="' + t.id + '" style="margin-left:auto">Eliminar</button>')) + '</div>') +
       (t.st === 'aprobado' ? '<p class="note">Aprobada. Aprobar no publica ni envía nada: el siguiente paso lo das tú.</p>' : '') + '</footer></div>';
   sc = m.querySelector('.scroll'); if(sc) sc.scrollTop = top;
 }); }
@@ -735,7 +735,7 @@ document.addEventListener('click', function(e){
   if(el.classList.contains('lb')){ select(el.getAttribute('data-id')); return; }
   if(el.dataset.task){ S.open = el.dataset.task; S.fbFor = null; S.delAsk = null; renderModal(); renderQueue(); return; }
   var act = el.dataset.act, id = el.dataset.id, a = S.sel;
-  if(S.ro && /^(pick|assign|routine|approve|openFb|sendFb|retry|stop|delAsk|del|saveBrand|pickLogo|rmLogo)$/.test(act)) return;
+  if(S.ro && (S.rev ? /^(pick|assign|routine|retry|stop|delAsk|del|saveBrand|pickLogo|rmLogo)$/ : /^(pick|assign|routine|approve|openFb|sendFb|retry|stop|delAsk|del|saveBrand|pickLogo|rmLogo)$/).test(act)) return;
   if(act === 'closePanel') select(null);
   else if(act === 'pick') $('#filePick').click();
   else if(act === 'rmFile'){ (pend[a] || []).splice(Number(el.dataset.i), 1); renderPanel(); }
@@ -1369,10 +1369,10 @@ if(!world){ var n = document.createElement('div'); n.className = 'nogl'; n.inner
   if(SITE){
     try{ HOST = EMBED && window.parent.BLOffice ? window.parent.BLOffice.attach(window) : null; }catch(e){ HOST = null; }
     if(!HOST){ document.body.innerHTML = '<div style="min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center;font:16px/1.5 system-ui,sans-serif;color:#2A211B;background:#F6F1EA"><div><p style="font-weight:600;margin:0 0 8px">La oficina de agentes se abre desde Brandloop.</p><a href="./" style="color:#C24E08">Ir a Brandloop</a></div></div>'; return; }
-    S.db = HOST.db; S.mem = false; S.sample = HOST.sample || null; S.assets = null; S.ro = !HOST.admin; if(HOST.roster) try{ HOST.roster(AG.map(function(a){ return {id:a.id, name:a.name, role:a.role, does:a.does, gives:a.gives, no:a.no, routine:a.routine || '', extra:EXTRA[a.id] || '', reads:READS[a.id] || []}; })); }catch(e){}
+    S.db = HOST.db; S.mem = false; S.sample = HOST.sample || null; S.assets = null; S.ro = !HOST.admin; S.rev = !!HOST.review; if(HOST.roster) try{ HOST.roster(AG.map(function(a){ return {id:a.id, name:a.name, role:a.role, does:a.does, gives:a.gives, no:a.no, routine:a.routine || '', extra:EXTRA[a.id] || '', reads:READS[a.id] || []}; })); }catch(e){}
     document.body.classList.add('embed'); if(S.ro) document.body.classList.add('ro');
     var bn = $('#bNew'); bn.innerHTML = '← <span class=bk>Brandloop</span>'; bn.setAttribute('aria-label', 'Volver a Brandloop'); bn.style.width = 'auto'; bn.style.padding = '0 12px';
-    if(S.ro){ $('#bEdit').textContent = 'Biblioteca'; $('#tab-revisar').hidden = true; }
+    if(S.ro){ $('#bEdit').textContent = 'Biblioteca'; if(!S.rev) $('#tab-revisar').hidden = true; }
     subscribeBrands(); return;
   }
   var c = window.claude, use = function(n){ return c && typeof c.use === 'function' ? Promise.resolve(c.use(n)).catch(function(){ return null; }) : Promise.resolve(null); };

@@ -1877,7 +1877,7 @@ function officeSubs(id){
   const hot=()=>{if(S.view==="home"||S.view==="office"||S.view==="plan")render()};
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/plan2027`).onSnapshot(d=>{if(S.cid!==id)return;S.plan27=d.exists?d.data():null;S.plan27L=true;hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/office`).onSnapshot(d=>{if(S.cid!==id)return;S.ofPub=d.exists?d.data():null;hot()},()=>{}));
-  if(ofAdm())unsubs.push(S.rawdb.collection(`office/${id}/tasks`).onSnapshot(s=>{if(S.cid!==id)return;S.ofTasks=s.docs.map(d=>({...d.data(),id:d.id}));clearTimeout(OF.pubT);OF.pubT=setTimeout(()=>ofPublish(id),1200);hot()},()=>{}));
+  unsubs.push(S.rawdb.collection(`office/${id}/tasks`).onSnapshot(s=>{if(S.cid!==id)return;S.ofTasks=s.docs.map(d=>({...d.data(),id:d.id}));if(ofAdm()){clearTimeout(OF.pubT);OF.pubT=setTimeout(()=>ofPublish(id),1200)}hot()},()=>{}));
 }
 /* la dirección publica solo el estado de cada agente (trabajando, para revisar, con cambios): nunca el contenido */
 async function ofPublish(cid){
@@ -1908,17 +1908,17 @@ function ofHost(cid){
     doc:()=>({id:cid,set:async d=>{if(!adm)deny();await raw.doc(`office/${cid}/cfg/main`).set({about:String((d&&d.about)||"").slice(0,3000),off:Array.isArray(d&&d.off)?d.off.filter(x=>typeof x==="string").slice(0,20):[],ua:Date.now()});ofPublish(cid)},update:async()=>deny(),delete:async()=>deny()})};
   const tp=`office/${cid}/tasks`;
   const tasks={where:()=>tasks,
-    onSnapshot(cb,err){if(!adm){setTimeout(()=>{if(live())cb(snap([]))},0);return track(()=>{})}
+    onSnapshot(cb,err){
       return track(raw.collection(tp).onSnapshot(s=>{if(live())cb(snap(s.docs.map(d=>({...d.data(),id:d.id,brand:cid}))))},err))},
     doc:id=>{id=String(id||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,60);const r=raw.doc(`${tp}/${id}`);
-      return {id,set:async d=>{if(!adm||!id)deny();const x={...d};delete x.id;x.brand=cid;await r.set(x)},update:async p=>{if(!adm||!id)deny();await r.update(p)},delete:async()=>{if(!adm||!id)deny();await r.delete()}}}};
+      return {id,set:async d=>{if(!adm||!id)deny();const x={...d};delete x.id;x.brand=cid;await r.set(x)},update:async p=>{if(!id)deny();if(!adm){const st=p&&p.st;if(!(st==="aprobado"||st==="cambios"))deny();const q={st,ua:Date.now(),err:null,by:V.user.uname};if(st==="cambios")q.fb=String(p.fb||"").slice(0,2000);p=q}await r.update(p)},delete:async()=>{if(!adm||!id)deny();await r.delete()}}}};
   const kp=`clients/${cid}/office_kb`;
   const kb={where:()=>kb,
     onSnapshot(cb,err){return track(raw.collection(kp).onSnapshot(s=>{if(live())cb(snap(s.docs.map(d=>({...d.data(),id:d.id,brand:cid}))))},err))},
     doc:id=>{id=String(id||"").replace(/[^A-Za-z0-9_-]/g,"").slice(0,60);const r=raw.doc(`${kp}/${id}`);
       return {id,set:async d=>{if(!id)deny();const x={...d};delete x.id;x.brand=cid;await r.set(x)},update:async p=>{if(!id)deny();await r.update(p)},delete:async()=>{if(!id)deny();await r.delete()}}}};
   const none={where:()=>none,onSnapshot(cb){setTimeout(()=>cb(snap([])),0);return ()=>{}},doc:()=>({set:async()=>deny(),update:async()=>deny(),delete:async()=>deny()})};
-  return {v:1,cid,admin:adm,sample:adm?ofSample(cid):null,context:id=>ofContext(id),roster:adm?(l=>{ofRoster(l)}):null,db:{collection:n=>n==="brands"?brands:n==="tasks"?tasks:n==="kb"?kb:none},close:()=>closeOffice()};
+  return {v:1,cid,admin:adm,review:!adm,sample:adm?ofSample(cid):null,context:id=>ofContext(id),roster:adm?(l=>{ofRoster(l)}):null,db:{collection:n=>n==="brands"?brands:n==="tasks"?tasks:n==="kb"?kb:none},close:()=>closeOffice()};
 }
 /* el equipo trabaja al instante: la función bl-office corre en Brandloop y solo acepta a la dirección */
 function ofSample(cid){return (prompt,o)=>{o=o||{};
