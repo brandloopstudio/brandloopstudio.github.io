@@ -1379,7 +1379,7 @@ const SUGGESTED_METRICS=[["Seguidores Instagram","Instagram","seguidores"],["Seg
 
 /* ---------- helpers ---------- */
 const FAMRE=/(?<![@\/.\w-])isi[ ]?(care|clinic|hospital|sanatorio|lab|image|claims)\b/gi;const famFix=t=>t.replace(FAMRE,m=>m===m.toLowerCase()?m:"ISI"+m.replace(/^isi ?/i,"").toUpperCase());
-const esc=s=>famFix(String(s??"")).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const esc=s=>famFix(String(s??"").replace(/<\/?cite\b[^>]*>/gi,"")).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const pad=n=>String(n).padStart(2,"0");
 const dstr=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const todayStr=()=>dstr(new Date());
@@ -1519,7 +1519,7 @@ function body(){
     case "plan": return viewPlan27(c);
     case "export": return viewExport(c);
     case "brand": return viewBrand(c);
-    default: return isClient()?viewHomeClient(c):viewHome(c);
+    default: return viewHome(c);
   }
 }
 const emptyBox=(t,s,extra="")=>`<div class="empty"><b>${esc(t)}</b><span>${esc(s)}</span>${extra}</div>`;
@@ -1872,6 +1872,7 @@ function viewHome(c){
    <div class="row">${rangeSeg()}<button class="btn" data-act="view" data-v="loop">${ic("spark")} Preguntar a Loop</button></div></section>
   ${!PORTAL&&c.portalUrl?`<div class="portalbar"><span>${ic("brand")}<span><b>${esc(c.name)} ya tiene su portal.</b> Su equipo entra con su cuenta de Claude y ahí viven sus datos al día.</span></span><a class="btn ink sm" href="${esc(c.portalUrl)}" target="_blank" rel="noopener">Abrir portal ${ic("arrow")}</a></div>`:""}
   <section class="dash" style="${cvars(c)};--c2:var(--c)">
+   ${askCard(c,k)}
    ${officeCard(c)}
    ${profileCard(c,pct,k)}
    ${(()=>{const pi=planInfo();const ml=monthLabel(S.month);return meshCard("warm","Avance del plan",pct==null?"—":pi.fut?"—":pct+"%",pct==null?"Aún sin plan para "+ml:pi.fut?ml+" aún no empieza":!pi.k?"Ningún objetivo de "+ml+" tiene dato todavía":pi.k<pi.n?`${ml} · ${pi.k} de ${pi.n} objetivos con dato`:`${ml} · promedio de ${pi.n} objetivos`,"plan","plan")})()}
@@ -1892,7 +1893,7 @@ function viewHome(c){
    ${historyCard(c)}
    ${tasksPanel()}
    ${marketBand(c)}
-  </section>`;
+  </section>${ofSheet(c)}`;
 }
 /* ---------- «Cómo vamos»: el inicio del dueño de la marca ---------- */
 const HOME_CARDS=[
@@ -1946,6 +1947,16 @@ function viewHomeClient(c){
    </article>
    ${sel.map(k=>homeCardHTML(k,c,K,pct)).join("")}
   </section>${ofSheet(c)}`;
+}
+function askCard(c,K){
+  const rev=(S.ofTasks||[]).filter(t=>t.st==="revisar").sort((a,b)=>(a.ua||0)-(b.ua||0));if(!rev.length&&!K.pending)return "";
+  const nm=id=>((OF_AG.find(a=>a[0]===id)||[])[1])||id;
+  const tt=t=>{const o=String(t.out||"");const h=(o.match(/^\s*#{1,4}\s+(.+)$/m)||[])[1]||"";return (h||String(t.brief||"").replace(/^Rutina( de madrugada)?:\s*/i,"")).replace(/\*\*/g,"").trim()};
+  return `<article class="card d12 hask"><h2 class="t">Necesitamos tu aprobación</h2><p class="s">Nada se publica sin visto bueno. Revisa y aprueba, o pide cambios.</p>
+   ${K.pending?`<div class="hitem"><span><b>${K.pending} ${K.pending===1?"pieza de contenido":"piezas de contenido"}</b><span class="s">Posts de la parrilla por aprobar</span></span><button class="btn sm" data-act="pendingPosts">Revisar ${ic("arrow")}</button></div>`:""}
+   ${rev.slice(0,S.askAll?50:4).map(t=>`<div class="hitem"><span><b>${esc(tt(t).slice(0,90))}</b><span class="s">${esc(nm(t.agent))}${t.ver>1?" · versión "+t.ver:""}</span></span><span class="row"><button class="btn sm" data-act="ofOpen" data-id="${esc(t.id)}">Ver</button><button class="btn ok sm" data-act="ofApprove" data-id="${esc(t.id)}">Aprobar</button></span></div>`).join("")}
+   ${rev.length>4?`<div class="hitem"><button class="btn txt sm" data-act="askAll">${S.askAll?"Ver menos":"Ver las "+rev.length+" entregas"}</button></div>`:""}
+  </article>`;
 }
 function ofSheet(c){
   const t=S.ofView&&(S.ofTasks||[]).find(x=>x.id===S.ofView);if(!t)return "";
@@ -5591,6 +5602,7 @@ const A={
   resetUser:async b=>{const u=(S.vusers||[]).find(x=>x.uname===b.dataset.id);if(!u)return;const pass=genPass();try{await vaultCreateUser({name:u.name,uname:u.uname,pass,role:u.role,brands:u.brands||[]});S.newCred={name:u.name,uname:u.uname,pass};await loadVaultUsers()}catch(e){toast(e.message||"No se pudo cambiar la contraseña")}},
   askDelUser:b=>{S.confirm="u:"+b.dataset.id;render()},
   delUser:async b=>{S.confirm=null;try{await S.rawdb.doc("vault_users/"+b.dataset.id).delete();toast("Acceso quitado");await loadVaultUsers()}catch(e){toast("No se pudo quitar el acceso")}},
+  askAll:()=>{S.askAll=!S.askAll;render()},
   homeEdit:()=>{S.homeEdit=!S.homeEdit;render()},
   homeCard:b=>{const k=b.dataset.k,cur=homeSel(),next=cur.includes(k)?cur.filter(x=>x!==k):[...cur,k];S.homePref={cards:next};render();S.rawdb.doc(`clients/${S.cid}/docs/home`).set({cards:next,ua:Date.now()}).catch(()=>toast("No se pudo guardar"))},
   ofOpen:b=>{S.ofView=b.dataset.id;S.drafts.offb="";render()},
