@@ -1173,6 +1173,7 @@ html.of-open,html.of-open body{overflow:hidden}
 .tour-s span{font-size:13px;opacity:.85}
 .nv.modsall{opacity:.7}
 .slg.chrow{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.slg.chrow>span{display:inline-flex;align-items:center;gap:5px}.slg.chrow em{font-style:normal;font-size:12px;opacity:.8}.slg.chrow .chico,.slg.chrow .chico svg{width:22px;height:22px}.ctable .cn .chico{margin-right:6px}
+.capc{margin-top:16px}.cap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:0 20px 20px}.cap-b{display:grid;gap:8px;padding:14px;border-radius:14px;background:var(--accent-soft)}.cap-n{font-size:26px;line-height:1.1}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -2122,6 +2123,7 @@ function officeSubs(id){
   if(PORTAL||!V.user||!S.rawdb)return;
   const hot=()=>{if(S.view==="home"||S.view==="office"||S.view==="plan")render()};
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/plan2027`).onSnapshot(d=>{if(S.cid!==id)return;S.plan27=d.exists?d.data():null;S.plan27L=true;hot()},()=>{}));
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/adscfg`).onSnapshot(d=>{if(S.cid!==id)return;S.adsCfg=d.exists?d.data():null;if(S.view==="ads")render()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/activity`).onSnapshot(d=>{if(S.cid!==id)return;S.act=d.exists?d.data():null;hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/modules`).onSnapshot(d=>{if(S.cid!==id)return;S.modCfg=d.exists?d.data():null;S.modLoaded=true;hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/home`).onSnapshot(d=>{if(S.cid!==id)return;S.homePref=d.exists?d.data():null;hot()},()=>{}));
@@ -5026,13 +5028,25 @@ function viewAds(c){
   const donut=objs.length?`<div class="ad-don"><svg viewBox="0 0 140 140" width="150" height="150" role="img" aria-label="Inversión por objetivo"><circle r="${R}" cx="70" cy="70" fill="none" stroke="var(--line)" stroke-width="18"/>${arcs}<text x="70" y="66" text-anchor="middle" font-size="11" fill="var(--muted)">objetivos</text><text x="70" y="84" text-anchor="middle" font-size="20" font-weight="800" fill="var(--fg)">${objs.length}</text></svg><div class="ad-leg">${objs.map(([k,v],i)=>`<div><i style="background:${COLS[i%COLS.length]}"></i><span>${esc(k)}</span><b>${Math.round(v/tot*100)}%</b></div>`).join("")}</div></div>`:"";
   const charts=top.length?`<div class="ec-two ad-two"><div class="inner ec-card"><div class="ec-chh"><div><span class="ec-ct">Inversión por campaña</span><span class="hint">Las ${top.length} con más gasto · el color indica el estado</span></div></div>${bars}</div>${donut?`<div class="inner ec-card"><span class="ec-ct">En qué se invirtió</span><span class="hint" style="margin-top:-6px">Reparto del gasto por objetivo</span>${donut}</div>`:""}</div>`:"";
   const sorted=[...A].sort((a,b)=>(a.status==="active"?0:1)-(b.status==="active"?0:1)||(b.createdAt||0)-(a.createdAt||0));
-  return hero+(charts?`<div style="margin:0 20px 20px">${charts}</div>`:"")+`</section>
+  return hero+(charts?`<div style="margin:0 20px 20px">${charts}</div>`:"")+`</section>`+capCard(c)+`
    <div class="row">${S.canWrite?`<button class="btn ink" data-act="toggleAd">${ic("plus")} Nueva campaña</button>`:""}<button class="btn" data-act="toggleAdGen" ${S.sample&&!S.sampleOff?"":"disabled"}>${ic("spark")} Copys para anuncios</button>${A.length?`<button class="btn accent" data-act="adPick" ${S.sample&&!S.sampleOff&&!S.adAn?.running?"":"disabled"}>${S.adAn?.running?'<span class="spin"></span>':ic("spark")} Analizar pauta con Loop</button>`:""}</div>
    ${S.adPick?adPickPanel(sorted):""}
    ${adAnPanel()}
    ${S.showAdGen?adGenPanel(c):""}
    ${S.showNewAd?adForm():""}
    ${A.length?`<div class="ad-hd"><h2>Campañas</h2><span class="hint">${act} activa${act===1?"":"s"} · ${A.length-act} terminada${A.length-act===1?"":"s"} o pausada${A.length-act===1?"":"s"}</span></div><div class="ad-grid">${sorted.map(a=>adCard(a,mx)).join("")}</div>`:emptyBox("Aún no hay campañas","Registra tu primera campaña para seguir presupuesto, leads y costo por lead.")}`;
+}
+/* Tope mensual de pauta: lo fija la marca; Brandloop propone, pero nunca gasta más de lo que el dueño autorizó */
+function capCard(c){
+  const k=S.adsCfg||{},CUR=finOf().currency==="USD"?"USD":"GTQ",cap=Number(k.cap)||0,prop=Number(k.proposed)||0;
+  const month=new Date().toISOString().slice(0,7),sp=S.ads.filter(a=>a.status==="active"||(a.updatedAt&&new Date(a.updatedAt).toISOString().slice(0,7)===month)).reduce((t,a)=>t+(Number(a.spent)||0),0);
+  const pct=cap?Math.min(100,Math.round(sp/cap*100)):0,over=cap&&sp>cap;
+  return `<section class="panel capc"><div class="ph"><div class="t"><h2>Presupuesto mensual de pauta</h2><span class="s">Tú decides cuánto se invierte al mes. Brandloop mueve y pausa anuncios dentro de ese tope y nunca lo pasa.</span></div></div>
+   <div class="cap-grid">
+    <div class="cap-b"><span class="lbl">Lo que autorizas tú</span>${S.capEdit?`<div class="row" style="gap:6px"><input type="number" min="0" step="50" data-draft="cap-v" value="${cap||""}" style="width:140px" placeholder="0"><button class="btn ink sm" data-act="capSave">Guardar</button><button class="btn sm" data-act="capEdit">Cancelar</button></div>`:`<b class="cap-n">${cap?esc(money(cap,CUR)):"Sin tope definido"}</b><button class="btn sm" data-act="capEdit">${cap?"Cambiar":"Definir tope"}</button>`}${k.capBy?`<span class="s">Fijado por @${esc(k.capBy)} el ${esc(fmtTs(k.capAt||0))}</span>`:""}</div>
+    <div class="cap-b"><span class="lbl">Lo que propone Brandloop</span><b class="cap-n">${prop?esc(money(prop,CUR)):"—"}</b>${ofAdm()?(S.propEdit?`<div class="row" style="gap:6px"><input type="number" min="0" step="50" data-draft="prop-v" value="${prop||""}" style="width:140px"><button class="btn ink sm" data-act="propSave">Guardar</button></div>`:`<button class="btn sm" data-act="propEdit">Proponer</button>`):`<span class="s">${prop&&cap&&prop>cap?"Propuesto arriba de tu tope: manda lo que tú autorizas.":prop?"Solo es una sugerencia; manda tu tope.":""}</span>`}</div>
+    <div class="cap-b"><span class="lbl">Invertido este mes</span><b class="cap-n" style="${over?"color:var(--bad)":""}">${esc(money(sp,CUR))}</b>${cap?`<div class="ec-tr" style="height:6px"><i style="width:${pct}%;background:${over?"var(--bad)":"var(--ok)"}"></i></div><span class="s">${pct}% del tope</span>`:`<span class="s">Define un tope para que Brandloop sepa hasta dónde llegar.</span>`}</div>
+   </div></section>`;
 }
 function adCard(a,mx){
   const bud=Number(a.budget)||0,sp=Number(a.spent)||0,pct=bud?Math.min(100,Math.round(sp/bud*100)):0;
@@ -5481,7 +5495,7 @@ async function autopilot(id){
 }
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
-  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.modCfg=null; S.modEdit=null; S.modLoaded=false; S.tour=null; S.tourSeen=false; S.showAll=false; S.act=null; S.plan27=null; S.plan27L=false; officeSubs(id);
+  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.modCfg=null; S.modEdit=null; S.modLoaded=false; S.tour=null; S.tourSeen=false; S.showAll=false; S.act=null; S.adsCfg=null; S.capEdit=false; S.propEdit=false; S.plan27=null; S.plan27L=false; officeSubs(id);
   S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.funnel=null;S.compass=null;S.compSum=null;["finance","adcalc","pautastrat","funnel","compass","prodstories","investPlan","webaudit","site"].forEach(k=>{S[k+"Seen"]=false;S[k+"Cid"]=null});Object.keys(S).forEach(k=>{if(k.startsWith("_raw_")&&!k.startsWith("_raw_"+id+"_"))delete S[k]});S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
   [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["funnel","funnel"],["compass","compass"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{const nv=x.exists?x.data():null;const js=JSON.stringify(nv);if(S.cid!==id)return;const rk="_raw_"+id+"_"+k;if(S[rk]===js&&S[k+"Seen"]&&S[k+"Cid"]===id)return;S[rk]=js;S[k+"Cid"]=id;S[k]=k==="finance"&&nv&&S.finDraft?{...nv,...S.finDraft}:k==="adcalc"&&S.calDirty&&S.adcalc?S.adcalc:nv;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
@@ -5714,6 +5728,10 @@ const A={
   delUser:async b=>{S.confirm=null;try{await S.rawdb.doc("vault_users/"+b.dataset.id).delete();toast("Acceso quitado");await loadVaultUsers()}catch(e){toast("No se pudo quitar el acceso")}},
   askAll:()=>{S.askAll=!S.askAll;render()},
   showAll:()=>{S.showAll=!S.showAll;render()},
+  capEdit:()=>{S.capEdit=!S.capEdit;S.drafts["cap-v"]=String((S.adsCfg&&S.adsCfg.cap)||"");render()},
+  capSave:async()=>{const v=Math.max(0,Number(S.drafts["cap-v"])||0);const d={...(S.adsCfg||{}),cap:v,capBy:V.user.uname,capAt:Date.now()};S.adsCfg=d;S.capEdit=false;render();try{await S.rawdb.doc(`clients/${S.cid}/docs/adscfg`).set(d);toast("Tope guardado: Brandloop no pasará de ahí");logAct("pauta","Fijó el tope mensual de pauta en "+money(v,finOf().currency==="USD"?"USD":"GTQ"),{cap:v})}catch(e){toast("No se pudo guardar")}},
+  propEdit:()=>{S.propEdit=!S.propEdit;S.drafts["prop-v"]=String((S.adsCfg&&S.adsCfg.proposed)||"");render()},
+  propSave:async()=>{const v=Math.max(0,Number(S.drafts["prop-v"])||0);const d={...(S.adsCfg||{}),proposed:v,propAt:Date.now()};S.adsCfg=d;S.propEdit=false;render();try{await S.rawdb.doc(`clients/${S.cid}/docs/adscfg`).set(d);toast("Propuesta guardada")}catch(e){toast("No se pudo guardar")}},
   actSeen:()=>{lsSet("bl-act-seen-"+(V.user.uname||""),String(Date.now()));render()},
   actAllOpen:()=>{S.actAllOpen=!S.actAllOpen;render()},
   actGo:()=>{S.view="home";S.actAllOpen=true;render();setTimeout(()=>{const el=document.querySelector(".act");if(el)el.scrollIntoView({behavior:"smooth",block:"center"})},50)},
