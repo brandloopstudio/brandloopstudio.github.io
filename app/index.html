@@ -1287,7 +1287,24 @@ html.of-open,html.of-open body{overflow:hidden}
   window.BL_TOOL=tool;
   window.BL_FN=async(name,body)=>{const {data,error}=await sb.functions.invoke(name,{body});if(error){let code="failed";try{const j=await error.context.json();if(j&&j.error&&j.error.code)code=j.error.code}catch(x){}throw {code}}if(data&&data.error)throw {code:(data.error&&data.error.code)||"failed"};return data};
   const social={call:async(mode,body)=>{const tk=session&&session.access_token;if(!tk)throw {code:"auth",message:"Inicia sesión"};const r=await fetch(`${window.BL_SB_URL}/functions/v1/bl-publish?mode=${encodeURIComponent(mode)}`,{method:"POST",headers:{"content-type":"application/json",apikey:window.BL_SB_KEY,authorization:"Bearer "+tk},body:JSON.stringify(body||{})});const j=await r.json().catch(()=>({}));if(!r.ok||j.error)throw {code:"social",message:j.error||("Error "+r.status)};return j}};
-  window.claude={use:async(name)=>{if(name==="social")return social;if(name==="mcp")return mcp;if(name==="db")return db;if(name==="user")return user;if(name==="downloads")return downloads;if(name==="assets")return assets;return null}};
+  /* IA dentro de la app: va por el servidor (bl-ai) con la sesión de la persona; la app ejecuta las herramientas que pida el modelo */
+  const aiCall=async(body,signal)=>{const tk=session&&session.access_token;if(!tk)throw {code:"not_granted"};const r=await fetch(`${window.BL_SB_URL}/functions/v1/bl-ai`,{method:"POST",headers:{"content-type":"application/json",apikey:window.BL_SB_KEY,authorization:"Bearer "+tk},body:JSON.stringify(body),signal});const j=await r.json().catch(()=>({}));if(j&&j.error)throw {code:j.error.code||"failed",message:j.error.message||""};if(!r.ok)throw {code:r.status===401?"not_granted":"failed"};return j};
+  const sample=async(input,opts={})=>{
+    const sig=opts.signal;const tools=(opts.tools||[]).map(t=>({name:t.name,description:t.description,inputSchema:t.inputSchema}));
+    let msgs=(Array.isArray(input)?input:[{role:"user",content:String(input)}]).map(m=>({role:m.role,content:m.content}));
+    const tier=opts.modelTier==="complex"?"complex":opts.modelTier==="quick"?"quick":"normal";let text="";
+    for(let round=0;round<6;round++){
+      if(sig&&sig.aborted)throw {code:"cancelled"};
+      const r=await aiCall({cid:S.cid||"",messages:msgs,tools,tier,json:!!opts.json,system:opts.system||""},sig);
+      if(r.text)text=r.text;
+      if(!(r.toolUse||[]).length)break;
+      msgs=[...msgs,{role:"assistant",content:r.content},{role:"user",content:await Promise.all(r.toolUse.map(async u=>{const t=(opts.tools||[]).find(x=>x.name===u.name);let out;try{out=t?await t.execute(u.input||{}):{error:"herramienta desconocida"}}catch(e){out={error:String(e&&e.message||e)}}return {type:"tool_result",tool_use_id:u.id,content:JSON.stringify(out).slice(0,8000)}}))}];
+    }
+    if(opts.onText)opts.onText({text});return {text};
+  };
+  sample.json=async(prompt,opts={})=>{const {text}=await sample(prompt,{...opts,json:true});const t=String(text||"").trim().replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,"");const a=t.indexOf("{"),b=t.lastIndexOf("}"),c=t.indexOf("["),d=t.lastIndexOf("]");const cut=(a>=0&&(c<0||a<c))?t.slice(a,b+1):t.slice(c,d+1);try{return JSON.parse(cut||t)}catch(e){throw {code:"invalid_json"}}};
+  sample.limits=async()=>({tools:true});
+  window.claude={use:async(name)=>{if(name==="sample")return sample;if(name==="social")return social;if(name==="mcp")return mcp;if(name==="db")return db;if(name==="user")return user;if(name==="downloads")return downloads;if(name==="assets")return assets;return null}};
 
   /* sesión con Supabase ligada al usuario de Brandloop */
   const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
