@@ -1180,6 +1180,7 @@ html.of-open,html.of-open body{overflow:hidden}
 .tl{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;padding:0 20px 20px}.tl-m{min-height:92px;padding:8px 6px;border-radius:12px;background:var(--panel-2,rgba(127,127,127,.08));display:grid;align-content:start;gap:4px}.tl-m.has{background:var(--accent-soft);outline:1px solid var(--c)}.tl-m b{font-size:12px;text-transform:uppercase;letter-spacing:.04em}.tl-i{font-size:11px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.tl-i.more{opacity:.6}
 .p27grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;padding:0 20px 20px}.p27c{padding:14px;border-radius:14px;border:1px solid var(--line);display:grid;gap:8px;align-content:start}.p27c-h{display:grid;gap:6px}.p27c-h b{font-size:15px;line-height:1.3}.p27c p{margin:0;font-size:13.5px;line-height:1.5}.p27c .how{padding:8px 10px;border-radius:10px;background:var(--accent-soft)}.p27c .src{font-size:12px}.chip.warn{background:#fff4e0;color:#8a5200}
 @media(max-width:900px){.tl{grid-template-columns:repeat(6,1fr)}}@media(max-width:560px){.tl{grid-template-columns:repeat(3,1fr)}}
+.ut{position:fixed;inset:0;z-index:999;pointer-events:none}.ut::before{content:"";position:fixed;left:var(--x);top:var(--y);width:var(--w);height:var(--h);border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.55),0 0 0 3px var(--accent,#f2620a);transition:left .25s,top .25s,width .25s,height .25s}.ut-card{position:fixed;width:320px;max-width:calc(100vw - 24px);padding:16px 18px;border-radius:16px;background:var(--panel,#fff);color:var(--ink,#111);box-shadow:0 18px 50px rgba(0,0,0,.35);pointer-events:auto;display:grid;gap:8px;transition:left .25s,top .25s}.ut-card h3{margin:0;font-size:18px}.ut-card p{margin:0;font-size:14px;line-height:1.5}.ut-card::after{content:"";position:absolute;width:14px;height:14px;background:inherit;transform:rotate(45deg)}.ut-card[data-side="left"]::after{left:-7px;top:22px}.ut-card[data-side="right"]::after{right:-7px;top:22px}.ut-card[data-side="top"]::after{top:-7px;left:24px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -1475,7 +1476,8 @@ function render(){
   try{ss=a.selectionStart;se=a.selectionEnd}catch(e){}
   const logScroll=document.getElementById("chat-log");
   const atBottom=!logScroll||logScroll.scrollHeight-logScroll.scrollTop-logScroll.clientHeight<40;
-  const _g=S.clients.length?groupOf(S.view)[0]:"";const _c=client();if(_c&&S.modLoaded&&!(S.modCfg&&S.modCfg.done)&&!S.tour&&!S.tourSeen){S.tour=1;S.tourSeen=true;S.tourSel=MODULES.filter(m=>m[5]).map(m=>m[0])}root.innerHTML=(S.tour&&_c?tourHTML(_c):"")+rail()+`<main class="main g-${_g} v-${S.view}" style="--bc:${_c?brandPal(_c)[0].hex:"var(--accent)"};--bc2:${_c?(brandPal(_c)[1]||brandPal(_c)[0]).hex:"var(--accent-hi)"}">${topbar()}${S.clients.length&&S.view!=="newclient"?subnav():""}${body()}</main>`;
+  const _g=S.clients.length?groupOf(S.view)[0]:"";const _c=client();if(_c&&S.modLoaded&&!(S.modCfg&&S.modCfg.done)&&!S.tour&&!S.tourSeen){S.tour=1;S.tourSeen=true;S.tourSel=MODULES.filter(m=>m[5]).map(m=>m[0])}if(_c&&S.modLoaded&&S.modCfg&&S.modCfg.done&&!S.modCfg.uiTour&&!S.tour&&!S.uiTour&&!S.uiTourSeen){S.uiTour=1;S.uiTourSeen=true}root.innerHTML=(S.tour&&_c?tourHTML(_c):"")+uiTourHTML()+rail()+`<main class="main g-${_g} v-${S.view}" style="--bc:${_c?brandPal(_c)[0].hex:"var(--accent)"};--bc2:${_c?(brandPal(_c)[1]||brandPal(_c)[0]).hex:"var(--accent-hi)"}">${topbar()}${S.clients.length&&S.view!=="newclient"?subnav():""}${body()}</main>`;
+  if(S.uiTour)requestAnimationFrame(uiTourPlace);
   root.querySelectorAll("[data-draft]").forEach(el=>{const k=el.dataset.draft;if(k in S.drafts)el.value=S.drafts[k]});
   if(fid){const el=document.getElementById(fid);if(el){el.focus({preventScroll:true});try{if(ss!=null)el.setSelectionRange(ss,se)}catch(e){}}}
   if(atBottom) scrollChat();
@@ -1499,7 +1501,7 @@ function rail(){
    ${S.menu?`<div class="menu" role="menu">${S.clients.filter(k=>!S.meet||k.id===S.meet).map(k=>`<button role="menuitem" data-act="client" data-id="${esc(k.id)}" aria-current="${k.id===S.cid}">${monoHTML(k,"")}<span>${esc(k.name)}<br><span class="hint">${esc(k.industry||"")}</span></span></button>`).join("")}
      ${S.clients.length>1?`<button data-act="meet">${S.meet?"Salir del modo reunión":"Modo reunión: mostrar solo esta marca"}</button>`:""}${S.meet?"":S.canWrite&&V.user?.role!=="admin"&&V.enabled?"":S.canWrite?`<button data-act="view" data-v="newclient">${ic("plus")} Agregar cliente</button>`:""}</div>`:""}</div>`:`<a class="logo" href="${SITE_URL}" target="_blank" rel="noopener" title="Ir a la página de Brandloop">${loopSvg()}</a>`}
   <nav class="nav" aria-label="Áreas">${(()=>{const G=navG(),a=G.filter(g=>["home","mkt","market","social","ads"].includes(g[0])),b=G.filter(g=>!["home","mkt","market","social","ads"].includes(g[0]));return `<span class="sec">Estrategia y contenido</span><ul>${a.map(item).join("")}</ul>${b.length?`<span class="sec">Marca, ventas y equipo</span><ul>${b.map(item).join("")}</ul>`:""}`})()}${MODULES.some(m=>!modOn(m[0]))?`<button class="nv modsall" data-act="showAll" aria-pressed="${!!S.showAll}" title="Módulos apagados"><span class="ic">${ic("plus")}</span><span class="nl">${S.showAll?"Ocultar módulos apagados":"Ver módulos apagados"}</span></button>`:""}</nav>
-  <div class="side-foot"><div class="themes" role="group" aria-label="Tema"><button class="ic2" data-act="theme" data-t="light" aria-pressed="${th==="light"}" aria-label="Tema claro" title="Tema claro">${ic("sun")}</button><button class="ic2" data-act="theme" data-t="dark" aria-pressed="${th==="dark"}" aria-label="Tema oscuro" title="Tema oscuro">${ic("moon")}</button></div>
+  <div class="side-foot"><button class="nv" data-act="uiTourOpen" title="Recorrido por la plataforma"><span class="ic">${ic("bulb")}</span><span class="nl">¿Cómo se usa?</span></button><div class="themes" role="group" aria-label="Tema"><button class="ic2" data-act="theme" data-t="light" aria-pressed="${th==="light"}" aria-label="Tema claro" title="Tema claro">${ic("sun")}</button><button class="ic2" data-act="theme" data-t="dark" aria-pressed="${th==="dark"}" aria-label="Tema oscuro" title="Tema oscuro">${ic("moon")}</button></div>
    ${V.user?.role==="admin"?`<button class="nv" data-act="view" data-v="access" ${S.view==="access"?'aria-current="page"':""}><span class="ic">${ic("brand")}</span><span class="nl">Usuarios y accesos</span></button>`:""}
    <div class="me">${(()=>{const bl=V.user&&V.user.role!=="admin"&&c?logoFor(c,false):null;return bl?`<span class="mono hilogo"><img src="${esc(bl.url)}" alt="${esc(c.name)}" style="${bl.f?"filter:"+bl.f:""}"></span>`:`<span class="mono" style="--c:#f2620a;--c-on:#fff">${esc((V.user?.name||S.me?.name||"BL").slice(0,2).toUpperCase())}</span>`})()}<span class="who"><b>${esc(V.user?.name||S.me?.name||"Tu equipo")}</b><span class="brandrow">${V.user?esc("@"+V.user.uname):`${loopSvg(3)} Brandloop`}</span></span></div>${V.user?`<button class="logoutbtn" data-act="logout">${ic("logout")} Cerrar sesión</button>`:""}</div>${siteLink("sitelink")}</aside>`;
 }
@@ -2023,6 +2025,36 @@ function modulesCard(c){
   </tbody></table></div></article>`;
 }
 /* Recorrido inicial: el usuario elige sus módulos y ve un resumen de lo que el sistema hará por cada decisión */
+/* Recorrido por la interfaz con flechitas: qué es cada cosa y para qué sirve. Por marca, se puede saltar y se puede repetir. */
+const UI_TOUR=[
+  ["aside.side .ws","Tu marca","Aquí ves con qué marca estás. Todo lo que hay en Brandloop es solo de esta marca."],
+  ['aside.side .nv[data-v="home"]',"Inicio","Tu resumen: qué hay por aprobar, qué salió esta semana y cómo van los números. Empieza siempre aquí."],
+  ['aside.side .nv[data-v="plan"]',"Plan y estrategia","Lo macro: el Plan 2027, la estrategia, tu audiencia. De aquí sale todo lo demás."],
+  ['aside.side .nv[data-v="trends:sector"]',"Mercado","Qué está pasando afuera: tendencias, competencia y si las inteligencias artificiales recomiendan tu marca."],
+  ['aside.side .nv[data-v="cal"]',"Social Media","El calendario del mes, cada publicación, la pauta y los resultados orgánicos. Aquí frenas o apruebas lo que va a salir."],
+  ['aside.side .nv[data-v="campaigns"]',"Campañas","Campañas grandes, eventos del año y correos a tus clientes."],
+  ['aside.side .nv[data-v="brand"]',"Marca","Tu logo, colores, tono y las personas que hablan por la marca. Lo que el equipo usa para que todo se vea tuyo."],
+  ['aside.side .nv[data-v="pipe"]',"Ventas","A quién estamos contactando y qué documentos tienes listos."],
+  ['aside.side .nv[data-v="office"]',"Equipo de IA","Los agentes que trabajan de madrugada por tu marca. Aquí ves qué entregaron y les pides cambios."],
+  ['aside.side .modsall',"Módulos apagados","Lo que no elegiste sigue aquí. Lo enciendes cuando quieras."],
+  ['header.top .tb[data-v="cal"]',"Calendario rápido","Un atajo al calendario del mes desde cualquier parte."],
+  ['header.top .btn.accent',"Nuevo post","Si se te ocurre algo, lo escribes aquí y el equipo lo convierte en pieza."],
+  ['aside.side .themes',"Claro u oscuro","Elige el tema que te guste. Y si quieres volver a ver este recorrido, está en el botón de ayuda."]];
+function uiTourHTML(){
+  if(!S.uiTour)return "";const steps=UI_TOUR.filter(([sel])=>document.querySelector(sel));if(!steps.length)return "";
+  const i=Math.min(S.uiTour-1,steps.length-1),[sel,t,txt]=steps[i];
+  return `<div class="ut" data-ut-sel="${esc(sel)}"><div class="ut-card"><span class="eyebrow">${i+1} de ${steps.length}</span><h3>${esc(t)}</h3><p>${esc(txt)}</p><div class="row" style="justify-content:space-between;gap:8px"><button class="btn sm ghost" data-act="uiTourSkip">Saltar</button><span class="row" style="gap:6px">${i?`<button class="btn sm" data-act="uiTourBack">Atrás</button>`:""}<button class="btn ink sm" data-act="${i<steps.length-1?"uiTourNext":"uiTourDone"}">${i<steps.length-1?"Siguiente":"Listo"}</button></span></div></div></div>`;
+}
+function uiTourPlace(){
+  const box=document.querySelector(".ut");if(!box)return;const el=document.querySelector(box.dataset.utSel);if(!el){act.uiTourNext();return}
+  el.scrollIntoView({block:"nearest"});const r=el.getBoundingClientRect(),pad=6;
+  box.style.setProperty("--x",r.left-pad+"px");box.style.setProperty("--y",r.top-pad+"px");box.style.setProperty("--w",r.width+pad*2+"px");box.style.setProperty("--h",r.height+pad*2+"px");
+  const card=box.querySelector(".ut-card");const cw=320,ch=card.offsetHeight||170;let x=r.right+16,y=r.top;let side="left";
+  if(x+cw>innerWidth-12){x=r.left-cw-16;side="right"}if(x<12){x=Math.max(12,Math.min(innerWidth-cw-12,r.left));y=r.bottom+16;side="top"}
+  if(y+ch>innerHeight-12)y=Math.max(12,innerHeight-ch-12);
+  card.style.left=x+"px";card.style.top=y+"px";card.dataset.side=side;
+}
+async function uiTourSave(){try{if(!S.cid||!S.canWrite)return;const d={...(S.modCfg||{}),uiTour:true};S.modCfg=d;await S.rawdb.doc(`clients/${S.cid}/docs/modules`).set(d)}catch(e){}}
 function tourHTML(c){
   const step=S.tour||1,sel=S.tourSel||MODULES.filter(m=>m[5]).map(m=>m[0]),auto=S.tourAuto||((S.modCfg&&S.modCfg.auto)||"avisar");
   const box=`<div class="tour" role="dialog" aria-modal="true" aria-label="Configura Brandloop"><div class="tour-in" style="${cvars(c)}">`;
@@ -2859,6 +2891,7 @@ function mountDesigns(){
     el.dataset.k=key;fitDesign(el)});
 }
 function fitDesign(el){const st=el.shadowRoot&&el.shadowRoot.querySelector(".st");if(!st)return;const W=+getComputedStyle(el).getPropertyValue("--dw")||1080,H=+getComputedStyle(el).getPropertyValue("--dh")||1350;const w=el.clientWidth||300;const s=w/W;st.style.transform=`scale(${s})`;el.style.height=Math.round(H*s)+"px"}
+window.addEventListener("resize",()=>{if(S.uiTour)uiTourPlace()});
 let fitTimer=null;window.addEventListener("resize",()=>{clearTimeout(fitTimer);fitTimer=setTimeout(()=>document.querySelectorAll(".dz").forEach(fitDesign),120)});
 
 /* export designs to PNG via html2canvas */
@@ -5564,7 +5597,7 @@ async function autopilot(id){
 }
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
-  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.modCfg=null; S.modEdit=null; S.modLoaded=false; S.tour=null; S.tourSeen=false; S.showAll=false; S.act=null; S.adsCfg=null; S.capEdit=false; S.propEdit=false; S.socialCfg=null; S.queue=null; S.contact=null; S.adsAuto=null; S.digest=null; S.ctEdit=false; S.plan27=null; S.plan27L=false; officeSubs(id);
+  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.modCfg=null; S.modEdit=null; S.modLoaded=false; S.tour=null; S.tourSeen=false; S.showAll=false; S.act=null; S.adsCfg=null; S.capEdit=false; S.propEdit=false; S.socialCfg=null; S.queue=null; S.uiTour=null; S.uiTourSeen=false; S.contact=null; S.adsAuto=null; S.digest=null; S.ctEdit=false; S.plan27=null; S.plan27L=false; officeSubs(id);
   S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.funnel=null;S.compass=null;S.compSum=null;["finance","adcalc","pautastrat","funnel","compass","prodstories","investPlan","webaudit","site"].forEach(k=>{S[k+"Seen"]=false;S[k+"Cid"]=null});Object.keys(S).forEach(k=>{if(k.startsWith("_raw_")&&!k.startsWith("_raw_"+id+"_"))delete S[k]});S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
   [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["funnel","funnel"],["compass","compass"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{const nv=x.exists?x.data():null;const js=JSON.stringify(nv);if(S.cid!==id)return;const rk="_raw_"+id+"_"+k;if(S[rk]===js&&S[k+"Seen"]&&S[k+"Cid"]===id)return;S[rk]=js;S[k+"Cid"]=id;S[k]=k==="finance"&&nv&&S.finDraft?{...nv,...S.finDraft}:k==="adcalc"&&S.calDirty&&S.adcalc?S.adcalc:nv;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
@@ -5817,6 +5850,11 @@ const A={
     catch(e){toast("No se pudo: "+(e&&e.message||"Meta no respondió"))}
     S.adBusy=false;render()},
   tourOpen:()=>{S.tour=1;S.tourSel=MODULES.map(m=>m[0]).filter(k=>modOn(k));render()},
+  uiTourNext:()=>{S.uiTour=(S.uiTour||1)+1;render()},
+  uiTourBack:()=>{S.uiTour=Math.max(1,(S.uiTour||1)-1);render()},
+  uiTourSkip:()=>{S.uiTour=null;render();uiTourSave()},
+  uiTourDone:()=>{S.uiTour=null;render();uiTourSave();toast("Cuando quieras repetirlo: botón ¿Cómo se usa?")},
+  uiTourOpen:()=>{S.uiTour=1;S.uiTourSeen=true;render()},
   tourNext:()=>{S.tour=Math.min(4,(S.tour||1)+1);render()},
   tourAuto:b=>{S.tourAuto=b.dataset.k;render()},
   tourBack:()=>{S.tour=Math.max(1,(S.tour||1)-1);render()},
