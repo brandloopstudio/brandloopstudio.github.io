@@ -2049,7 +2049,7 @@ function uiTourHTML(){
   return `<div class="ut" data-ut-sel="${esc(sel)}"><div class="ut-card"><span class="eyebrow">${i+1} de ${steps.length}</span><h3>${esc(t)}</h3><p>${esc(txt)}</p><div class="row" style="justify-content:space-between;gap:8px"><button class="btn sm ghost" data-act="uiTourSkip">Saltar</button><span class="row" style="gap:6px">${i?`<button class="btn sm" data-act="uiTourBack">Atrás</button>`:""}<button class="btn ink sm" data-act="${i<steps.length-1?"uiTourNext":"uiTourDone"}">${i<steps.length-1?"Siguiente":"Listo"}</button></span></div></div></div>`;
 }
 function uiTourPlace(){
-  const box=document.querySelector(".ut");if(!box)return;const el=document.querySelector(box.dataset.utSel);if(!el){act.uiTourNext();return}
+  const box=document.querySelector(".ut");if(!box)return;const el=document.querySelector(box.dataset.utSel);if(!el){A.uiTourNext();return}
   el.scrollIntoView({block:"nearest"});const r=el.getBoundingClientRect(),pad=6;
   box.style.setProperty("--x",r.left-pad+"px");box.style.setProperty("--y",r.top-pad+"px");box.style.setProperty("--w",r.width+pad*2+"px");box.style.setProperty("--h",r.height+pad*2+"px");
   const card=box.querySelector(".ut-card");const cw=320,ch=card.offsetHeight||170;let x=r.right+16,y=r.top;let side="left";
