@@ -2037,8 +2037,8 @@ const UI_TOUR=[
   ['aside.side .nv[data-v="pipe"]',"Ventas","A quién estamos contactando y qué documentos tienes listos."],
   ['aside.side .nv[data-v="office"]',"Equipo de IA","Los agentes que trabajan de madrugada por tu marca. Aquí ves qué entregaron y les pides cambios."],
   ['aside.side .modsall',"Módulos apagados","Lo que no elegiste sigue aquí. Lo enciendes cuando quieras."],
-  ['header.top .tb[data-v="cal"]',"Calendario rápido","Un atajo al calendario del mes desde cualquier parte."],
-  ['header.top .btn.accent',"Nuevo post","Si se te ocurre algo, lo escribes aquí y el equipo lo convierte en pieza."],
+  ['.top .tb[data-v="cal"]',"Calendario rápido","Un atajo al calendario del mes desde cualquier parte."],
+  ['.top .btn.accent',"Nuevo post","Si se te ocurre algo, lo escribes aquí y el equipo lo convierte en pieza."],
   ['aside.side .themes',"Claro u oscuro","Elige el tema que te guste. Y si quieres volver a ver este recorrido, está en el botón de ayuda."]];
 function uiTourHTML(){
   if(!S.uiTour)return "";const steps=UI_TOUR.filter(([sel])=>document.querySelector(sel));if(!steps.length)return "";
