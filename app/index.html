@@ -1181,6 +1181,8 @@ html.of-open,html.of-open body{overflow:hidden}
 .p27grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;padding:0 20px 20px}.p27c{padding:14px;border-radius:14px;border:1px solid var(--line);display:grid;gap:8px;align-content:start}.p27c-h{display:grid;gap:6px}.p27c-h b{font-size:15px;line-height:1.3}.p27c p{margin:0;font-size:13.5px;line-height:1.5}.p27c .how{padding:8px 10px;border-radius:10px;background:var(--accent-soft)}.p27c .src{font-size:12px}.chip.warn{background:#fff4e0;color:#8a5200}
 @media(max-width:900px){.tl{grid-template-columns:repeat(6,1fr)}}@media(max-width:560px){.tl{grid-template-columns:repeat(3,1fr)}}
 .ut{position:fixed;inset:0;z-index:999;pointer-events:none}.ut::before{content:"";position:fixed;left:var(--x);top:var(--y);width:var(--w);height:var(--h);border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.55),0 0 0 3px var(--accent,#f2620a);transition:left .25s,top .25s,width .25s,height .25s}.ut-card{position:fixed;width:320px;max-width:calc(100vw - 24px);padding:16px 18px;border-radius:16px;background:var(--panel,#fff);color:var(--ink,#111);box-shadow:0 18px 50px rgba(0,0,0,.35);pointer-events:auto;display:grid;gap:8px;transition:left .25s,top .25s}.ut-card h3{margin:0;font-size:18px}.ut-card p{margin:0;font-size:14px;line-height:1.5}.ut-card::after{content:"";position:absolute;width:14px;height:14px;background:inherit;transform:rotate(45deg)}.ut-card[data-side="left"]::after{left:-7px;top:22px}.ut-card[data-side="right"]::after{right:-7px;top:22px}.ut-card[data-side="top"]::after{top:-7px;left:24px}
+#calpv{position:fixed;z-index:800;width:300px;border-radius:16px;overflow:hidden;background:var(--panel,#fff);color:var(--ink,#111);box-shadow:0 18px 50px rgba(0,0,0,.35);pointer-events:none;animation:fadein .15s}#calpv img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;max-height:240px}.calpv-no{height:90px;display:grid;place-items:center;background:var(--accent-soft);opacity:.7}.calpv-b{padding:12px 14px;display:grid;gap:6px}.calpv-b b{font-size:14px;line-height:1.3}.calpv-b p{margin:0;font-size:12.5px;line-height:1.45;opacity:.85}@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.botav{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--accent-soft)}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -1369,7 +1371,7 @@ const GROUPS_ALL=[
   ["ads","Campañas","ads",[["campaigns","Campañas y eventos"],["email","Email marketing"],["events","Eventos y asociaciones"]]],
   ["brandg","Marca","brand",[["brand","Perfil de marca"],["identity","Identidad visual"],["mockups","Aplicaciones de marca"],["prodstory","Historias por producto"],["web","Página web"],["people","Perfiles profesionales"]]],
   ["sales","Ventas","pipe",[["pipe","Pipeline"],["track","Trackers"],["export","Documentos"]]],
-  ["ai","Equipo de IA","spark",[["office","Oficina de agentes"],["agents","Agentes"],["loop","Loop"]]]
+  ["ai","Equipo de IA","spark",[["office","Oficina de agentes"],["agents","Agentes"],["loop","Pregúntale"]]]
 ];
 /* vista del dueño de la marca: de lo macro (el plan) a lo micro (cada pieza), sin herramientas internas */
 const CLIENT_GROUPS=[
@@ -2027,19 +2029,20 @@ function modulesCard(c){
 /* Recorrido inicial: el usuario elige sus módulos y ve un resumen de lo que el sistema hará por cada decisión */
 /* Recorrido por la interfaz con flechitas: qué es cada cosa y para qué sirve. Por marca, se puede saltar y se puede repetir. */
 const UI_TOUR=[
-  ["aside.side .ws","Tu marca","Aquí ves con qué marca estás. Todo lo que hay en Brandloop es solo de esta marca."],
-  ['aside.side .nv[data-v="home"]',"Inicio","Tu resumen: qué hay por aprobar, qué salió esta semana y cómo van los números. Empieza siempre aquí."],
-  ['aside.side .nv[data-v="plan"]',"Plan y estrategia","Lo macro: el Plan 2027, la estrategia, tu audiencia. De aquí sale todo lo demás."],
-  ['aside.side .nv[data-v="trends:sector"]',"Mercado","Qué está pasando afuera: tendencias, competencia y si las inteligencias artificiales recomiendan tu marca."],
-  ['aside.side .nv[data-v="cal"]',"Social Media","El calendario del mes, cada publicación, la pauta y los resultados orgánicos. Aquí frenas o apruebas lo que va a salir."],
-  ['aside.side .nv[data-v="campaigns"]',"Campañas","Campañas grandes, eventos del año y correos a tus clientes."],
-  ['aside.side .nv[data-v="brand"]',"Marca","Tu logo, colores, tono y las personas que hablan por la marca. Lo que el equipo usa para que todo se vea tuyo."],
-  ['aside.side .nv[data-v="pipe"]',"Ventas","A quién estamos contactando y qué documentos tienes listos."],
-  ['aside.side .nv[data-v="office"]',"Equipo de IA","Los agentes que trabajan de madrugada por tu marca. Aquí ves qué entregaron y les pides cambios."],
-  ['aside.side .modsall',"Módulos apagados","Lo que no elegiste sigue aquí. Lo enciendes cuando quieras."],
-  ['.top .tb[data-v="cal"]',"Calendario rápido","Un atajo al calendario del mes desde cualquier parte."],
-  ['.top .btn.accent',"Nuevo post","Si se te ocurre algo, lo escribes aquí y el equipo lo convierte en pieza."],
-  ['aside.side .themes',"Claro u oscuro","Elige el tema que te guste. Y si quieres volver a ver este recorrido, está en el botón de ayuda."]];
+  ["aside.side .ws","Tu marca","Aquí ves con qué marca estás trabajando. Todo lo que hay en Brandloop (plan, piezas, resultados, pauta) es solo de esta marca; nunca se mezcla con otra."],
+  ['aside.side .nv[data-v="home"]',"Inicio: tu resumen","Es la primera pantalla cada día. Arriba, lo que espera tu visto bueno (piezas, cambios de pauta). Abajo, los KPI de la semana: alcance (cuánta gente vio tu contenido), clics y contactos nuevos. Si solo tienes 2 minutos, con esto basta."],
+  ['aside.side .nv[data-v="plan"]',"Plan y estrategia: lo macro","El Plan 2027 dice dónde debe estar la marca y qué eventos, premios y gremiales conviene mover cada mes. La estrategia define a quién le hablamos (audiencia) y cómo (tono y pilares de contenido). De aquí sale todo lo que se publica."],
+  ['aside.side .nv[data-v="trends:sector"]',"Mercado: qué pasa afuera","Tendencias de tu sector, qué está haciendo la competencia y IA Search: si ChatGPT, Gemini o Claude recomiendan tu marca cuando alguien pregunta por tu categoría. Lo medimos cada 15 días."],
+  ['aside.side .nv[data-v="cal"]',"Social Media: calendario y resultados","El calendario del mes muestra qué sale cada día (pasa el cursor sobre una pieza y la ves sin entrar). La parrilla es el detalle pieza por pieza, con sus textos y artes. Aquí apruebas, frenas o pides cambios. También está la pauta (anuncios pagados) y las métricas orgánicas (lo que logras sin pagar)."],
+  ['aside.side .nv[data-v="campaigns"]',"Campañas: lo grande del año","Campañas especiales (lanzamientos, fechas clave), eventos y asociaciones del sector y email marketing: los correos que mandamos a tu base de clientes."],
+  ['aside.side .nv[data-v="brand"]',"Marca: tu identidad","Logo, colores, tipografía, tono de voz y las personas que hablan por la marca (por ejemplo, el perfil de LinkedIn del CEO). El equipo usa esto para que cada pieza se vea y suene como tú."],
+  ['aside.side .nv[data-v="pipe"]',"Ventas: a quién estamos contactando","El pipeline (lista de prospectos y en qué etapa van), los trackers de resultados y los documentos listos para mandar: cotizaciones, presentaciones."],
+  ['aside.side .nv[data-v="office"]',"Equipo de IA: tus agentes","Un equipo de agentes trabaja de madrugada por tu marca: investiga, redacta, diseña y mide. En la oficina ves qué entregó cada uno y le pides cambios. Nada sale sin pasar por tu nivel de aprobación."],
+  ['aside.side .nv[data-v="loop"]',"Pregúntale a tu robot","Tu asistente conoce tu marca, tu plan y tus números. Pregúntale qué significa una métrica, pídele ideas o que te deje una pieza lista en la parrilla. Hasta 10 preguntas al día."],
+  ['aside.side .modsall',"Módulos apagados","Lo que no elegiste en la configuración sigue existiendo. Desde aquí lo enciendes cuando lo necesites."],
+  ['.top .tb[data-v="cal"]',"Atajo al calendario","Desde cualquier pantalla, un clic te lleva al calendario del mes."],
+  ['.top .btn.accent',"Nuevo post","¿Se te ocurrió algo? Escríbelo aquí en dos líneas. El equipo lo convierte en una pieza completa y te la deja para aprobar."],
+  ['aside.side .themes',"Claro u oscuro","Elige el tema que te sea más cómodo. Y si quieres repetir este recorrido, está en el botón «¿Cómo se usa?»."]];
 function uiTourHTML(){
   if(!S.uiTour)return "";const steps=UI_TOUR.filter(([sel])=>document.querySelector(sel));if(!steps.length)return "";
   const i=Math.min(S.uiTour-1,steps.length-1),[sel,t,txt]=steps[i];
@@ -2164,6 +2167,8 @@ function officeSubs(id){
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/plan2027`).onSnapshot(d=>{if(S.cid!==id)return;S.plan27=d.exists?d.data():null;S.plan27L=true;hot()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/social`).onSnapshot(d=>{if(S.cid!==id)return;S.socialCfg=d.exists?d.data():null;if(S.view==="cal"||S.view==="posts")render()},()=>{}));
   unsubs.push(S.rawdb.collection(`office/${id}/queue`).onSnapshot(s=>{if(S.cid!==id)return;S.queue={};s.docs.forEach(d=>S.queue[d.id]=d.data());queueApply();queueSync();if(S.view==="cal"||S.view==="posts")render()},()=>{}));
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/mascot`).onSnapshot(d=>{if(S.cid!==id)return;S.mascot=d.exists?ofMascot(d.data()):null;if(S.view==="loop"||S.view==="home")render()},()=>{}));
+  unsubs.push(S.rawdb.doc(`clients/${id}/docs/askq`).onSnapshot(d=>{if(S.cid!==id)return;S.askq=d.exists?d.data():null;if(S.view==="loop")render()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/contact`).onSnapshot(d=>{if(S.cid!==id)return;S.contact=d.exists?d.data():null;if(S.view==="ads")render()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/adsauto`).onSnapshot(d=>{if(S.cid!==id)return;S.adsAuto=d.exists?d.data():null;if(S.view==="ads")render()},()=>{}));
   unsubs.push(S.rawdb.doc(`clients/${id}/docs/digest`).onSnapshot(d=>{if(S.cid!==id)return;S.digest=d.exists?d.data():null;if(S.view==="home")render()},()=>{}));
@@ -2402,20 +2407,25 @@ function marketBand(c){
    <div class="br"><div class="ph"><h2 class="t">Lo que se mueve en tu nicho</h2><span class="s2">${S.trends.length} tendencias</span></div><div class="gcards">${cards.join("")||`<p class="s2">La investigación automática llenará esta sección.</p>`}</div></div></section>`;
 }
 
+const ASK_LIMIT=10;
+const botName=()=>(S.mascot&&S.mascot.name)||"Loop";
+const botAv=()=>S.mascot&&(S.mascot.av||S.mascot.img)?`<img class="botav" src="${esc(S.mascot.av||S.mascot.img)}" alt="">`:loopSvg(3.6);
+function askLeft(){if(ofAdm())return Infinity;const q=S.askq||{};return q.day===todayStr()?Math.max(0,ASK_LIMIT-(Number(q.n)||0)):ASK_LIMIT}
+async function askCount(){if(ofAdm()||!S.cid)return;const q=S.askq||{};const d={day:todayStr(),n:q.day===todayStr()?(Number(q.n)||0)+1:1};S.askq=d;try{await S.rawdb.doc(`clients/${S.cid}/docs/askq`).set(d)}catch(e){}}
 function chatPanel(c){
-  const ch=chatOf(c.id);
+  const ch=chatOf(c.id);const left=askLeft();
   const sugs=["Dame 5 ideas de posts para esta semana","¿Cómo vamos con el plan del mes?","Escribe un post sobre la tendencia más fuerte","¿En qué me diferencio de la competencia?"];
-  let log=`<div class="msg a">Hola, soy Loop, el asistente de IA de ${esc(c.name)}. Conozco su perfil de marca, el plan, los posts, las tendencias y la competencia. ${S.tools&&S.canWrite?"Puedo crear posts y tareas por ti.":""}¿En qué te ayudo?</div>`;
+  let log=`<div class="msg a">Hola, soy ${esc(botName())}${S.mascot?", el robot de "+esc(c.name):", el asistente de IA de "+esc(c.name)}. Conozco su perfil de marca, el plan, los posts, las tendencias y la competencia. ${S.tools&&S.canWrite?"Puedo crear posts y tareas por ti. ":""}Pregúntame lo que quieras${left!==Infinity?` (tienes ${left} pregunta${left===1?"":"s"} hoy)`:""}.</div>`;
   log+=ch.turns.map(t=>`<div class="msg ${t.role==="user"?"u":"a"}">${esc(t.content)}</div>`).join("");
   if(ch.busy) log+= ch.live?`<div class="msg a" id="live">${esc(ch.live)}</div>`:`<div class="msg a thinkrow thinking" id="live">${loopSvg()} Pensando…</div>`;
   if(ch.err) log+=`<div class="msg err">${esc(ch.err)}</div>`;
   const off=!S.sample||S.sampleOff;
-  return `<article class="panel chat ${ch.busy?"thinking":""}"><div class="chat-head"><div class="t" style="flex:1"><h2 style="font-size:19px">Loop</h2><span class="hint">Asistente de IA de ${esc(c.name)}</span></div><span class="orb">${loopSvg(3.6)}</span></div>
+  return `<article class="panel chat ${ch.busy?"thinking":""}"><div class="chat-head"><div class="t" style="flex:1"><h2 style="font-size:19px">${esc(botName())}</h2><span class="hint">${S.mascot?"El robot de "+esc(c.name):"Asistente de IA de "+esc(c.name)}${left!==Infinity?` · ${left} de ${ASK_LIMIT} preguntas hoy`:""}</span></div><span class="orb">${botAv()}</span></div>
    <div class="inner" style="padding:0;display:flex;flex-direction:column;flex:1"><div class="log" id="chat-log" aria-live="polite">${log}</div>
    <div style="padding:0 12px 12px;display:flex;flex-direction:column;gap:10px">
    ${!ch.turns.length&&!off?`<div class="sugs">${sugs.map(s=>`<button class="sug" data-act="sug" data-q="${esc(s)}">${esc(s)}</button>`).join("")}</div>`:""}
    ${off?`<p class="hint">${S.sampleOff?"El asistente no está disponible en esta vista. Revisa el permiso para usar Claude en esta página.":"Conectando con el asistente…"}</p>`:""}
-   <form class="composer" data-form="chat"><input type="text" id="chat-input" data-draft="chat-${esc(c.id)}" placeholder="Escribe un mensaje…" autocomplete="off" ${off?"disabled":""}>
+   <form class="composer" data-form="chat"><input type="text" id="chat-input" data-draft="chat-${esc(c.id)}" placeholder="${left===0?"Se acabaron las preguntas de hoy; mañana hay 10 más":"Escribe tu pregunta…"}" autocomplete="off" ${off||left===0?"disabled":""}>
    ${ch.busy?`<button type="button" class="btn ink round" data-act="stopchat" aria-label="Detener">${ic("stop")}</button>`:`<button class="btn accent round" aria-label="Enviar" ${off?"disabled":""}>${ic("send")}</button>`}</form></div></div></article>`;
 }
 
@@ -3489,7 +3499,7 @@ function viewAgents(c){
   ${card("trends","Investigación semanal","Cada lunes actualiza tendencias del mercado, tendencias en redes, hashtags y el mapa de competencia.","Ver tendencias",'data-act="view" data-v="trends:sector"',`<p class="hint">Última actualización: ${S.trends.length?esc(fmtTs(Math.max(...S.trends.map(t=>t.updatedAt||0)))):"pendiente"}</p>`)}
   </div>`;
 }
-function viewLoop(c){return `<section class="greet"><div class="hello"><h1>Loop</h1><p class="sub">Tu asistente de IA para ${esc(c.name)}. Pídele ideas, análisis, copys o que te deje piezas listas en la parrilla.</p></div></section><div class="loopwide">${chatPanel(c)}</div>`}
+function viewLoop(c){return `<section class="greet"><div class="hello"><h1>Pregúntale a ${esc(botName())}</h1><p class="sub">${S.mascot?esc(botName())+" es el robot de "+esc(c.name)+": conoce tu marca, tu plan y tus resultados.":"Tu asistente de IA para "+esc(c.name)+"."} Pídele ideas, que te explique un número o que te deje una pieza lista en la parrilla.${ofAdm()?"":" Hasta "+ASK_LIMIT+" preguntas al día."}</p></div></section><div class="loopwide">${chatPanel(c)}</div>`}
 
 /* ---------- IA Search (GEO) ---------- */
 const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
@@ -3646,6 +3656,20 @@ function metricForm(){
    <div class="field" style="max-width:240px"><label for="mt-target">Meta mensual (opcional)</label><input type="number" step="any" id="mt-target" data-draft="mt-target"></div><div class="row"><button class="btn ink">Crear tracker</button></div></form>`;
 }
 
+/* Vista previa de una pieza del calendario al pasar el cursor (sin entrar) */
+function calPreview(el){
+  let pv=document.getElementById("calpv");if(!el){if(pv)pv.remove();return}
+  const p=S.posts.find(x=>x.id===el.dataset.id);if(!p)return;
+  const nets=(p.variants||[]).length?p.variants.map(v=>v.network):[p.channel];const {img}=qMedia(p);const cap=String(p.caption||(p.variants&&p.variants[0]&&p.variants[0].copy)||"").replace(/\s+/g," ").slice(0,180);
+  if(!pv){pv=document.createElement("div");pv.id="calpv";document.body.appendChild(pv)}
+  pv.innerHTML=`${img?`<img src="${esc(img)}" alt="">`:`<div class="calpv-no">${ic("posts")}</div>`}<div class="calpv-b"><div class="row" style="gap:6px;align-items:center">${nets.map(n=>chIco(n)).join("")}<span class="pill st-${esc(p.status||"draft")}">${esc(STATUS[p.status]||"")}</span>${p.time?`<span class="hint">${esc(p.time)}</span>`:""}</div><b>${esc(p.title||"")}</b>${cap?`<p>${esc(cap)}${cap.length>=180?"…":""}</p>`:""}<span class="hint">Clic para abrir la pieza</span></div>`;
+  const r=el.getBoundingClientRect(),w=300;let x=r.right+10,y=r.top;if(x+w>innerWidth-8)x=r.left-w-10;if(x<8)x=8;
+  pv.style.left=x+"px";pv.style.top="0px";const h=pv.offsetHeight;if(y+h>innerHeight-8)y=Math.max(8,innerHeight-h-8);pv.style.top=y+"px";
+}
+document.addEventListener("mouseover",e=>{const el=e.target.closest(".mc-e[data-id]");if(el)calPreview(el)});
+document.addEventListener("mouseout",e=>{const el=e.target.closest(".mc-e[data-id]");if(el&&!(e.relatedTarget&&el.contains(e.relatedTarget)))calPreview(null)});
+document.addEventListener("focusin",e=>{const el=e.target.closest(".mc-e[data-id]");if(el)calPreview(el)});
+document.addEventListener("focusout",()=>calPreview(null));
 /* ---------- content calendar ---------- */
 const DOW=["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
 const dowIx=s=>(parseD(s).getDay()+6)%7;
@@ -5597,7 +5621,7 @@ async function autopilot(id){
 }
 function selectClient(id){setTimeout(()=>runImports(),1500);setTimeout(()=>autopilot(id),6500);
   if(!id||!S.db) return;
-  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.modCfg=null; S.modEdit=null; S.modLoaded=false; S.tour=null; S.tourSeen=false; S.showAll=false; S.act=null; S.adsCfg=null; S.capEdit=false; S.propEdit=false; S.socialCfg=null; S.queue=null; S.uiTour=null; S.uiTourSeen=false; S.contact=null; S.adsAuto=null; S.digest=null; S.ctEdit=false; S.plan27=null; S.plan27L=false; officeSubs(id);
+  stopSubs(); closeOffice(true); S.cid=id; lsSet("bl-client",id); S.ofTasks=null; S.ofPub=null; S.homePref=null; S.iaS=null; S.ofView=null; S.modCfg=null; S.modEdit=null; S.modLoaded=false; S.tour=null; S.tourSeen=false; S.showAll=false; S.act=null; S.adsCfg=null; S.capEdit=false; S.propEdit=false; S.socialCfg=null; S.queue=null; S.uiTour=null; S.uiTourSeen=false; S.mascot=null; S.askq=null; S.contact=null; S.adsAuto=null; S.digest=null; S.ctEdit=false; S.plan27=null; S.plan27L=false; officeSubs(id);
   S.posts=[];S.postsSeen=false;S.trends=[];S.comps=[];S.tasks=[];S.plan=null;S.deals=[];S.metrics=[];S.geo=[];S.geoRun={running:false,error:null,ctl:null};S.ads=[];S.organic=[];S.emailcamps=[];S.orgRun=null;S.strategy=null;S.stratRun={running:false,error:null,ctl:null};S.reply={running:false,error:null,options:null,ctl:null};S.adGen={running:false,error:null,res:null,ctl:null};S.importMsg=null;S.idEdit=false;S.idPal=null;S.camps=[];S.campOpen=null;S.campLogos=[];S.audience=null;S.innovation=null;S.finance=null;S.finDraft=null;S.adcalc=null;S.calDirty=false;S.pautastrat=null;S.pautastratSeen=false;S.prodstories=null;S.prodstoriesSeen=false;S.investPlan=null;S.funnel=null;S.compass=null;S.compSum=null;["finance","adcalc","pautastrat","funnel","compass","prodstories","investPlan","webaudit","site"].forEach(k=>{S[k+"Seen"]=false;S[k+"Cid"]=null});Object.keys(S).forEach(k=>{if(k.startsWith("_raw_")&&!k.startsWith("_raw_"+id+"_"))delete S[k]});S.events=[];S.assocs=[];S.webaudit=null;S.site=null;S.siteSecs=null;S.siteSeen=false;S.webRun={running:false,error:null};S.siteRun={running:false,error:null};S.invRun={running:false,error:null};
   [["finance","finance"],["adcalc","adcalc"],["pautastrat","pautastrat"],["funnel","funnel"],["compass","compass"],["prodstories","prodstories"],["investplan","investPlan"],["webaudit","webaudit"],["site","site"]].forEach(([d,k])=>unsubs.push(S.db.doc(`clients/${id}/docs/${d}`).onSnapshot(x=>{const nv=x.exists?x.data():null;const js=JSON.stringify(nv);if(S.cid!==id)return;const rk="_raw_"+id+"_"+k;if(S[rk]===js&&S[k+"Seen"]&&S[k+"Cid"]===id)return;S[rk]=js;S[k+"Cid"]=id;S[k]=k==="finance"&&nv&&S.finDraft?{...nv,...S.finDraft}:k==="adcalc"&&S.calDirty&&S.adcalc?S.adcalc:nv;S[k+"Seen"]=true;render()},dbErr)));
   unsubs.push(S.db.collection(`clients/${id}/events`).onSnapshot(x=>{S.events=x.docs.map(d=>({id:d.id,...d.data()}));render()},dbErr));
@@ -5675,11 +5699,11 @@ function workCtx(){
   return `${st}\nPipeline: ${pipe}\nPauta:\n${ads}\n\nPlan ${monthLabel(S.month)} — enfoque: ${S.plan?.focus||"-"}\n${o}\n\nPosts recientes:\n${ps}\n\nTendencias del sector:\n${tr}\n\nCompetencia:\n${cp}\n\nPendientes:\n${tk}`;
 }
 async function sendChat(text){
-  const c=client();if(!c||!S.sample)return;const ch=chatOf(c.id);if(ch.busy)return;
+  const c=client();if(!c||!S.sample)return;const ch=chatOf(c.id);if(ch.busy)return;if(askLeft()<=0){toast("Se acabaron las preguntas de hoy. Mañana hay "+ASK_LIMIT+" más.");return}askCount();
   ch.turns.push({role:"user",content:text});ch.busy=true;ch.err=null;ch.live="";ch.ctl=new AbortController();
   S.drafts["chat-"+c.id]="";render();scrollChat();
   const canAct=S.tools&&S.canWrite;
-  const rules=`Eres Loop, el asistente de marketing con IA dentro de Brandloop. Ahora trabajas para la marca ${c.name}. Hoy es ${todayStr()}.\n\n${brandCtx(c)}\n\n${workCtx()}\n\nReglas: responde en español, claro y accionable, sin rodeos (máximo unas 160 palabras salvo que pidan un texto largo como un post o un correo). Usa la voz de la marca cuando escribas contenido. No inventes cifras, precios, fechas, clientes ni resultados que no estén en el contexto; si falta un dato, dilo. Texto plano, sin markdown con asteriscos ni almohadillas de encabezado.${canAct?" Si la persona te pide crear, guardar o dejar listo un post, usa la herramienta crear_post (queda como Por aprobar) y luego confirma en una línea qué guardaste. Para recordatorios o pendientes usa agregar_tarea. No crees nada que no te hayan pedido.":""}`;
+  const rules=`Eres ${botName()}, ${S.mascot?"la mascota y asistente":"el asistente de marketing con IA"} de la marca ${c.name} dentro de Brandloop. Hablas en primera persona como ${botName()}, con calidez y sin tecnicismos innecesarios; cuando uses un término de marketing, explícalo en una frase. Hoy es ${todayStr()}.\n\n${brandCtx(c)}\n\n${workCtx()}\n\nReglas: responde en español, claro y accionable, sin rodeos (máximo unas 160 palabras salvo que pidan un texto largo como un post o un correo). Usa la voz de la marca cuando escribas contenido. No inventes cifras, precios, fechas, clientes ni resultados que no estén en el contexto; si falta un dato, dilo. Texto plano, sin markdown con asteriscos ni almohadillas de encabezado.${canAct?" Si la persona te pide crear, guardar o dejar listo un post, usa la herramienta crear_post (queda como Por aprobar) y luego confirma en una línea qué guardaste. Para recordatorios o pendientes usa agregar_tarea. No crees nada que no te hayan pedido.":""}`;
   const turns=ch.turns.slice(-12);
   const input=[{role:"user",content:rules},...turns];
   const opts={signal:ch.ctl.signal,cache:false,modelTier:"quick",onText:({text})=>{ch.live=text;const el=document.getElementById("live");if(el){el.classList.remove("thinkrow","thinking");el.textContent=text;scrollChat()}else render()}};
