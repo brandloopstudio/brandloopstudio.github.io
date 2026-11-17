@@ -1176,6 +1176,10 @@ html.of-open,html.of-open body{overflow:hidden}
 .capc{margin-top:16px}.cap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;padding:0 20px 20px}.cap-b{display:grid;gap:8px;padding:14px;border-radius:14px;background:var(--accent-soft)}.cap-n{font-size:26px;line-height:1.1}
 .sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 20px 14px}.sc-r{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:var(--accent-soft);font-size:13px}.sc-n{display:flex;align-items:center;gap:6px;font-weight:600}.sc-s{font-size:12px;color:var(--muted)}.sc-s.ok{color:var(--ok)}.sc-s.soon{opacity:.6}
 .prop{margin:0 20px 14px;padding:14px;border-radius:14px;background:var(--warn-soft,#fff4e0);display:grid;gap:6px}.ct{margin:0 20px 20px;padding:14px;border-radius:14px;border:1px dashed var(--line);display:grid;gap:8px}
+.p27hero{padding:22px;display:grid;gap:10px}.p27hero p{font-size:15px;line-height:1.55;margin:0}.p27bets{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:6px}.bet{display:flex;gap:12px;padding:14px;border-radius:14px;background:var(--accent-soft);font-size:14px;line-height:1.45}.bet b{font-size:26px;line-height:1;color:var(--c)}
+.tl{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;padding:0 20px 20px}.tl-m{min-height:92px;padding:8px 6px;border-radius:12px;background:var(--panel-2,rgba(127,127,127,.08));display:grid;align-content:start;gap:4px}.tl-m.has{background:var(--accent-soft);outline:1px solid var(--c)}.tl-m b{font-size:12px;text-transform:uppercase;letter-spacing:.04em}.tl-i{font-size:11px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.tl-i.more{opacity:.6}
+.p27grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;padding:0 20px 20px}.p27c{padding:14px;border-radius:14px;border:1px solid var(--line);display:grid;gap:8px;align-content:start}.p27c-h{display:grid;gap:6px}.p27c-h b{font-size:15px;line-height:1.3}.p27c p{margin:0;font-size:13.5px;line-height:1.5}.p27c .how{padding:8px 10px;border-radius:10px;background:var(--accent-soft)}.p27c .src{font-size:12px}.chip.warn{background:#fff4e0;color:#8a5200}
+@media(max-width:900px){.tl{grid-template-columns:repeat(6,1fr)}}@media(max-width:560px){.tl{grid-template-columns:repeat(3,1fr)}}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9a3a0a"/><stop offset=".55" stop-color="#ff6a00"/><stop offset="1" stop-color="#ffb057"/></linearGradient></defs></svg>
@@ -2261,8 +2265,37 @@ function viewPlan27(c){
   const st=t?t.st:(S.plan27&&S.plan27.out?"aprobado":""),lab={trabajando:"En preparación",cambios:"Con cambios pedidos",revisar:"Listo para que lo revises",aprobado:"Aprobado"}[st]||"";
   const head=`<section class="dash-head"><div><h1>Plan 2027</h1><p class="sub">Dónde debe estar ${esc(c.name)} y qué debe mover durante el año: eventos, premiaciones, gremiales, pauta y email marketing.</p></div>${t?`<div class="row" style="align-items:center;gap:12px"><span class="pill" style="--pc:${st==="aprobado"?"var(--ok)":st==="revisar"?"var(--warn)":"var(--faint)"}">${esc(lab)}</span>${st==="revisar"?`<button class="btn ok" data-act="ofApprove" data-id="plan2027">Aprobar</button><button class="btn" data-act="ofOpen" data-id="plan2027">Pedir cambios</button>`:""}</div>`:""}</section>`;
   if(!txt)return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)"><div class="card d12 p27"><p>${t?"El equipo está armando el plan. Aparece aquí en cuanto esté listo.":"Todavía no hay Plan 2027 para esta marca."}</p></div></section>`;
-  return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)">${st==="revisar"?`<div class="card d12 p27"><p><b>Borrador para tu revisión.</b> Léelo y apruébalo, o pide cambios y el equipo lo rehace esta madrugada.</p></div>`:""}${ofMd(txt)}</section>${ofSheet(c)}`;
+  const note=st==="revisar"?`<div class="card d12 p27"><p><b>Borrador para tu revisión.</b> Léelo y apruébalo, o pide cambios y el equipo lo rehace esta madrugada.</p></div>`:"";
+  if(S.p27Text)return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)">${note}<div class="d12 row" style="justify-content:flex-end"><button class="btn sm" data-act="p27Toggle">Ver como tablero</button></div>${ofMd(txt)}</section>${ofSheet(c)}`;
+  return head+`<section class="dash" style="${cvars(c)};--c2:var(--c)">${note}${plan27Board(txt)}</section>${ofSheet(c)}`;
 }
+/* Plan 2027 como tablero: el texto del agente se convierte en tarjetas y una línea de tiempo por mes */
+const P27_MONTHS=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const P27_ICON={evento:"pipe",stand:"ads",premi:"spark",gremi:"people",pauta:"ads",email:"mail",mirada:"trends",contenido:"posts"};
+function plan27Parse(txt){
+  const parts=String(txt||"").split(/\n(?=##\s)/);const out=[];
+  for(const part of parts){const m=part.match(/^##\s*(.+)\n?([\s\S]*)$/);if(!m){if(part.trim())out.push({title:"",intro:part.trim(),items:[]});continue}
+    const title=m[1].trim(),body=m[2]||"";const items=[],intro=[];
+    body.split("\n").forEach(l=>{const b=l.match(/^\s*[-•]\s+(.*)$/);if(!b){if(l.trim())intro.push(l.trim());return}
+      let t=b[1],name="",meta="",rest=t;const bm=t.match(/^\*\*(.+?)\*\*:?\s*(.*)$/);if(bm){name=bm[1];rest=bm[2];const pm=name.match(/^(.*?)\s*\((.+)\)\s*:?$/);if(pm){name=pm[1];meta=pm[2]}}
+      const mo=P27_MONTHS.findIndex(x=>new RegExp("\\b"+x+"\\b","i").test(meta||name));
+      const src=(rest.match(/Fuente:\s*(https?:\S+)/i)||[])[1]||"";rest=rest.replace(/\s*Fuente:\s*https?:\S+/i,"");
+      const how=(rest.match(/Cómo participar:\s*([\s\S]*)$/i)||[])[1]||"";rest=rest.replace(/\s*Cómo participar:[\s\S]*$/i,"");
+      items.push({name:name||rest.slice(0,60),meta,month:mo,text:rest.trim(),how:how.trim(),src})});
+    out.push({title,intro:intro.join("\n"),items})}
+  return out;
+}
+function plan27Board(txt){
+  const secs=plan27Parse(txt);const all=secs.flatMap(s=>s.items.map(i=>({...i,sec:s.title})));
+  const ico=t=>{const k=Object.keys(P27_ICON).find(k=>t.toLowerCase().includes(k));return ic(k?P27_ICON[k]:"plan")};
+  const first=secs.find(s=>/mirada|resumen/i.test(s.title));
+  const tl=`<div class="card d12 p27tl"><div class="ph"><div class="t"><h2>${ic("pipe")} El año, mes a mes</h2><span class="s">Pasa el cursor o toca cada mes para ver qué hay.</span></div></div><div class="tl">${P27_MONTHS.map((mn,i)=>{const its=all.filter(x=>x.month===i);return `<div class="tl-m ${its.length?"has":""}"><b>${mn.slice(0,3)}</b>${its.slice(0,3).map(x=>`<span class="tl-i" title="${esc(x.name)}">${esc(x.name)}</span>`).join("")}${its.length>3?`<span class="tl-i more">+${its.length-3}</span>`:""}</div>`}).join("")}</div></div>`;
+  const hero=first?`<div class="card d12 p27hero"><span class="eyebrow">${esc(first.title)}</span>${first.intro.split("\n").filter(Boolean).map(x=>`<p>${inlineMd(x)}</p>`).join("")}${first.items.length?`<div class="p27bets">${first.items.map((x,i)=>`<div class="bet"><b>${i+1}</b><span>${inlineMd(x.text||x.name)}</span></div>`).join("")}</div>`:""}</div>`:"";
+  const rest=secs.filter(s=>s!==first&&(s.title||s.items.length)).map(s=>`<div class="card d12 p27sec"><div class="ph"><div class="t"><h2>${ico(s.title)} ${esc(s.title||"Notas")}</h2>${s.intro?`<span class="s">${inlineMd(s.intro.split("\n")[0])}</span>`:""}</div></div>
+    ${s.items.length?`<div class="p27grid">${s.items.map(x=>`<article class="p27c"><div class="p27c-h"><b>${esc(x.name)}</b>${x.meta?`<span class="chip">${esc(x.meta)}</span>`:""}</div>${x.text?`<p>${inlineMd(x.text)}</p>`:""}${x.how?`<p class="how"><b>Cómo participar:</b> ${inlineMd(x.how)}</p>`:""}${x.src?`<a class="src" href="${esc(x.src)}" target="_blank" rel="noopener">Ver fuente</a>`:""}</article>`).join("")}</div>`:`<div style="padding:0 20px 16px">${ofMd(s.intro)}</div>`}</div>`).join("");
+  return `<div class="d12 row" style="justify-content:flex-end"><button class="btn sm" data-act="p27Toggle">Ver texto completo</button></div>${hero}${tl}${rest}`;
+}
+const inlineMd=t=>esc(t).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/\[dato por confirmar\]/gi,'<span class="chip warn">por confirmar</span>').replace(/(https?:\/\/\S+)/g,'<a href="$1" target="_blank" rel="noopener">fuente</a>');
 
 function agentsStrip(c){
   const up=Math.max(0,...S.trends.map(t=>t.updatedAt||0),...S.comps.map(t=>t.updatedAt||0),...S.events.map(t=>t.updatedAt||0));
@@ -5769,6 +5802,7 @@ const A={
   ctEdit:()=>{S.ctEdit=!S.ctEdit;S.drafts["ct-email"]=(S.contact||{}).email||"";S.drafts["ct-wa"]=(S.contact||{}).whatsapp||"";render()},
   ctSave:async()=>{const d={...(S.contact||{}),email:String(S.drafts["ct-email"]||"").trim(),whatsapp:String(S.drafts["ct-wa"]||"").replace(/[^\d+ ]/g,"").trim(),by:V.user.uname,ua:Date.now()};S.contact=d;S.ctEdit=false;render();try{await S.rawdb.doc(`clients/${S.cid}/docs/contact`).set(d);toast("Guardado: ahí te avisamos")}catch(e){toast("No se pudo guardar")}},
   propDismiss:async()=>{const a=S.adsAuto||{};try{await S.rawdb.doc(`clients/${S.cid}/docs/adsauto`).set({...a,proposal:null});logAct("pauta","Decidió dejar activa «"+((a.proposal||{}).name||"")+"»")}catch(e){}},
+  p27Toggle:()=>{S.p27Text=!S.p27Text;render()},
   capEdit:()=>{S.capEdit=!S.capEdit;S.drafts["cap-v"]=String((S.adsCfg&&S.adsCfg.cap)||"");render()},
   capSave:async()=>{const v=Math.max(0,Number(S.drafts["cap-v"])||0);const d={...(S.adsCfg||{}),cap:v,capBy:V.user.uname,capAt:Date.now()};S.adsCfg=d;S.capEdit=false;render();try{await S.rawdb.doc(`clients/${S.cid}/docs/adscfg`).set(d);toast("Tope guardado: Brandloop no pasará de ahí");logAct("pauta","Fijó el tope mensual de pauta en "+money(v,finOf().currency==="USD"?"USD":"GTQ"),{cap:v})}catch(e){toast("No se pudo guardar")}},
   propEdit:()=>{S.propEdit=!S.propEdit;S.drafts["prop-v"]=String((S.adsCfg&&S.adsCfg.proposed)||"");render()},
