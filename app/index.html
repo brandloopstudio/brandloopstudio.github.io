@@ -2025,7 +2025,7 @@ function tourHTML(c){
   if(step===1)return box+`<span class="eyebrow">Paso 1 de 4</span><h1>Bienvenido a Brandloop, ${esc(c.name)}</h1>
    <p>Brandloop ordena tu marketing de lo macro a lo micro: primero el plan, luego las campañas y el contenido, y al final los resultados. Un equipo de IA hace el trabajo pesado; tú apruebas.</p>
    <p>En el siguiente paso eliges qué módulos quieres ver. Lo que no elijas sigue existiendo y lo puedes encender después desde tu inicio.</p>
-   <div class="row" style="justify-content:flex-end;gap:8px"><button class="btn" data-act="tourSkip">Ver todo, sin configurar</button><button class="btn ink" data-act="tourNext">Elegir módulos ${ic("arrow")}</button></div></div></div>`;
+   <div class="row" style="justify-content:flex-end;gap:8px"><button class="btn ink" data-act="tourNext">Empezar (2 minutos) ${ic("arrow")}</button></div></div></div>`;
   if(step===2)return box+`<span class="eyebrow">Paso 2 de 4</span><h1>¿Qué quieres ver en Brandloop?</h1><p>Marca los módulos que te interesan. Puedes cambiarlo cuando quieras.</p>
    <div class="tour-mods">${MODULES.map(([k,l,what])=>`<label class="tour-m ${sel.includes(k)?"on":""}"><input type="checkbox" data-act="tourPick" data-k="${k}" ${sel.includes(k)?"checked":""}><span><b>${esc(l)}</b><span class="s">${esc(what)}</span></span></label>`).join("")}</div>
    <div class="row" style="justify-content:space-between;gap:8px"><button class="btn" data-act="tourBack">Atrás</button><button class="btn ink" data-act="tourNext" ${sel.length?"":"disabled"}>Ver qué hará el sistema ${ic("arrow")}</button></div></div></div>`;
